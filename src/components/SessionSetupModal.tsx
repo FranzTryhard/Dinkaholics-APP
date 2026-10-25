@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Player, RotationMode, RotationConfig, Session } from '../types';
 import { DEFAULT_ROTATION_CONFIG } from '../engine/config';
+import { DinkaholicsLogo } from './DinkaholicsLogo';
 import { PickleballIcon } from './PickleballIcon';
 import {
   X,
@@ -116,14 +117,7 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
         {/* Header - Signature Dinkaholics Emerald Gradient */}
         <div className="px-6 py-4 bg-gradient-to-r from-slate-900 via-[#0F382C] to-slate-900 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-emerald-800/40 shadow-xs shrink-0 bg-[#0F382C]">
-              <img
-                src="/src/assets/images/dinkaholics_reclub_style_1792884764544.jpg"
-                alt="Dinkaholics DH Logo"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <DinkaholicsLogo size="md" />
             <div>
               <h2 className="text-lg font-black text-white tracking-tight font-display flex items-center gap-2">
                 <span>Configure New Session</span>

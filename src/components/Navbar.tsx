@@ -2,6 +2,7 @@ import React from 'react';
 import { Session, RotationMode } from '../types';
 import { Plus, RotateCcw, Trophy } from 'lucide-react';
 import { PickleballIcon } from './PickleballIcon';
+import { DinkaholicsLogo } from './DinkaholicsLogo';
 
 interface NavbarProps {
   session: Session | null;
@@ -25,14 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-6">
         {/* Brand Zone */}
         <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => onNavigateTab('dashboard')}>
-          <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-emerald-800/40 bg-[#0F382C]">
-            <img
-              src="/src/assets/images/dinkaholics_reclub_style_1792884764544.jpg"
-              alt="Dinkaholics DH Logo"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <DinkaholicsLogo size="md" />
 
           <div>
             <div className="flex items-center gap-1.5">

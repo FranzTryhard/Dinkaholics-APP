@@ -31,6 +31,7 @@ import { HistoryView } from './views/HistoryView';
 import { SettingsView } from './views/SettingsView';
 import { RoundRobinView } from './views/RoundRobinView';
 import { PickleballIcon } from './components/PickleballIcon';
+import { DinkaholicsLogo } from './components/DinkaholicsLogo';
 
 export default function App() {
   const [players, setPlayers] = useState<Player[]>(() => StorageService.getPlayers());
@@ -436,13 +437,8 @@ export default function App() {
         ) : (
           /* Empty or Concluded Session State */
           <div className="py-16 text-center max-w-md mx-auto space-y-5 px-4">
-            <div className="w-20 h-20 rounded-3xl overflow-hidden shadow-2xl mx-auto border-2 border-emerald-800/40 bg-[#0F382C]">
-              <img
-                src="/src/assets/images/dinkaholics_reclub_style_1792884764544.jpg"
-                alt="Dinkaholics DH Logo"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-              />
+            <div className="flex justify-center">
+              <DinkaholicsLogo size="xl" />
             </div>
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-100 text-lime-900 text-xs font-black mb-2">

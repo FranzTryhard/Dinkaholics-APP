@@ -145,9 +145,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs relative group">
             <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] max-h-72 overflow-hidden bg-[#0F382C]">
               <img
-                src="/assets/aistudio/image_8772cc28.png"
+                src="/assets/aistudio/image_8772cc28.jpg"
+                onError={(e) => {
+                  e.currentTarget.src = '/assets/aistudio/image_8772cc28.png';
+                }}
                 alt="Dinkaholics Club Community Group Photo"
                 referrerPolicy="no-referrer"
+                loading="eager"
                 className="w-full h-full object-cover object-[center_35%] transition-transform duration-500 group-hover:scale-[1.02]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent pointer-events-none" />
