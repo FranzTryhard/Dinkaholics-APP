@@ -1,5 +1,5 @@
 import React from 'react';
-import dinkaholicsLogoImg from '../assets/images/dinkaholics_reclub_style_1792884764544.jpg';
+import dinkaholicsLogoWebp from '../assets/images/dinkaholics_logo.webp';
 
 interface DinkaholicsLogoProps {
   className?: string;
@@ -13,31 +13,58 @@ export const DinkaholicsLogo: React.FC<DinkaholicsLogoProps> = ({
   showText = false,
 }) => {
   const sizeMap = {
-    sm: 'w-7 h-7',
-    md: 'w-10 h-10',
-    lg: 'w-12 h-12',
-    xl: 'w-20 h-20',
+    sm: 'w-8 h-8',
+    md: 'w-11 h-11',
+    lg: 'w-14 h-14',
+    xl: 'w-24 h-24 sm:w-28 sm:h-28',
+  };
+
+  const pixelDimensions = {
+    sm: 32,
+    md: 44,
+    lg: 56,
+    xl: 112,
   };
 
   const roundedMap = {
-    sm: 'rounded-lg',
-    md: 'rounded-xl',
+    sm: 'rounded-xl',
+    md: 'rounded-2xl',
     lg: 'rounded-2xl',
     xl: 'rounded-3xl',
   };
 
+  const dim = pixelDimensions[size];
+
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
-      <div className={`relative ${sizeMap[size]} shrink-0 ${roundedMap[size]} overflow-hidden shadow-sm border border-emerald-800/40 bg-[#0F382C]`}>
-        <img
-          src={dinkaholicsLogoImg || '/assets/images/dinkaholics_logo.jpg'}
-          onError={(e) => {
-            e.currentTarget.src = '/assets/images/dinkaholics_logo.jpg';
-          }}
-          alt="Dinkaholics DH Logo"
-          referrerPolicy="no-referrer"
-          className="w-full h-full object-cover"
-        />
+      <div
+        className={`relative ${sizeMap[size]} shrink-0 ${roundedMap[size]} overflow-hidden shadow-md bg-[#0C3827]`}
+      >
+        <picture>
+          <source
+            type="image/webp"
+            srcSet="/assets/images/dinkaholics_logo_64.webp 64w, /assets/images/dinkaholics_logo_140.webp 140w, /assets/images/dinkaholics_logo_280.webp 280w"
+            sizes={
+              size === 'xl'
+                ? '(max-width: 640px) 96px, 112px'
+                : `${dim}px`
+            }
+          />
+          <img
+            src={dinkaholicsLogoWebp || '/assets/images/dinkaholics_logo_280.webp'}
+            srcSet="/assets/images/dinkaholics_logo_140.webp 1x, /assets/images/dinkaholics_logo_280.webp 2x"
+            width={dim}
+            height={dim}
+            loading="eager"
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.src = '/assets/images/dinkaholics_logo_280.jpg';
+            }}
+            alt="Dinkaholics DH Logo"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover"
+          />
+        </picture>
       </div>
 
       {showText && (
@@ -53,3 +80,4 @@ export const DinkaholicsLogo: React.FC<DinkaholicsLogoProps> = ({
     </div>
   );
 };
+
