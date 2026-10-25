@@ -265,14 +265,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     }
     setIsSubmitting(true);
     const winner: 'teamA' | 'teamB' = scoreA > scoreB ? 'teamA' : 'teamB';
-    try {
-      onFinishMatch(match.id, scoreA, scoreB, winner);
-    } catch (err) {
-      console.error('Failed to finish match:', err);
-      setIsSubmitting(false);
-      setToastMessage('Error saving match result. Please try again.');
-      setTimeout(() => setToastMessage(null), 3000);
-    }
+    onFinishMatch(match.id, scoreA, scoreB, winner);
   };
 
   if (isMatchEnded) {

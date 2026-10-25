@@ -1,5 +1,5 @@
 {
-  "name": "Dinkaholics — Smart Pickleball Matchmaking & Rotation",
+  "name": "PickleMatch — Smart Pickleball Matchmaking & Rotation",
   "description": "Smart pickleball court booking, real-time availability, and fair doubles matchmaking with balanced, winner-stays, and social rotation modes.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
