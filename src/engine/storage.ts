@@ -7,6 +7,7 @@ import {
   SessionSummary,
 } from '../types';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION, INITIAL_DEMO_MATCHES } from './mockData';
+import { DEFAULT_PLAYER_AVATAR } from './config';
 
 const PLAYERS_KEY = 'picklematch_players_v1';
 const ACTIVE_SESSION_KEY = 'picklematch_active_session_v1';
@@ -52,10 +53,18 @@ export class StorageService {
           const nonDemo = parsed.filter(
             (p: Player) => !p.isDemo && !p.id.match(/^p([1-9]|10)$/)
           );
-          if (nonDemo.length !== parsed.length) {
-            this.savePlayers(nonDemo);
+          let hasModifications = nonDemo.length !== parsed.length;
+          const sanitized = nonDemo.map((p: Player) => {
+            if (!p.avatar || p.avatar.trim() === '') {
+              hasModifications = true;
+              return { ...p, avatar: DEFAULT_PLAYER_AVATAR };
+            }
+            return p;
+          });
+          if (hasModifications) {
+            this.savePlayers(sanitized);
           }
-          return nonDemo;
+          return sanitized;
         }
       }
     } catch (e) {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Match, Player } from '../types';
+import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import {
   Trophy,
   MapPin,
@@ -220,11 +221,14 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                             key={p.id}
                             className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
                           >
-                            {p.avatar ? (
-                              <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                              p.name.charAt(0)
-                            )}
+                            <img
+                              src={p.avatar || DEFAULT_PLAYER_AVATAR}
+                              onError={(e) => {
+                                e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
+                              }}
+                              alt={p.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         ))}
                       </div>
@@ -264,11 +268,14 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                             key={p.id}
                             className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
                           >
-                            {p.avatar ? (
-                              <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                              p.name.charAt(0)
-                            )}
+                            <img
+                              src={p.avatar || DEFAULT_PLAYER_AVATAR}
+                              onError={(e) => {
+                                e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
+                              }}
+                              alt={p.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         ))}
                       </div>

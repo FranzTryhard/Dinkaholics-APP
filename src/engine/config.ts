@@ -1,5 +1,7 @@
 import { MatchmakingWeights, RotationMode, RotationConfig } from '../types';
 
+export const DEFAULT_PLAYER_AVATAR = '/assets/images/dinkaholics_logo.jpg';
+
 export const DEFAULT_ROTATION_CONFIG: RotationConfig = {
   winnerStaysRule: 'stay_together',
   maxConsecutiveGames: 2,

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Player, Match, Session } from '../types';
 import { Trophy, Flame, Award, ChevronRight, TrendingUp } from 'lucide-react';
 import { PlayerDetailModal } from '../components/PlayerDetailModal';
+import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 
 interface LeaderboardViewProps {
   players: Player[];
@@ -109,17 +110,14 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
                   #{index + 1}
                 </span>
 
-                {player.avatar ? (
-                  <img
-                    src={player.avatar}
-                    alt={player.name}
-                    className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-slate-100 text-[#0F382C] font-bold text-sm flex items-center justify-center shrink-0 border border-slate-200">
-                    {player.name.charAt(0)}
-                  </div>
-                )}
+                <img
+                  src={player.avatar || DEFAULT_PLAYER_AVATAR}
+                  onError={(e) => {
+                    e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
+                  }}
+                  alt={player.name}
+                  className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
+                />
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">

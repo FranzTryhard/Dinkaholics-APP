@@ -13,6 +13,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { PlayerDetailModal } from '../components/PlayerDetailModal';
+import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 
 interface PlayersViewProps {
   players: Player[];
@@ -67,7 +68,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
 
     onAddPlayer({
       name: newName.trim(),
-      avatar: newAvatar.trim() || undefined,
+      avatar: newAvatar.trim() || DEFAULT_PLAYER_AVATAR,
       skillRating: newRating,
       totalGamesPlayed: 0,
       wins: 0,
@@ -209,17 +210,14 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                     className="flex items-center gap-3 min-w-0 cursor-pointer group"
                     title="View player detail & performance trends"
                   >
-                    {player.avatar ? (
-                      <img
-                        src={player.avatar}
-                        alt={player.name}
-                        className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0 group-hover:ring-2 group-hover:ring-[#0F382C]/30 transition"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-slate-100 text-[#0F382C] font-bold text-sm flex items-center justify-center shrink-0 border border-slate-200 group-hover:border-[#0F382C] transition">
-                        {player.name.charAt(0)}
-                      </div>
-                    )}
+                    <img
+                      src={player.avatar || DEFAULT_PLAYER_AVATAR}
+                      onError={(e) => {
+                        e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
+                      }}
+                      alt={player.name}
+                      className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0 group-hover:ring-2 group-hover:ring-[#0F382C]/30 transition"
+                    />
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -376,12 +374,34 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Avatar URL (Optional)</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Profile Photo (Optional)
+                </label>
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 mb-2">
+                  <img
+                    src={newAvatar.trim() || DEFAULT_PLAYER_AVATAR}
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
+                    }}
+                    alt="PFP Preview"
+                    className="w-10 h-10 rounded-full object-cover border border-slate-300 shadow-2xs shrink-0"
+                  />
+                  <div className="min-w-0 flex-1 text-left">
+                    <span className="text-[11px] font-bold text-slate-800 block truncate">
+                      {newAvatar.trim() ? 'Custom PFP Imported' : 'Uniformed Built-in Club PFP'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">
+                      {newAvatar.trim()
+                        ? 'Custom image will be applied'
+                        : 'Defaulted to Dinkaholics official club PFP'}
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="url"
                   value={newAvatar}
                   onChange={(e) => setNewAvatar(e.target.value)}
-                  placeholder="https://... (or leave empty for initials)"
+                  placeholder="Paste image URL (or leave blank for built-in PFP)"
                   className="w-full px-3.5 py-2 rounded-xl bg-slate-50 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-[#0F382C] border border-slate-200 transition"
                 />
               </div>

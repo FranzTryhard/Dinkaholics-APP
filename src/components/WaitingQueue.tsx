@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Player, SKILL_LEVEL_COLORS, PlayerStatus } from '../types';
 import { formatWaitTime, getEffectiveWaitMs } from '../engine/matchmaker';
+import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import { Clock, Coffee, Check, Flame, ChevronRight, UserPlus } from 'lucide-react';
 
 interface WaitingQueueProps {
@@ -91,17 +92,14 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
                     {idx + 1}
                   </span>
 
-                  {p.avatar ? (
-                    <img
-                      src={p.avatar}
-                      alt={p.name}
-                      className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-200"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 text-xs flex items-center justify-center font-bold shrink-0">
-                      {p.name.charAt(0)}
-                    </div>
-                  )}
+                  <img
+                    src={p.avatar || DEFAULT_PLAYER_AVATAR}
+                    onError={(e) => {
+                      e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
+                    }}
+                    alt={p.name}
+                    className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-200"
+                  />
 
                   <div className="truncate">
                     <div className="flex items-center gap-1.5">
