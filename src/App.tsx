@@ -10,7 +10,6 @@ import {
   RotationConfig,
 } from './types';
 import { StorageService } from './engine/storage';
-import { DEFAULT_PLAYER_AVATAR } from './engine/config';
 import {
   recommendMatchesForAvailableCourts,
   createMatchFromRecommendation,
@@ -235,9 +234,6 @@ export default function App() {
   const handleAddPlayer = (newPlayerData: Omit<Player, 'id'>) => {
     const newPlayer: Player = {
       ...newPlayerData,
-      avatar: newPlayerData.avatar && newPlayerData.avatar.trim() !== ''
-        ? newPlayerData.avatar.trim()
-        : DEFAULT_PLAYER_AVATAR,
       id: `p_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
     };
 
@@ -255,14 +251,8 @@ export default function App() {
 
   // Handler: Update Player Details
   const handleUpdatePlayerDetails = (updatedPlayer: Player) => {
-    const playerWithAvatar: Player = {
-      ...updatedPlayer,
-      avatar: updatedPlayer.avatar && updatedPlayer.avatar.trim() !== ''
-        ? updatedPlayer.avatar.trim()
-        : DEFAULT_PLAYER_AVATAR,
-    };
     const updatedPlayers = players.map((p) =>
-      p.id === playerWithAvatar.id ? playerWithAvatar : p
+      p.id === updatedPlayer.id ? updatedPlayer : p
     );
     setPlayers(updatedPlayers);
     StorageService.savePlayers(updatedPlayers);

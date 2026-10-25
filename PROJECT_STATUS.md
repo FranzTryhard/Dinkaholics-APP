@@ -86,14 +86,12 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] CSV export of completed session matches.
 - [x] PWA offline support and Web Audio API offline sound.
 - [x] Idempotent match completion preventing duplicate win/loss counting.
-- [x] Uniform Built-in Player PFP: All added and existing players without an imported photo uniformly default to the official Dinkaholics club PFP (`/assets/images/dinkaholics_logo.jpg`) with live preview in the Add Player modal.
 - [x] Automated test suites in `src/engine/__tests__/`.
 
 ---
 
-## 4. Resolved Issues & Milestones
+## 4. Resolved Issues
 - **Match Result Saving Freeze / Delay:** In `CourtVisualScorekeeper.tsx`, `handleConfirmFinish` set `isSubmitting = true` (changing button state to "Recording Result...") but never invoked the passed `onFinishMatch(match.id, scoreA, scoreB, winner)` prop. This caused the UI to hang indefinitely on the victory screen. Resolved by wiring `onFinishMatch` with error handling.
-- **Uniform Built-in PFP for Players Without Photos:** All player cards, waiting queues, leaderboard standings, live scoreboards, match histories, and tournament rosters now uniformly render the official Dinkaholics club badge for any player added without an imported photo.
 
 ---
 
@@ -105,6 +103,11 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 ---
 
 ## 6. Next Recommended Actions
-1. Confirm user acceptance of the uniform player PFP behavior.
+1. Confirm user acceptance of the match saving fix in the live development app.
 2. Align on whether Round-Robin matches should auto-sync into session history.
-3. Address any additional requested features or court rotation rules.
+3. Address any additional requested features.
+1. Clarify remaining backlog/intent with the user (see turn questions).
+2. Establish priority for:
+   - Synchronizing Round-Robin match results into session history & player statistics.
+   - Any requested UI/UX improvements or new club features.
+   - Remote multi-device synchronization if desired.

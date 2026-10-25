@@ -8,7 +8,6 @@ import {
   SKILL_LEVEL_COLORS,
 } from '../types';
 import { HeroScoreCard } from '../components/HeroScoreCard';
-import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import { WaitingQueue } from '../components/WaitingQueue';
 import { SessionInsights } from '../components/SessionInsights';
 import {
@@ -315,14 +314,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                                 key={p.id}
                                 className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
                               >
-                                <img
-                                  src={p.avatar || DEFAULT_PLAYER_AVATAR}
-                                  onError={(e) => {
-                                    e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                                  }}
-                                  alt={p.name}
-                                  className="w-full h-full object-cover"
-                                />
+                                {p.avatar ? (
+                                  <img
+                                    src={p.avatar}
+                                    alt={p.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  p.name.charAt(0)
+                                )}
                               </div>
                             ))}
                           </div>
@@ -348,14 +348,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                                 key={p.id}
                                 className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
                               >
-                                <img
-                                  src={p.avatar || DEFAULT_PLAYER_AVATAR}
-                                  onError={(e) => {
-                                    e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                                  }}
-                                  alt={p.name}
-                                  className="w-full h-full object-cover"
-                                />
+                                {p.avatar ? (
+                                  <img
+                                    src={p.avatar}
+                                    alt={p.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  p.name.charAt(0)
+                                )}
                               </div>
                             ))}
                           </div>
@@ -514,14 +515,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         #{idx + 1}
                       </span>
 
-                      <img
-                        src={player.avatar || DEFAULT_PLAYER_AVATAR}
-                        onError={(e) => {
-                          e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                        }}
-                        alt={player.name}
-                        className="w-8 h-8 rounded-full object-cover border border-slate-200"
-                      />
+                      {player.avatar ? (
+                        <img
+                          src={player.avatar}
+                          alt={player.name}
+                          className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 text-xs font-bold flex items-center justify-center">
+                          {player.name.charAt(0)}
+                        </div>
+                      )}
 
                       <div>
                         <div className="text-xs font-bold text-slate-900">{player.name}</div>

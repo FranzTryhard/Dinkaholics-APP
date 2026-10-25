@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Player, Session } from '../types';
-import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import {
   RoundRobinRound,
   RoundRobinMatch,
@@ -556,15 +555,16 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                       </td>
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden">
-                            <img
-                              src={row.player.avatar || DEFAULT_PLAYER_AVATAR}
-                              onError={(e) => {
-                                e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                              }}
-                              alt={row.player.name}
-                              className="w-full h-full rounded-full object-cover"
-                            />
+                          <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-xs text-slate-700">
+                            {row.player.avatar ? (
+                              <img
+                                src={row.player.avatar}
+                                alt={row.player.name}
+                                className="w-full h-full rounded-full object-cover"
+                              />
+                            ) : (
+                              row.player.name.charAt(0)
+                            )}
                           </div>
                           <div>
                             <div className="font-bold text-slate-900">{row.player.name}</div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Player, Match, Session, SkillLevel, SKILL_LEVEL_LABELS, PlayerStatus } from '../types';
-import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import { PlayerPerformanceTrendsChart } from './PlayerPerformanceTrendsChart';
 import {
   X,
@@ -63,14 +62,17 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
         {/* Header */}
         <div className="px-5 py-4 bg-gradient-to-r from-slate-900 via-[#0F382C] to-slate-900 text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3.5 min-w-0">
-            <img
-              src={player.avatar || DEFAULT_PLAYER_AVATAR}
-              onError={(e) => {
-                e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-              }}
-              alt={player.name}
-              className="w-12 h-12 rounded-2xl object-cover border-2 border-white/20 shadow-md shrink-0"
-            />
+            {player.avatar ? (
+              <img
+                src={player.avatar}
+                alt={player.name}
+                className="w-12 h-12 rounded-2xl object-cover border-2 border-white/20 shadow-md shrink-0"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-2xl bg-white/10 text-lime-400 font-black text-lg flex items-center justify-center border border-white/20 shrink-0">
+                {player.name.charAt(0)}
+              </div>
+            )}
 
             <div className="min-w-0">
               <div className="flex items-center gap-2">

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Player, MatchCandidate } from '../types';
 import { calculateBalanceScore } from '../engine/matchmaker';
-import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import {
   ArrowLeft,
   X,
@@ -170,14 +169,13 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <Menu className="w-4 h-4 text-slate-400" />
-                      <img
-                        src={p.avatar || DEFAULT_PLAYER_AVATAR}
-                        onError={(e) => {
-                          e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                        }}
-                        alt={p.name}
-                        className="w-7 h-7 rounded-full object-cover border border-slate-200"
-                      />
+                      {p.avatar ? (
+                        <img src={p.avatar} alt={p.name} className="w-7 h-7 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-slate-100 text-[#0F382C] font-bold text-xs flex items-center justify-center">
+                          {p.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <div className="text-xs font-bold text-slate-900">{p.name}</div>
                         <div className="text-[10px] text-slate-400">Level {p.skillRating}</div>
@@ -213,14 +211,13 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <Menu className="w-4 h-4 text-slate-400" />
-                      <img
-                        src={p.avatar || DEFAULT_PLAYER_AVATAR}
-                        onError={(e) => {
-                          e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                        }}
-                        alt={p.name}
-                        className="w-7 h-7 rounded-full object-cover border border-slate-200"
-                      />
+                      {p.avatar ? (
+                        <img src={p.avatar} alt={p.name} className="w-7 h-7 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-slate-100 text-[#0F382C] font-bold text-xs flex items-center justify-center">
+                          {p.name.charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <div className="text-xs font-bold text-slate-900">{p.name}</div>
                         <div className="text-[10px] text-slate-400">Level {p.skillRating}</div>

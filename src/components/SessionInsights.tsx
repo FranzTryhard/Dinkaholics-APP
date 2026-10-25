@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Player, Match, Session } from '../types';
 import { getEffectiveWaitMs, formatWaitTime } from '../engine/matchmaker';
-import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import {
   Clock,
   Flame,
@@ -211,14 +210,17 @@ export const SessionInsights: React.FC<SessionInsightsProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
-                    <img
-                      src={player.avatar || DEFAULT_PLAYER_AVATAR}
-                      onError={(e) => {
-                        e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                      }}
-                      alt={player.name}
-                      className="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0"
-                    />
+                    {player.avatar ? (
+                      <img
+                        src={player.avatar}
+                        alt={player.name}
+                        className="w-7 h-7 rounded-full object-cover border border-slate-200 shrink-0"
+                      />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-slate-100 text-[#0F382C] font-bold text-xs flex items-center justify-center shrink-0 border border-slate-200">
+                        {player.name.charAt(0)}
+                      </div>
+                    )}
                     <span className="text-xs font-bold text-slate-900 truncate">
                       {player.name}
                     </span>

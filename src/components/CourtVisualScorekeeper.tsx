@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Match, Player } from '../types';
-import { DEFAULT_PLAYER_AVATAR } from '../engine/config';
 import { PickleballIcon } from './PickleballIcon';
 import {
   Trophy,
@@ -307,14 +306,17 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             <div className="flex items-center justify-center gap-4">
               {winnerPlayers.map((p) => (
                 <div key={p.id} className="flex flex-col items-center">
-                  <img
-                    src={p.avatar || DEFAULT_PLAYER_AVATAR}
-                    onError={(e) => {
-                      e.currentTarget.src = DEFAULT_PLAYER_AVATAR;
-                    }}
-                    alt={p.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-[#D4E938]"
-                  />
+                  {p.avatar ? (
+                    <img
+                      src={p.avatar}
+                      alt={p.name}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-[#D4E938]"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-white/20 text-white font-bold flex items-center justify-center border-2 border-[#D4E938]">
+                      {p.name.charAt(0)}
+                    </div>
+                  )}
                   <span className="text-xs font-semibold text-white mt-1 truncate max-w-[100px]">
                     {p.name}
                   </span>
