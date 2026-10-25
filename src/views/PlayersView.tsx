@@ -288,7 +288,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                 </div>
 
                 {/* Rating Level Selector and Stats & Trends Trigger */}
-                <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 text-xs gap-2">
+                <div className="flex flex-wrap sm:flex-nowrap items-center justify-between pt-2.5 border-t border-slate-100 text-xs gap-2">
                   <button
                     type="button"
                     onClick={() => setSelectedPlayer(player)}
@@ -299,15 +299,15 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                     <span>Stats & Trends</span>
                   </button>
 
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] text-slate-400 font-medium mr-0.5 hidden sm:inline">
+                  <div className="flex items-center gap-1 shrink-0 ml-auto sm:ml-0">
+                    <span className="text-[10px] text-slate-400 font-medium mr-0.5 hidden xs:inline">
                       Level:
                     </span>
                     {([1, 2, 3, 4, 5] as SkillLevel[]).map((level) => (
                       <button
                         key={level}
                         onClick={() => handleRatingChangeRequest(player, level)}
-                        className={`touch-target w-7 h-7 rounded-lg text-xs font-bold transition flex items-center justify-center ${
+                        className={`touch-target w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center justify-center shrink-0 ${
                           player.skillRating === level
                             ? 'bg-[#0F382C] text-white shadow-2xs'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'

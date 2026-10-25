@@ -33,7 +33,25 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
   const [scoreB, setScoreB] = useState(match.scoreB || 0);
   const [serverNumber, setServerNumber] = useState<1 | 2>(1);
   const [servingTeam, setServingTeam] = useState<'teamA' | 'teamB'>('teamA');
-  const [history, setHistory] = useState<Array<{ a: number; b: number; sNum: 1 | 2; sTeam: 'teamA' | 'teamB' }>>([]);
+  // Player index on serving team (0 or 1) who is currently serving
+  const [serverPlayerIndex, setServerPlayerIndex] = useState<0 | 1>(0);
+  // Current court positions: [leftBoxPlayerIdx, rightBoxPlayerIdx]
+  const [teamAPositions, setTeamAPositions] = useState<[number, number]>([0, 1]);
+  const [teamBPositions, setTeamBPositions] = useState<[number, number]>([0, 1]);
+  // Scoring mode: 'side_out' (traditional doubles 1-2-Sideout) or 'rally' (point every rally)
+  const [scoringMode, setScoringMode] = useState<'side_out' | 'rally'>('side_out');
+
+  const [history, setHistory] = useState<
+    Array<{
+      a: number;
+      b: number;
+      sNum: 1 | 2;
+      sTeam: 'teamA' | 'teamB';
+      sPlayerIdx: 0 | 1;
+      posA: [number, number];
+      posB: [number, number];
+    }>
+  >([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isMatchEnded, setIsMatchEnded] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(courtAudio.getSoundEnabled());
@@ -85,46 +103,116 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
   const teamAPlayers = match.teamA.map(getPlayer);
   const teamBPlayers = match.teamB.map(getPlayer);
 
+  // The active server object
+  const activeServerPlayer =
+    servingTeam === 'teamA'
+      ? teamAPlayers[serverPlayerIndex] || teamAPlayers[0]
+      : teamBPlayers[serverPlayerIndex] || teamBPlayers[0];
+
   // Pickleball score string: Server Score - Receiver Score - Server Number
   const serverScore = servingTeam === 'teamA' ? scoreA : scoreB;
   const receiverScore = servingTeam === 'teamA' ? scoreB : scoreA;
 
   const handleScorePoint = (scoringTeam: 'teamA' | 'teamB') => {
-    // Record history for undo
-    setHistory((prev) => [...prev, { a: scoreA, b: scoreB, sNum: serverNumber, sTeam: servingTeam }]);
+    // Record history for full undo
+    setHistory((prev) => [
+      ...prev,
+      {
+        a: scoreA,
+        b: scoreB,
+        sNum: serverNumber,
+        sTeam: servingTeam,
+        sPlayerIdx: serverPlayerIndex,
+        posA: [...teamAPositions] as [number, number],
+        posB: [...teamBPositions] as [number, number],
+      },
+    ]);
 
     let nextA = scoreA;
     let nextB = scoreB;
     let nextServerNumber = serverNumber;
     let nextServingTeam = servingTeam;
+    let nextServerPlayerIndex = serverPlayerIndex;
+    let nextPosA: [number, number] = [...teamAPositions];
+    let nextPosB: [number, number] = [...teamBPositions];
 
-    if (scoringTeam === servingTeam) {
-      // Serving team scored a point!
+    if (scoringMode === 'rally') {
+      // In Rally Scoring: whoever wins the rally scores a point
       if (scoringTeam === 'teamA') {
         nextA = scoreA + 1;
-        setToastMessage(`+1 Point to Team 1!`);
       } else {
         nextB = scoreB + 1;
-        setToastMessage(`+1 Point to Team 2!`);
       }
-      courtAudio.playPaddleHit();
-    } else {
-      // Side out / Change of server
-      if (serverNumber === 1) {
-        nextServerNumber = 2;
-        setToastMessage(`Second Server!`);
+
+      if (scoringTeam === servingTeam) {
+        // Serving team scored: switch sides, same server continues
+        if (servingTeam === 'teamA') {
+          nextPosA = [teamAPositions[1], teamAPositions[0]];
+        } else {
+          nextPosB = [teamBPositions[1], teamBPositions[0]];
+        }
+        setToastMessage(`+1 Point to ${scoringTeam === 'teamA' ? 'Team 1' : 'Team 2'}!`);
+        courtAudio.playPaddleHit();
       } else {
+        // Receiving team scored: serve switches to receiving team
+        nextServingTeam = scoringTeam;
         nextServerNumber = 1;
-        nextServingTeam = servingTeam === 'teamA' ? 'teamB' : 'teamA';
-        setToastMessage(`Side out! ${nextServingTeam === 'teamA' ? 'Team 1' : 'Team 2'} now serving`);
+        nextServerPlayerIndex = 0;
+        const newServer = scoringTeam === 'teamA' ? teamAPlayers[0] : teamBPlayers[0];
+        setToastMessage(`+1 Point! Serve switches to ${newServer.name}`);
+        courtAudio.playSideOut();
       }
-      courtAudio.playSideOut();
+    } else {
+      // Traditional Side-Out Doubles Scoring:
+      if (scoringTeam === servingTeam) {
+        // Serving team scored a point!
+        if (scoringTeam === 'teamA') {
+          nextA = scoreA + 1;
+          // Serving team players switch left/right court sides
+          nextPosA = [teamAPositions[1], teamAPositions[0]];
+          setToastMessage(`+1 Point to Team 1! ${teamAPlayers[serverPlayerIndex].name} serves again`);
+        } else {
+          nextB = scoreB + 1;
+          // Serving team players switch left/right court sides
+          nextPosB = [teamBPositions[1], teamBPositions[0]];
+          setToastMessage(`+1 Point to Team 2! ${teamBPlayers[serverPlayerIndex].name} serves again`);
+        }
+        courtAudio.playPaddleHit();
+      } else {
+        // Receiving team won the rally (serving team faults)
+        if (serverNumber === 1) {
+          // Serve switches to Second Server on the SAME team!
+          nextServerNumber = 2;
+          nextServerPlayerIndex = serverPlayerIndex === 0 ? 1 : 0;
+          const partner =
+            servingTeam === 'teamA'
+              ? teamAPlayers[nextServerPlayerIndex]
+              : teamBPlayers[nextServerPlayerIndex];
+          setToastMessage(`Second Server! ${partner.name} now serving (Server #2)`);
+        } else {
+          // Server 2 faulted -> SIDE OUT! Serve switches to the OTHER team!
+          nextServerNumber = 1;
+          nextServingTeam = servingTeam === 'teamA' ? 'teamB' : 'teamA';
+          nextServerPlayerIndex = 0;
+          const nextTeamServer =
+            nextServingTeam === 'teamA' ? teamAPlayers[0] : teamBPlayers[0];
+          setToastMessage(
+            `Side out! ${nextTeamServer.name} now serving for ${
+              nextServingTeam === 'teamA' ? 'Team 1' : 'Team 2'
+            }`
+          );
+        }
+        courtAudio.playSideOut();
+      }
     }
 
     setScoreA(nextA);
     setScoreB(nextB);
     setServerNumber(nextServerNumber);
     setServingTeam(nextServingTeam);
+    setServerPlayerIndex(nextServerPlayerIndex);
+    setTeamAPositions(nextPosA);
+    setTeamBPositions(nextPosB);
 
     // Check for win condition (11 points and win by 2)
     if (
@@ -161,6 +249,9 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     setScoreB(last.b);
     setServerNumber(last.sNum);
     setServingTeam(last.sTeam);
+    setServerPlayerIndex(last.sPlayerIdx);
+    setTeamAPositions(last.posA);
+    setTeamBPositions(last.posB);
     setHistory((prev) => prev.slice(0, prev.length - 1));
     setIsMatchEnded(false);
   };
@@ -174,7 +265,6 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     }
     setIsSubmitting(true);
     const winner: 'teamA' | 'teamB' = scoreA > scoreB ? 'teamA' : 'teamB';
-    onFinishMatch(match.id, scoreA, scoreB, winner);
   };
 
   if (isMatchEnded) {
@@ -252,21 +342,60 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
   }
 
   const handleSideOut = () => {
-    setHistory((prev) => [...prev, { a: scoreA, b: scoreB, sNum: serverNumber, sTeam: servingTeam }]);
+    setHistory((prev) => [
+      ...prev,
+      {
+        a: scoreA,
+        b: scoreB,
+        sNum: serverNumber,
+        sTeam: servingTeam,
+        sPlayerIdx: serverPlayerIndex,
+        posA: [...teamAPositions] as [number, number],
+        posB: [...teamBPositions] as [number, number],
+      },
+    ]);
     let nextNum: 1 | 2 = 1;
     let nextTeam: 'teamA' | 'teamB' = servingTeam;
-    if (serverNumber === 1) {
+    let nextIdx: 0 | 1 = serverPlayerIndex;
+
+    if (serverNumber === 1 && scoringMode === 'side_out') {
       nextNum = 2;
-      setToastMessage('Second Server!');
+      nextIdx = serverPlayerIndex === 0 ? 1 : 0;
+      const partner = servingTeam === 'teamA' ? teamAPlayers[nextIdx] : teamBPlayers[nextIdx];
+      setToastMessage(`Second Server! ${partner.name} now serving`);
     } else {
       nextNum = 1;
       nextTeam = servingTeam === 'teamA' ? 'teamB' : 'teamA';
-      setToastMessage(`Side out! ${nextTeam === 'teamA' ? 'Team 1' : 'Team 2'} serving`);
+      nextIdx = 0;
+      const nextServer = nextTeam === 'teamA' ? teamAPlayers[0] : teamBPlayers[0];
+      setToastMessage(`Side out! ${nextServer.name} now serving for ${nextTeam === 'teamA' ? 'Team 1' : 'Team 2'}`);
     }
     setServerNumber(nextNum);
     setServingTeam(nextTeam);
+    setServerPlayerIndex(nextIdx);
     courtAudio.playSideOut();
     setTimeout(() => setToastMessage(null), 2500);
+  };
+
+  const handleSelectServer = (team: 'teamA' | 'teamB', playerIdx: 0 | 1) => {
+    setHistory((prev) => [
+      ...prev,
+      {
+        a: scoreA,
+        b: scoreB,
+        sNum: serverNumber,
+        sTeam: servingTeam,
+        sPlayerIdx: serverPlayerIndex,
+        posA: [...teamAPositions] as [number, number],
+        posB: [...teamBPositions] as [number, number],
+      },
+    ]);
+    setServingTeam(team);
+    setServerPlayerIndex(playerIdx);
+    const chosenPlayer = team === 'teamA' ? teamAPlayers[playerIdx] : teamBPlayers[playerIdx];
+    setToastMessage(`Server set to ${chosenPlayer.name}!`);
+    courtAudio.playPaddleHit();
+    setTimeout(() => setToastMessage(null), 2000);
   };
 
   if (isBigDigitMode) {
@@ -367,7 +496,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               {isLeftServing && (
                 <div className="inline-flex items-center gap-1.5 bg-[#84CC16] text-[#081F19] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
                   <PickleballIcon className="w-4 h-4 text-[#081F19]" />
-                  <span>SERVING · #{serverNumber}</span>
+                  <span>SERVING · {activeServerPlayer.name} (#{serverNumber})</span>
                 </div>
               )}
             </div>
@@ -413,7 +542,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               {isRightServing && (
                 <div className="inline-flex items-center gap-1.5 bg-[#84CC16] text-[#081F19] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
                   <PickleballIcon className="w-4 h-4 text-[#081F19]" />
-                  <span>SERVING · #{serverNumber}</span>
+                  <span>SERVING · {activeServerPlayer.name} (#{serverNumber})</span>
                 </div>
               )}
             </div>
@@ -553,8 +682,39 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
           </button>
         )}
 
-        <div className="text-xs font-medium text-slate-600 mt-2 text-center">
-          Tap court team area below or use buttons to score:
+        {/* Scoring Mode Toggle */}
+        <div className="flex items-center justify-between w-full mt-2 mb-1 px-1">
+          <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setScoringMode('side_out')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
+                scoringMode === 'side_out'
+                  ? 'bg-[#0F382C] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Side-Out (1-2-Sideout)
+            </button>
+            <button
+              type="button"
+              onClick={() => setScoringMode('rally')}
+              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
+                scoringMode === 'rally'
+                  ? 'bg-[#0F382C] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Rally Scoring
+            </button>
+          </div>
+          <span className="text-[10px] text-slate-400 font-medium">
+            {scoringMode === 'side_out' ? 'Fault = Next Server' : 'Point on every rally'}
+          </span>
+        </div>
+
+        <div className="text-xs font-medium text-slate-600 mt-1 text-center">
+          Tap court area or buttons below to score:
         </div>
 
         {/* Toast alert */}
@@ -565,102 +725,186 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
         )}
 
         {/* Interactive Pickleball Court Top-Down View */}
-        <div className="mt-3 w-full aspect-[4/5] max-h-80 rounded-2xl border-4 border-white shadow-lg overflow-hidden flex flex-col bg-[#144637] relative">
-          {/* Top Half: Team 1 */}
-          <button
-            type="button"
-            onClick={() => handleScorePoint('teamA')}
-            className={`flex-1 relative flex border-b-2 border-white/50 transition active:scale-[0.99] ${
-              servingTeam === 'teamA' ? 'bg-[#1b5c49]' : 'bg-[#0F382C]'
-            }`}
-          >
-            {/* Left box */}
-            <div className="flex-1 border-r border-white/30 flex items-center justify-center p-2 relative">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow">
-                {teamAPlayers[0].name.charAt(0)}
+        {(() => {
+          const playerLeftA = teamAPlayers[teamAPositions[0]] || teamAPlayers[0];
+          const playerRightA = teamAPlayers[teamAPositions[1]] || teamAPlayers[1];
+          const playerLeftB = teamBPlayers[teamBPositions[0]] || teamBPlayers[0];
+          const playerRightB = teamBPlayers[teamBPositions[1]] || teamBPlayers[1];
+
+          const isLeftAServing = servingTeam === 'teamA' && activeServerPlayer.id === playerLeftA.id;
+          const isRightAServing = servingTeam === 'teamA' && activeServerPlayer.id === playerRightA.id;
+          const isLeftBServing = servingTeam === 'teamB' && activeServerPlayer.id === playerLeftB.id;
+          const isRightBServing = servingTeam === 'teamB' && activeServerPlayer.id === playerRightB.id;
+
+          return (
+            <div className="mt-2 w-full aspect-[4/5] max-h-80 rounded-2xl border-4 border-white shadow-lg overflow-hidden flex flex-col bg-[#144637] relative">
+              {/* Top Half: Team 1 */}
+              <div
+                className={`flex-1 relative flex border-b-2 border-white/50 transition ${
+                  servingTeam === 'teamA' ? 'bg-[#185341]' : 'bg-[#0F382C]'
+                }`}
+              >
+                {/* Team 1 Left Court Box */}
+                <div
+                  onClick={() => handleScorePoint('teamA')}
+                  className={`flex-1 border-r border-white/30 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
+                    isLeftAServing ? 'ring-2 ring-inset ring-[#84CC16]/70' : ''
+                  }`}
+                  title={`Team 1: ${playerLeftA.name}`}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow border border-white/20">
+                      {playerLeftA.name.charAt(0)}
+                    </div>
+                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
+                      {playerLeftA.name}
+                    </span>
+                  </div>
+
+                  {isLeftAServing && (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#84CC16] text-[#0A271E] font-black text-[9px] px-2 py-0.5 rounded-full shadow-md animate-pulse">
+                      <PickleballIcon className="w-3 h-3 text-[#0A271E]" />
+                      <span>Serving #{serverNumber}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Team 1 Right Court Box */}
+                <div
+                  onClick={() => handleScorePoint('teamA')}
+                  className={`flex-1 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
+                    isRightAServing ? 'ring-2 ring-inset ring-[#84CC16]/70' : ''
+                  }`}
+                  title={`Team 1: ${playerRightA.name}`}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow border border-white/20">
+                      {playerRightA.name.charAt(0)}
+                    </div>
+                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
+                      {playerRightA.name}
+                    </span>
+                  </div>
+
+                  {isRightAServing && (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#84CC16] text-[#0A271E] font-black text-[9px] px-2 py-0.5 rounded-full shadow-md animate-pulse">
+                      <PickleballIcon className="w-3 h-3 text-[#0A271E]" />
+                      <span>Serving #{serverNumber}</span>
+                    </div>
+                  )}
+                </div>
               </div>
-              <span className="absolute bottom-2 text-[10px] text-white/90 font-medium truncate max-w-[80px]">
-                {teamAPlayers[0].name}
-              </span>
+
+              {/* Kitchen / Non-Volley Zone */}
+              <div className="h-9 bg-[#0a271e] border-y-2 border-white/70 flex items-center justify-center text-[10px] font-bold text-white/80 uppercase tracking-widest shadow-inner shrink-0">
+                Non-Volley Zone (NVZ)
+              </div>
+
+              {/* Bottom Half: Team 2 */}
+              <div
+                className={`flex-1 relative flex transition ${
+                  servingTeam === 'teamB' ? 'bg-[#185341]' : 'bg-[#0F382C]'
+                }`}
+              >
+                {/* Team 2 Left Court Box */}
+                <div
+                  onClick={() => handleScorePoint('teamB')}
+                  className={`flex-1 border-r border-white/30 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
+                    isLeftBServing ? 'ring-2 ring-inset ring-[#84CC16]/70' : ''
+                  }`}
+                  title={`Team 2: ${playerLeftB.name}`}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow border border-white/20">
+                      {playerLeftB.name.charAt(0)}
+                    </div>
+                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
+                      {playerLeftB.name}
+                    </span>
+                  </div>
+
+                  {isLeftBServing && (
+                    <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-[#84CC16] text-[#0A271E] font-black text-[9px] px-2 py-0.5 rounded-full shadow-md animate-pulse">
+                      <PickleballIcon className="w-3 h-3 text-[#0A271E]" />
+                      <span>Serving #{serverNumber}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Team 2 Right Court Box */}
+                <div
+                  onClick={() => handleScorePoint('teamB')}
+                  className={`flex-1 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
+                    isRightBServing ? 'ring-2 ring-inset ring-[#84CC16]/70' : ''
+                  }`}
+                  title={`Team 2: ${playerRightB.name}`}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow border border-white/20">
+                      {playerRightB.name.charAt(0)}
+                    </div>
+                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
+                      {playerRightB.name}
+                    </span>
+                  </div>
+
+                  {isRightBServing && (
+                    <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-[#84CC16] text-[#0A271E] font-black text-[9px] px-2 py-0.5 rounded-full shadow-md animate-pulse">
+                      <PickleballIcon className="w-3 h-3 text-[#0A271E]" />
+                      <span>Serving #{serverNumber}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-
-            {/* Right box */}
-            <div className="flex-1 flex items-center justify-center p-2 relative">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow">
-                {teamAPlayers[1].name.charAt(0)}
-              </div>
-              <span className="absolute bottom-2 text-[10px] text-white/90 font-medium truncate max-w-[80px]">
-                {teamAPlayers[1].name}
-              </span>
-            </div>
-
-            {/* Serving indicator ball on Team A */}
-            {servingTeam === 'teamA' && (
-              <div className="absolute top-2 left-2 flex items-center gap-1 bg-[#84CC16] text-[#0A271E] font-black text-[9px] px-1.5 py-0.5 rounded-full shadow">
-                <PickleballIcon className="w-3 h-3 text-[#0A271E]" />
-                <span>Serving</span>
-              </div>
-            )}
-          </button>
-
-          {/* Kitchen / Non-Volley Zone */}
-          <div className="h-10 bg-[#0c2e24] border-y-2 border-white/70 flex items-center justify-center text-[10px] font-bold text-white/80 uppercase tracking-widest shadow-inner">
-            Non-Volley Zone (NVZ)
-          </div>
-
-          {/* Bottom Half: Team 2 */}
-          <button
-            type="button"
-            onClick={() => handleScorePoint('teamB')}
-            className={`flex-1 relative flex transition active:scale-[0.99] ${
-              servingTeam === 'teamB' ? 'bg-[#1b5c49]' : 'bg-[#0F382C]'
-            }`}
-          >
-            {/* Left box */}
-            <div className="flex-1 border-r border-white/30 flex items-center justify-center p-2 relative">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow">
-                {teamBPlayers[0].name.charAt(0)}
-              </div>
-              <span className="absolute top-2 text-[10px] text-white/90 font-medium truncate max-w-[80px]">
-                {teamBPlayers[0].name}
-              </span>
-            </div>
-
-            {/* Right box */}
-            <div className="flex-1 flex items-center justify-center p-2 relative">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold shadow">
-                {teamBPlayers[1].name.charAt(0)}
-              </div>
-              <span className="absolute top-2 text-[10px] text-white/90 font-medium truncate max-w-[80px]">
-                {teamBPlayers[1].name}
-              </span>
-            </div>
-
-            {/* Serving indicator ball on Team B */}
-            {servingTeam === 'teamB' && (
-              <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-[#84CC16] text-[#0A271E] font-black text-[9px] px-1.5 py-0.5 rounded-full shadow">
-                <PickleballIcon className="w-3 h-3 text-[#0A271E]" />
-                <span>Serving</span>
-              </div>
-            )}
-          </button>
-        </div>
+          );
+        })()}
       </div>
 
       {/* Footer controls */}
-      <div className="p-4 bg-white border-t border-slate-200">
-        <div className="max-w-md mx-auto flex items-center gap-3">
+      <div className="p-3 sm:p-4 bg-white border-t border-slate-200">
+        <div className="max-w-md mx-auto flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => handleScorePoint('teamA')}
-            className="touch-target flex-1 py-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] shadow-sm transition active:scale-95"
+            className={`touch-target flex-1 py-3 px-2 rounded-xl text-white font-bold text-xs shadow-sm transition active:scale-95 ${
+              servingTeam === 'teamA'
+                ? 'bg-[#0F382C] hover:bg-[#144637] ring-2 ring-[#84CC16]/60'
+                : 'bg-[#1b4b3c] hover:bg-[#235d4b]'
+            }`}
           >
-            +1 Team 1 ({scoreA})
+            <span>+1 Team 1 ({scoreA})</span>
+            {servingTeam === 'teamA' && (
+              <span className="block text-[9px] text-[#84CC16] font-normal">
+                Serving #{serverNumber}
+              </span>
+            )}
           </button>
+
+          <button
+            onClick={handleSideOut}
+            className="touch-target px-3 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex flex-col items-center justify-center transition active:scale-95 shrink-0"
+            title="Fault / Change Server"
+          >
+            <span className="text-[10px] text-slate-500 font-medium">Fault / Change</span>
+            <span className="text-[11px] text-[#0F382C] font-extrabold">
+              {scoringMode === 'side_out' && serverNumber === 1 ? 'Server #2' : 'Side Out'}
+            </span>
+          </button>
+
           <button
             onClick={() => handleScorePoint('teamB')}
-            className="touch-target flex-1 py-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] shadow-sm transition active:scale-95"
+            className={`touch-target flex-1 py-3 px-2 rounded-xl text-white font-bold text-xs shadow-sm transition active:scale-95 ${
+              servingTeam === 'teamB'
+                ? 'bg-[#0F382C] hover:bg-[#144637] ring-2 ring-[#84CC16]/60'
+                : 'bg-[#1b4b3c] hover:bg-[#235d4b]'
+            }`}
           >
-            +1 Team 2 ({scoreB})
+            <span>+1 Team 2 ({scoreB})</span>
+            {servingTeam === 'teamB' && (
+              <span className="block text-[9px] text-[#84CC16] font-normal">
+                Serving #{serverNumber}
+              </span>
+            )}
           </button>
         </div>
       </div>
