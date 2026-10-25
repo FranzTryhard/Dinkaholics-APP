@@ -17,18 +17,21 @@ import {
   Check,
   AlertCircle,
   Sparkles,
+  UserPlus,
 } from 'lucide-react';
 
 interface SessionSetupModalProps {
   players: Player[];
   onClose: () => void;
   onStartSession: (session: Session) => void;
+  onNavigateToPlayers?: () => void;
 }
 
 export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
   players,
   onClose,
   onStartSession,
+  onNavigateToPlayers,
 }) => {
   const [name, setName] = useState<string>('Dinkaholics Club Open Play');
   const [courtCount, setCourtCount] = useState<number>(2);
@@ -416,8 +419,30 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
             {/* Players Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-52 overflow-y-auto p-1 rounded-2xl border border-slate-100 bg-slate-50/50">
               {filteredPlayers.length === 0 ? (
-                <div className="col-span-full p-4 text-center text-xs text-slate-400">
-                  No players match your search.
+                <div className="col-span-full p-5 text-center text-xs text-slate-500 space-y-2">
+                  {players.length === 0 ? (
+                    <>
+                      <p className="font-bold text-slate-700">No players in roster yet</p>
+                      <p className="text-slate-400 max-w-xs mx-auto">
+                        Add at least 4 club players with skill levels (1–5) to start automated fair matchmaking.
+                      </p>
+                      {onNavigateToPlayers && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClose();
+                            onNavigateToPlayers();
+                          }}
+                          className="touch-target inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0F382C] text-white text-xs font-bold hover:bg-[#144637] transition shadow-xs mt-1"
+                        >
+                          <UserPlus className="w-3.5 h-3.5" />
+                          <span>Go to Players Screen & Add Players</span>
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <span>No players match your search filter.</span>
+                  )}
                 </div>
               ) : (
                 filteredPlayers.map((p) => {
@@ -474,9 +499,27 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
 
           {/* Validation Alert if < 4 players */}
           {!isPlayerCountValid && (
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>Please select at least 4 players to enable automated doubles matchmaking.</span>
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span className="truncate sm:whitespace-normal">
+                  {players.length < 4
+                    ? `Roster has ${players.length} player${players.length === 1 ? '' : 's'}. You need at least 4 players for doubles.`
+                    : 'Please select at least 4 players to enable automated doubles matchmaking.'}
+                </span>
+              </div>
+              {onNavigateToPlayers && players.length < 4 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onNavigateToPlayers();
+                  }}
+                  className="touch-target shrink-0 px-2.5 py-1 rounded-lg bg-amber-200 text-amber-900 font-bold text-[11px] hover:bg-amber-300 transition"
+                >
+                  Add Players
+                </button>
+              )}
             </div>
           )}
         </form>

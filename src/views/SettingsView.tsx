@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Session, RotationConfig, RotationMode } from '../types';
+import { DEFAULT_ROTATION_CONFIG } from '../engine/config';
 import {
   Settings,
   Smartphone,
@@ -16,7 +17,7 @@ import {
 } from 'lucide-react';
 
 interface SettingsViewProps {
-  session: Session;
+  session: Session | null;
   onUpdateSessionConfig: (newConfig: RotationConfig) => void;
   onResetDemo: () => void;
   onClearAll: () => void;
@@ -28,7 +29,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onResetDemo,
   onClearAll,
 }) => {
-  const [config, setConfig] = useState<RotationConfig>(session.rotationConfig);
+  const [config, setConfig] = useState<RotationConfig>(
+    session?.rotationConfig || DEFAULT_ROTATION_CONFIG
+  );
   const [showConfirmClear, setShowConfirmClear] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 

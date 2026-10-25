@@ -32,6 +32,7 @@ import { SettingsView } from './views/SettingsView';
 import { RoundRobinView } from './views/RoundRobinView';
 import { PickleballIcon } from './components/PickleballIcon';
 import { DinkaholicsLogo } from './components/DinkaholicsLogo';
+import { Layers, Play, Users } from 'lucide-react';
 
 export default function App() {
   const [players, setPlayers] = useState<Player[]>(() => StorageService.getPlayers());
@@ -358,112 +359,130 @@ export default function App() {
 
       {/* Main View Container */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-2 sm:px-4">
-        {session && session.status === 'active' ? (
-          <>
-            {currentTab === 'dashboard' && (
-              <DashboardView
-                session={session}
-                players={players}
-                matches={matches}
-                recommendationsByCourt={recommendations}
-                onStartRecommended={handleStartRecommended}
-                onEnterScore={(match) => setActiveScoreMatch(match)}
-                onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
-                onRegenerateRecommendation={handleRegenerateRecommendation}
-                onSwitchMode={handleSwitchMode}
-                onTogglePlayerStatus={handleTogglePlayerStatus}
-                onEndSessionClick={() => setIsEndSessionModalOpen(true)}
-                onNavigateTab={(tab) => setCurrentTab(tab)}
-              />
-            )}
-
-            {currentTab === 'courts' && (
-              <CourtsView
-                session={session}
-                players={players}
-                matches={matches}
-                recommendationsByCourt={recommendations}
-                onStartRecommended={handleStartRecommended}
-                onEnterScore={(match) => setActiveScoreMatch(match)}
-                onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
-                onRegenerateRecommendation={handleRegenerateRecommendation}
-              />
-            )}
-
-            {currentTab === 'tournament' && (
-              <RoundRobinView
-                players={players}
-                session={session}
-                playersById={playersById}
-                onNavigateToCourts={() => setCurrentTab('courts')}
-              />
-            )}
-
-            {currentTab === 'players' && (
-              <PlayersView
-                players={players}
-                matches={matches}
-                session={session}
-                isSessionActive={session?.status === 'active'}
-                onAddPlayer={handleAddPlayer}
-                onUpdatePlayerRating={handleUpdatePlayerRating}
-                onUpdatePlayerStatus={handleTogglePlayerStatus}
-                onDeletePlayer={handleDeletePlayer}
-                onUpdatePlayerDetails={handleUpdatePlayerDetails}
-              />
-            )}
-
-            {currentTab === 'leaderboard' && (
-              <LeaderboardView players={players} matches={matches} session={session} />
-            )}
-
-            {currentTab === 'history' && (
-              <HistoryView
-                matches={matches}
-                playersById={playersById}
-                activeMatches={matches.filter((m) => m.status === 'in_progress')}
-              />
-            )}
-
-            {currentTab === 'settings' && (
-              <SettingsView
-                session={session}
-                onUpdateSessionConfig={handleUpdateSessionConfig}
-                onResetDemo={handleResetDemo}
-                onClearAll={handleClearAll}
-              />
-            )}
-          </>
-        ) : (
-          /* Empty or Concluded Session State */
-          <div className="py-16 text-center max-w-md mx-auto space-y-5 px-4">
-            <div className="flex justify-center">
-              <DinkaholicsLogo size="xl" />
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-100 text-lime-900 text-xs font-black mb-2">
-                <span>DINKAHOLICS CLUB</span>
+        {currentTab === 'dashboard' && (
+          session && session.status === 'active' ? (
+            <DashboardView
+              session={session}
+              players={players}
+              matches={matches}
+              recommendationsByCourt={recommendations}
+              onStartRecommended={handleStartRecommended}
+              onEnterScore={(match) => setActiveScoreMatch(match)}
+              onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
+              onRegenerateRecommendation={handleRegenerateRecommendation}
+              onSwitchMode={handleSwitchMode}
+              onTogglePlayerStatus={handleTogglePlayerStatus}
+              onEndSessionClick={() => setIsEndSessionModalOpen(true)}
+              onNavigateTab={(tab) => setCurrentTab(tab)}
+            />
+          ) : (
+            /* Empty or Concluded Session State */
+            <div className="py-16 text-center max-w-md mx-auto space-y-5 px-4">
+              <div className="flex justify-center">
+                <DinkaholicsLogo size="xl" />
               </div>
-              <h2 className="text-2xl font-black text-slate-900 font-display">No Active Session</h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Start a session to begin automated fair matchmaking across your courts. No login required!
-              </p>
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-100 text-lime-900 text-xs font-black mb-2">
+                  <span>DINKAHOLICS CLUB</span>
+                </div>
+                <h2 className="text-2xl font-black text-slate-900 font-display">No Active Session</h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Start a session to begin automated fair matchmaking across your courts. No login required!
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  onClick={() => setIsSetupModalOpen(true)}
+                  className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-bold text-sm hover:bg-[#154b3c] transition active:scale-95 shadow-md font-display"
+                >
+                  Create New Session
+                </button>
+                <button
+                  onClick={() => setCurrentTab('players')}
+                  className="w-full py-2.5 rounded-2xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                >
+                  <Users className="w-4 h-4 text-[#0F382C]" />
+                  <span>Manage & Add Players</span>
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col gap-2 pt-2">
+          )
+        )}
+
+        {currentTab === 'courts' && (
+          session && session.status === 'active' ? (
+            <CourtsView
+              session={session}
+              players={players}
+              matches={matches}
+              recommendationsByCourt={recommendations}
+              onStartRecommended={handleStartRecommended}
+              onEnterScore={(match) => setActiveScoreMatch(match)}
+              onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
+              onRegenerateRecommendation={handleRegenerateRecommendation}
+            />
+          ) : (
+            <div className="py-16 text-center max-w-md mx-auto space-y-4 px-4">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#0F382C] flex items-center justify-center mx-auto shadow-xs">
+                <Layers className="w-7 h-7" />
+              </div>
+              <h2 className="text-xl font-black text-slate-900 font-display">No Active Courts Session</h2>
+              <p className="text-xs text-slate-500">
+                Courts are opened when a session begins. Set up court count, rotation mode, and start assigning matches.
+              </p>
               <button
                 onClick={() => setIsSetupModalOpen(true)}
-                className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-bold text-sm hover:bg-[#154b3c] transition active:scale-95 shadow-md font-display"
+                className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 shadow-md flex items-center justify-center gap-2"
               >
-                Create New Session
-              </button>
-              <button
-                onClick={() => setCurrentTab('players')}
-                className="w-full py-2.5 rounded-2xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center justify-center gap-1.5"
-              >
-                <span>Manage & Add Players</span>
+                <Play className="w-4 h-4 fill-current text-[#84CC16]" />
+                <span>Configure & Start Session</span>
               </button>
             </div>
-          </div>
+          )
+        )}
+
+        {currentTab === 'tournament' && (
+          <RoundRobinView
+            players={players}
+            session={session}
+            playersById={playersById}
+            onNavigateToCourts={() => setCurrentTab('courts')}
+          />
+        )}
+
+        {currentTab === 'players' && (
+          <PlayersView
+            players={players}
+            matches={matches}
+            session={session}
+            isSessionActive={session?.status === 'active'}
+            onAddPlayer={handleAddPlayer}
+            onUpdatePlayerRating={handleUpdatePlayerRating}
+            onUpdatePlayerStatus={handleTogglePlayerStatus}
+            onDeletePlayer={handleDeletePlayer}
+            onUpdatePlayerDetails={handleUpdatePlayerDetails}
+          />
+        )}
+
+        {currentTab === 'leaderboard' && (
+          <LeaderboardView players={players} matches={matches} session={session} />
+        )}
+
+        {currentTab === 'history' && (
+          <HistoryView
+            matches={matches}
+            playersById={playersById}
+            activeMatches={matches.filter((m) => m.status === 'in_progress')}
+          />
+        )}
+
+        {currentTab === 'settings' && (
+          <SettingsView
+            session={session}
+            onUpdateSessionConfig={handleUpdateSessionConfig}
+            onResetDemo={handleResetDemo}
+            onClearAll={handleClearAll}
+          />
         )}
       </main>
 
@@ -504,6 +523,10 @@ export default function App() {
           players={players}
           onClose={() => setIsSetupModalOpen(false)}
           onStartSession={handleStartSession}
+          onNavigateToPlayers={() => {
+            setIsSetupModalOpen(false);
+            setCurrentTab('players');
+          }}
         />
       )}
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Player, SKILL_LEVEL_COLORS, PlayerStatus } from '../types';
 import { formatWaitTime, getEffectiveWaitMs } from '../engine/matchmaker';
-import { Clock, Coffee, Check, Flame, ChevronRight } from 'lucide-react';
+import { Clock, Coffee, Check, Flame, ChevronRight, UserPlus } from 'lucide-react';
 
 interface WaitingQueueProps {
   players: Player[];
@@ -57,7 +57,23 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
       <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
         {waitingPlayers.length === 0 ? (
           <div className="p-6 text-center text-xs text-slate-400">
-            No players currently waiting. All active players are on court or resting.
+            {players.length === 0 ? (
+              <div className="space-y-2 py-1">
+                <p className="text-slate-500 font-medium">No players in roster yet.</p>
+                {onNavigateToPlayers && (
+                  <button
+                    type="button"
+                    onClick={onNavigateToPlayers}
+                    className="touch-target px-3 py-1.5 rounded-lg bg-[#0F382C] text-white text-xs font-bold hover:bg-[#144637] transition inline-flex items-center gap-1.5 shadow-2xs"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>+ Add Players</span>
+                  </button>
+                )}
+              </div>
+            ) : (
+              'No players currently waiting. All active players are on court or resting.'
+            )}
           </div>
         ) : (
           waitingPlayers.map((p, idx) => {
