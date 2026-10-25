@@ -14,7 +14,13 @@ import {
   Scale,
   Trophy,
   HeartHandshake,
+  Sparkles,
+  Play,
+  Clock,
 } from 'lucide-react';
+import { StorageService } from '../engine/storage';
+import { PickleballBounceLoader } from '../components/PickleballBounceLoader';
+
 
 interface SettingsViewProps {
   session: Session | null;
@@ -34,6 +40,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   );
   const [showConfirmClear, setShowConfirmClear] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [animDuration, setAnimDuration] = useState<number>(() => StorageService.getAnimationDuration());
+  const [previewAnim, setPreviewAnim] = useState<{ open: boolean; duration: number } | null>(null);
+
+  const handleDurationChange = (durationMs: number) => {
+    setAnimDuration(durationMs);
+    StorageService.setAnimationDuration(durationMs);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
+  };
 
   const handleSaveConfig = (partial: Partial<RotationConfig>) => {
     const updated = { ...config, ...partial };
@@ -42,6 +57,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 2000);
   };
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 space-y-6">
@@ -166,6 +182,137 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Match Animation & Celebration Experience */}
+      <div className="rounded-2xl bg-white border border-slate-200/90 p-5 space-y-4 shadow-xs">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#0F382C]" />
+            <div>
+              <h2 className="font-bold text-slate-900 text-sm">Full-Screen Celebration & Rotation Animation</h2>
+              <p className="text-[11px] text-slate-400">
+                Pickleball paddle bounce animation shown when matches finalize and courts rotate
+              </p>
+            </div>
+          </div>
+          {saveSuccess && (
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
+              <Check className="w-3.5 h-3.5" />
+              Saved
+            </span>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="font-bold text-slate-800 text-xs block mb-1.5">
+              Animation Duration Selection: 2 Seconds vs 3 Seconds
+            </label>
+            <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">
+              <strong>Recommendation: 2 Seconds</strong> is the ideal sweet spot. The paddle bounce cycle takes ~1.0s, so 2 seconds delivers exactly 2 clean, high-impact bounce rhythms before smoothly transitioning to the next court assignments without keeping active players waiting. 3 seconds is available if you prefer a longer celebratory spotlight.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Option 1: 2 Seconds (Recommended) */}
+              <div
+                onClick={() => handleDurationChange(2000)}
+                className={`cursor-pointer p-4 rounded-xl border-2 transition relative flex flex-col justify-between ${
+                  animDuration === 2000
+                    ? 'border-[#0F382C] bg-emerald-50/40 shadow-xs'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-emerald-600" />
+                      2.0 Seconds (Recommended)
+                    </span>
+                    {animDuration === 2000 && (
+                      <span className="text-[10px] uppercase font-bold bg-[#0F382C] text-white px-2 py-0.5 rounded-full">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 leading-normal">
+                    2 complete bounce cycles. Snappy, athletic, and prevents delays during fast open-play rotations.
+                  </p>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreviewAnim({ open: true, duration: 2000 });
+                    }}
+                    className="touch-target px-3 py-1.5 rounded-lg bg-emerald-950 text-white hover:bg-emerald-900 text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>Test 2s Full-Screen</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Option 2: 3 Seconds */}
+              <div
+                onClick={() => handleDurationChange(3000)}
+                className={`cursor-pointer p-4 rounded-xl border-2 transition relative flex flex-col justify-between ${
+                  animDuration === 3000
+                    ? 'border-[#0F382C] bg-emerald-50/40 shadow-xs'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-amber-600" />
+                      3.0 Seconds (Extended)
+                    </span>
+                    {animDuration === 3000 && (
+                      <span className="text-[10px] uppercase font-bold bg-[#0F382C] text-white px-2 py-0.5 rounded-full">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 leading-normal">
+                    3 bounce cycles. Extended dramatic celebration, ideal for high-stakes tournament finals.
+                  </p>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreviewAnim({ open: true, duration: 3000 });
+                    }}
+                    className="touch-target px-3 py-1.5 rounded-lg bg-emerald-950 text-white hover:bg-emerald-900 text-[11px] font-bold transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>Test 3s Full-Screen</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Full Screen Live Preview Overlay */}
+      {previewAnim && (
+        <PickleballBounceLoader
+          fullScreen={true}
+          duration={previewAnim.duration}
+          winnerPlayers={[
+            { name: 'Alex Rivera' },
+            { name: 'Jordan Lee' },
+          ]}
+          submessage="Final Score 11 - 9"
+          onComplete={() => setPreviewAnim(null)}
+        />
+      )}
+
 
       {/* Figma Mockup Export Guide */}
       <div className="rounded-2xl bg-white border border-slate-200/90 p-5 space-y-3 shadow-xs">

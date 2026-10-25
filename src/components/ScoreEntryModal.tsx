@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Match, Player } from '../types';
 import { Trophy, X, Plus, Minus, CheckCircle, AlertTriangle, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { PickleballBounceLoader } from './PickleballBounceLoader';
+
+import { StorageService } from '../engine/storage';
 
 interface ScoreEntryModalProps {
   match: Match;
@@ -21,6 +24,8 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
   const [manualWinner, setManualWinner] = useState<'teamA' | 'teamB' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const animDuration = StorageService.getAnimationDuration();
 
   // Auto-derived winner unless manually toggled
   const calculatedWinner: 'teamA' | 'teamB' = manualWinner || (scoreA >= scoreB ? 'teamA' : 'teamB');
@@ -56,9 +61,26 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
         colors: ['#0F382C', '#84CC16', '#10B981'],
       });
     } catch (e) {}
-
-    onConfirmScore(match.id, scoreA, scoreB, calculatedWinner);
   };
+
+  if (isSubmitting) {
+    const winnerIds = calculatedWinner === 'teamA' ? match.teamA : match.teamB;
+    const winnerPlayers = winnerIds.map((id) => playersById[id] || { id, name: 'Player' });
+    const winnerNames = winnerPlayers.map((p) => p.name).join(' & ');
+    return (
+      <PickleballBounceLoader
+        fullScreen={true}
+        duration={animDuration}
+        winnerPlayers={winnerPlayers}
+        message={winnerNames}
+        submessage={`Final Score ${scoreA} - ${scoreB}`}
+        onComplete={() => {
+          onConfirmScore(match.id, scoreA, scoreB, calculatedWinner);
+        }}
+      />
+    );
+  }
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
@@ -221,23 +243,34 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="touch-target flex-1 py-3 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || scoreA === scoreB}
-              className="touch-target flex-1 py-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#165342] transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-sm flex items-center justify-center gap-1.5"
-            >
-              <span>Finalize & Next</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+          {isSubmitting ? (
+            <div className="pt-2 pb-1 flex flex-col items-center justify-center bg-slate-50 border border-emerald-100 rounded-xl p-3">
+              <PickleballBounceLoader
+                size="sm"
+                theme="light"
+                message="Finalizing Score & Next Rotation..."
+                submessage="Updating player stats & court availability"
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="touch-target flex-1 py-3 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || scoreA === scoreB}
+                className="touch-target flex-1 py-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#165342] transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-sm flex items-center justify-center gap-1.5"
+              >
+                <span>Finalize & Next</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>

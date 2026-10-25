@@ -298,4 +298,22 @@ export class StorageService {
       completedMatch,
     };
   }
+
+  /**
+   * Get user preference for full-screen celebration duration (2000ms or 3000ms)
+   * Default: 2000ms (2.0s)
+   */
+  static getAnimationDuration(): number {
+    const val = safeGet('picklematch_anim_duration');
+    if (val === '3000' || val === '3') return 3000;
+    return 2000;
+  }
+
+  /**
+   * Set user preference for full-screen celebration duration
+   */
+  static setAnimationDuration(durationMs: number): void {
+    safeSet('picklematch_anim_duration', String(durationMs));
+  }
 }
+

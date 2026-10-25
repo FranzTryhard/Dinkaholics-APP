@@ -3,6 +3,7 @@ import { Player, RotationMode, RotationConfig, Session } from '../types';
 import { DEFAULT_ROTATION_CONFIG } from '../engine/config';
 import { DinkaholicsLogo } from './DinkaholicsLogo';
 import { PickleballIcon } from './PickleballIcon';
+import { PickleballBounceLoader } from './PickleballBounceLoader';
 import {
   X,
   Play,
@@ -43,6 +44,7 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
   const [winnerStaysRule, setWinnerStaysRule] = useState<'stay_together' | 'split_partners'>('stay_together');
   const [maxConsecutiveGames, setMaxConsecutiveGames] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
 
   const togglePlayer = (id: string) => {
     setErrorMessage(null);
@@ -72,11 +74,13 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isStarting) return;
     if (selectedPlayerIds.length < 4) {
       setErrorMessage('You must select at least 4 participating players to start doubles play.');
       return;
     }
     setErrorMessage(null);
+    setIsStarting(true);
 
     const courtNames: Record<number, string> = {};
     for (let i = 1; i <= courtCount; i++) {
@@ -108,7 +112,9 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
       activeCourtMatches,
     };
 
-    onStartSession(newSession);
+    setTimeout(() => {
+      onStartSession(newSession);
+    }, 450);
   };
 
   const maxSimultaneousCourts = Math.floor(selectedPlayerIds.length / 4);
@@ -526,23 +532,36 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
 
         {/* Modal Footer */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="touch-target px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-bold transition"
-          >
-            Cancel
-          </button>
+          {isStarting ? (
+            <div className="w-full flex items-center justify-center py-1">
+              <PickleballBounceLoader
+                size="sm"
+                theme="light"
+                message="Launching Dinkaholics Session..."
+                submessage="Configuring active courts and waiting queue"
+              />
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={onClose}
+                className="touch-target px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!isPlayerCountValid}
-            className="touch-target px-6 py-2.5 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shadow-md font-display"
-          >
-            <Play className="w-4 h-4 fill-current text-[#84CC16]" />
-            <span>Launch Session ({selectedPlayerIds.length} Players)</span>
-          </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!isPlayerCountValid}
+                className="touch-target px-6 py-2.5 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shadow-md font-display"
+              >
+                <Play className="w-4 h-4 fill-current text-[#84CC16]" />
+                <span>Launch Session ({selectedPlayerIds.length} Players)</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

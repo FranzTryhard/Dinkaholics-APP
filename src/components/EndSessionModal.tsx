@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Session, Match, Player } from '../types';
 import { Trophy, Clock, Users, Flame, Award, CheckCircle2, X } from 'lucide-react';
 import { PickleballIcon } from './PickleballIcon';
+import { PickleballBounceLoader } from './PickleballBounceLoader';
 
 interface EndSessionModalProps {
   session: Session;
@@ -29,6 +30,16 @@ export const EndSessionModal: React.FC<EndSessionModalProps> = ({
   const topStreakPlayer = [...players].sort((a, b) => b.streak - a.streak)[0];
   // Player with most games played
   const mostActivePlayer = [...players].sort((a, b) => b.sessionGamesPlayed - a.sessionGamesPlayed)[0];
+
+  const [isEnding, setIsEnding] = useState(false);
+
+  const handleConclude = () => {
+    if (isEnding) return;
+    setIsEnding(true);
+    setTimeout(() => {
+      onConfirmEnd();
+    }, 450);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
@@ -107,20 +118,33 @@ export const EndSessionModal: React.FC<EndSessionModalProps> = ({
             Ending this session will finalize all ratings, archive active court games, and store the full match history. You can start another session anytime.
           </div>
 
-          <div className="flex items-center gap-3 pt-2">
-            <button
-              onClick={onClose}
-              className="touch-target flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition"
-            >
-              Resume Play
-            </button>
-            <button
-              onClick={onConfirmEnd}
-              className="touch-target flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition active:scale-95 shadow-xs flex items-center justify-center gap-1.5"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Conclude Session</span>
-            </button>
+          <div className="pt-2">
+            {isEnding ? (
+              <div className="py-2 px-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center">
+                <PickleballBounceLoader
+                  size="sm"
+                  theme="light"
+                  message="Concluding Session & Archiving Stats..."
+                  submessage="Calculating final leaderboard standings"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={onClose}
+                  className="touch-target flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition"
+                >
+                  Resume Play
+                </button>
+                <button
+                  onClick={handleConclude}
+                  className="touch-target flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition active:scale-95 shadow-xs flex items-center justify-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Conclude Session</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

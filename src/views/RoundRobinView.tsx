@@ -25,6 +25,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { PickleballIcon } from '../components/PickleballIcon';
+import { PickleballBounceLoader } from '../components/PickleballBounceLoader';
 
 interface RoundRobinViewProps {
   players: Player[];
@@ -48,6 +49,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
   const [selectedRoundIndex, setSelectedRoundIndex] = useState(0);
   const [roundsCount, setRoundsCount] = useState<number>(5);
   const [targetScore, setTargetScore] = useState<number>(11);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Stored rounds state
   const [rounds, setRounds] = useState<RoundRobinRound[]>(() => {
@@ -77,13 +79,17 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
   };
 
   const handleGenerateSchedule = () => {
-    const newSchedule = generateRoundRobinSchedule(
-      availablePlayers,
-      session?.courtCount || 2,
-      roundsCount
-    );
-    saveRounds(newSchedule);
-    setSelectedRoundIndex(0);
+    setIsGenerating(true);
+    setTimeout(() => {
+      const newSchedule = generateRoundRobinSchedule(
+        availablePlayers,
+        session?.courtCount || 2,
+        roundsCount
+      );
+      saveRounds(newSchedule);
+      setSelectedRoundIndex(0);
+      setIsGenerating(false);
+    }, 500);
   };
 
   const handleScoreMatch = (
@@ -290,6 +296,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                   <button
                     key={r.roundNumber}
                     onClick={() => setSelectedRoundIndex(idx)}
+                    disabled={isGenerating}
                     className={`touch-target px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                       isSelected
                         ? 'bg-[#0F382C] text-white shadow-xs'
@@ -308,17 +315,27 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
             <div className="flex items-center gap-2 pl-4">
               <button
                 onClick={handleGenerateSchedule}
-                className="touch-target px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center gap-1.5"
+                disabled={isGenerating}
+                className="touch-target px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-60"
                 title="Regenerate round schedule"
               >
-                <RotateCcw className="w-3.5 h-3.5 text-[#0F382C]" />
+                <RotateCcw className={`w-3.5 h-3.5 text-[#0F382C] ${isGenerating ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Regenerate</span>
               </button>
             </div>
           </div>
 
           {/* Current Round Details */}
-          {currentRound && (
+          {isGenerating ? (
+            <div className="py-16 px-4 rounded-3xl bg-white border border-slate-200/90 shadow-2xs flex flex-col items-center justify-center animate-in fade-in duration-150">
+              <PickleballBounceLoader
+                size="md"
+                theme="light"
+                message="Generating Balanced Tournament Schedule..."
+                submessage="Distributing player pairings, court rotations, and bye rounds"
+              />
+            </div>
+          ) : currentRound && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

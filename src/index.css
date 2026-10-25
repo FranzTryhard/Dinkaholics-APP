@@ -87,3 +87,65 @@
 .safe-pb {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
+
+/* Pickleball Bouncing Loader (From Uiverse.io by narmesh_sah) */
+.loader,
+.pickleball-bounce-loader {
+  position: relative;
+  font-size: 16px;
+  width: 5.5em;
+  height: 5.5em;
+  transform: scale(1.6);
+  display: inline-block;
+}
+
+.loader:before,
+.pickleball-bounce-loader:before {
+  content: "";
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(90deg);
+  height: 50%;
+  width: 24px;
+  background: var(--loader-paddle-color, #f6f6f6);
+  box-shadow: none;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  animation: bounce1 1s ease-in-out infinite;
+}
+
+.loader:after,
+.pickleball-bounce-loader:after {
+  content: "";
+  position: absolute;
+  left: 2.24em;
+  top: 1.72em;
+  width: 1em;
+  height: 0.96em;
+  background-color: var(--loader-ball-color, #0cffaa);
+  border-radius: 50%;
+  animation: bounce2 1s ease-in-out infinite;
+}
+
+.loader-paddle-dark:before,
+.pickleball-bounce-loader-dark:before {
+  --loader-paddle-color: #0F382C;
+}
+
+@keyframes bounce1 {
+  90% {
+    top: 49%;
+    box-shadow: 2px 0 0 #0cffaa;
+  }
+}
+
+@keyframes bounce2 {
+  50% {
+    top: -0.24em;
+    height: 1em;
+  }
+  75% {
+    top: -0.26em;
+    height: 1em;
+  }
+}

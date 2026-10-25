@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { courtAudio } from '../utils/audio';
+import { PickleballBounceLoader } from './PickleballBounceLoader';
+import { StorageService } from '../engine/storage';
 
 interface CourtVisualScorekeeperProps {
   match: Match;
@@ -62,13 +64,14 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
   // Timer
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
+    if (isSubmitting || isMatchEnded) return;
     const update = () => {
       setElapsed(Math.max(0, Math.floor((Date.now() - match.startTime) / 1000)));
     };
     update();
     const timer = setInterval(update, 1000);
     return () => clearInterval(timer);
-  }, [match.startTime]);
+  }, [match.startTime, isSubmitting, isMatchEnded]);
 
   const formatTimer = (s: number) => {
     const mins = Math.floor(s / 60);
@@ -264,13 +267,33 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
       return;
     }
     setIsSubmitting(true);
-    const winner: 'teamA' | 'teamB' = scoreA > scoreB ? 'teamA' : 'teamB';
-    onFinishMatch(match.id, scoreA, scoreB, winner);
   };
+
+  if (isSubmitting) {
+    const isWinnerA = scoreA >= scoreB;
+    const winnerPlayers = isWinnerA ? teamAPlayers : teamBPlayers;
+    const winnerNames = winnerPlayers.map((p) => p.name).join(' & ');
+    const winner: 'teamA' | 'teamB' = scoreA > scoreB ? 'teamA' : 'teamB';
+    const animDuration = StorageService.getAnimationDuration();
+
+    return (
+      <PickleballBounceLoader
+        fullScreen={true}
+        duration={animDuration}
+        winnerPlayers={winnerPlayers}
+        message={winnerNames}
+        submessage={`Final Score ${scoreA} - ${scoreB}`}
+        onComplete={() => {
+          onFinishMatch(match.id, scoreA, scoreB, winner);
+        }}
+      />
+    );
+  }
 
   if (isMatchEnded) {
     const isWinnerA = scoreA >= scoreB;
     const winnerPlayers = isWinnerA ? teamAPlayers : teamBPlayers;
+
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
@@ -321,21 +344,32 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
 
           {/* Actions */}
           <div className="w-full space-y-2">
-            <button
-              onClick={handleConfirmFinish}
-              disabled={isSubmitting}
-              className={`touch-target w-full py-3 rounded-xl bg-[#84CC16] text-[#0A271E] font-black text-xs shadow-md hover:bg-lime-400 transition active:scale-95 font-display ${
-                isSubmitting ? 'opacity-60 cursor-not-allowed' : ''
-              }`}
-            >
-              {isSubmitting ? 'Recording Result...' : 'Confirm Result & Next Rotation'}
-            </button>
-            <button
-              onClick={handleUndo}
-              className="touch-target w-full py-2.5 rounded-xl border border-white/20 text-emerald-100 font-semibold text-xs hover:bg-white/10 transition"
-            >
-              Back to Scorekeeper
-            </button>
+            {isSubmitting ? (
+              <div className="py-2 px-4 rounded-2xl bg-black/20 border border-emerald-500/20 flex flex-col items-center">
+                <PickleballBounceLoader
+                  size="sm"
+                  theme="dark"
+                  message="Recording Result..."
+                  submessage="Calculating ratings & updating court rotation"
+                />
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={handleConfirmFinish}
+                  disabled={isSubmitting}
+                  className="touch-target w-full py-3 rounded-xl bg-[#84CC16] text-[#0A271E] font-black text-xs shadow-md hover:bg-lime-400 transition active:scale-95 font-display"
+                >
+                  Confirm Result & Next Rotation
+                </button>
+                <button
+                  onClick={handleUndo}
+                  className="touch-target w-full py-2.5 rounded-xl border border-white/20 text-emerald-100 font-semibold text-xs hover:bg-white/10 transition"
+                >
+                  Back to Scorekeeper
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Trophy,
 } from 'lucide-react';
+import { PickleballBounceLoader } from './PickleballBounceLoader';
 
 interface CourtCardProps {
   courtNumber: number;
@@ -34,6 +35,21 @@ export const CourtCard: React.FC<CourtCardProps> = ({
   onRegenerateRecommendation,
 }) => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [isRotating, setIsRotating] = useState(false);
+
+  const handleRegenerate = () => {
+    setIsRotating(true);
+    onRegenerateRecommendation(courtNumber);
+    setTimeout(() => setIsRotating(false), 450);
+  };
+
+  const handleStart = (candidate: MatchCandidate) => {
+    setIsRotating(true);
+    setTimeout(() => {
+      onStartRecommended(courtNumber, candidate);
+      setIsRotating(false);
+    }, 350);
+  };
 
   useEffect(() => {
     if (!activeMatch || activeMatch.status !== 'in_progress') {
@@ -174,7 +190,16 @@ export const CourtCard: React.FC<CourtCardProps> = ({
         ) : (
           /* IDLE COURT: SHOW RECOMMENDED NEXT MATCH */
           <div className="space-y-3">
-            {recommendedMatch ? (
+            {isRotating ? (
+              <div className="py-8 px-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center animate-in fade-in duration-150">
+                <PickleballBounceLoader
+                  size="sm"
+                  theme="light"
+                  message="Updating Court Lineup..."
+                  submessage="Calculating fair pairs and DUPR balance"
+                />
+              </div>
+            ) : recommendedMatch ? (
               <div className="rounded-xl bg-slate-50 border border-slate-200 p-3.5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#0F382C]">
@@ -186,7 +211,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
                       Rating diff: {recommendedMatch.ratingDiff}
                     </span>
                     <button
-                      onClick={() => onRegenerateRecommendation(courtNumber)}
+                      onClick={handleRegenerate}
                       className="p-1 rounded text-slate-400 hover:text-slate-700 transition"
                       title="Regenerate alternative matchup"
                       aria-label="Regenerate alternative matchup"
@@ -238,7 +263,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
                 {/* Primary & Secondary Actions */}
                 <div className="flex items-center gap-2 pt-1">
                   <button
-                    onClick={() => onStartRecommended(courtNumber, recommendedMatch)}
+                    onClick={() => handleStart(recommendedMatch)}
                     className="touch-target flex-1 py-2.5 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#165342] transition active:scale-[0.98] flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
