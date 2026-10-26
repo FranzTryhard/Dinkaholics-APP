@@ -11,6 +11,7 @@ import {
   ChevronRight,
   ShieldCheck,
 } from 'lucide-react';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface SessionInsightsProps {
   players: Player[];

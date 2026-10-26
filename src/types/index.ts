@@ -32,6 +32,8 @@ export const SKILL_LEVEL_COLORS: Record<SkillLevel, { bg: string; text: string; 
   5: { bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/30', badge: 'bg-rose-500' },
 };
 
+export const DEFAULT_PLAYER_AVATAR = '/assets/aistudio/image_c18b30c1.png';
+
 export type PlayerStatus = 'available' | 'playing' | 'resting' | 'finished';
 
 export interface Player {

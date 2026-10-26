@@ -221,31 +221,28 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                       </div>
                     )}
 
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-bold text-slate-900 truncate group-hover:text-[#0F382C] transition">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-sm font-bold text-slate-900 truncate max-w-[130px] sm:max-w-none group-hover:text-[#0F382C] transition" title={player.name}>
                           {player.name}
                         </span>
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-[#0F382C] border border-emerald-100 shrink-0">
                           L{player.skillRating}
                         </span>
+                        {player.streak >= 2 && (
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold shrink-0 whitespace-nowrap shadow-2xs">
+                            <Flame className="w-3 h-3 fill-amber-500 text-amber-500" />
+                            <span>{player.streak}W</span>
+                          </span>
+                        )}
                       </div>
 
-                      <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
-                        <span>{player.totalGamesPlayed} matches</span>
-                        <span>·</span>
-                        <span className="text-emerald-700 font-semibold">
+                      <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                        <span className="whitespace-nowrap">{player.totalGamesPlayed} {player.totalGamesPlayed === 1 ? 'match' : 'matches'}</span>
+                        <span className="text-slate-300">·</span>
+                        <span className="text-emerald-700 font-semibold whitespace-nowrap">
                           {player.wins}W - {player.losses}L
                         </span>
-                        {player.streak >= 2 && (
-                          <>
-                            <span>·</span>
-                            <span className="inline-flex items-center gap-0.5 text-amber-600 font-semibold text-[10px]">
-                              <Flame className="w-3 h-3 fill-current" />
-                              {player.streak}W
-                            </span>
-                          </>
-                        )}
                       </div>
                     </div>
                   </div>

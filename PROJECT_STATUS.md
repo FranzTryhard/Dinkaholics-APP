@@ -50,6 +50,7 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Batch 4 Micro-Interactions & Steppers]** Added precision score stepper dialog and standard pickleball score presets (`11-9`, `11-7`, `11-5`, `11-3`, `15-13`) for Round-Robin matches.
 - [x] **[Batch 4 Micro-Interactions & Steppers]** Upgraded player roster availability status controls into high-contrast, tactile pills (`Ready` / `Resting`) with live status indicators.
 - [x] **[Batch 4 Micro-Interactions & Steppers]** Added `autoFocus` across player and search dialogs for zero-friction typing.
+- [x] **[Bug Fix — UI Layout]** Resolved text collision and word-wrapping overlap where `4W streak` collided with `80% win rate` in `LeaderboardView.tsx`, `PlayersView.tsx`, and `WaitingQueue.tsx`. Repositioned win streak as a dedicated flame badge pill next to player level.
 
 ---
 

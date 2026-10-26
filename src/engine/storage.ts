@@ -5,6 +5,7 @@ import {
   MatchCandidate,
   RotationMode,
   SessionSummary,
+  DEFAULT_PLAYER_AVATAR,
 } from '../types';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION, INITIAL_DEMO_MATCHES } from './mockData';
 
@@ -48,10 +49,13 @@ export class StorageService {
       if (data) {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed)) {
-          // Filter out any predefined demo players
-          const nonDemo = parsed.filter(
-            (p: Player) => !p.isDemo && !p.id.match(/^p([1-9]|10)$/)
-          );
+          // Filter out any predefined demo players and ensure default avatar
+          const nonDemo = parsed
+            .filter((p: Player) => !p.isDemo && !p.id.match(/^p([1-9]|10)$/))
+            .map((p: Player) => ({
+              ...p,
+              avatar: p.avatar && p.avatar.trim() ? p.avatar : DEFAULT_PLAYER_AVATAR,
+            }));
           if (nonDemo.length !== parsed.length) {
             this.savePlayers(nonDemo);
           }

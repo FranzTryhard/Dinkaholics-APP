@@ -10,6 +10,7 @@ import {
 import { HeroScoreCard } from '../components/HeroScoreCard';
 import { WaitingQueue } from '../components/WaitingQueue';
 import { SessionInsights } from '../components/SessionInsights';
+import { PlayerAvatar } from '../components/PlayerAvatar';
 import {
   Search,
   MapPin,
@@ -310,20 +311,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           </span>
                           <div className="flex -space-x-1.5">
                             {team1.map((p) => (
-                              <div
+                              <PlayerAvatar
                                 key={p.id}
-                                className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
-                              >
-                                {p.avatar ? (
-                                  <img
-                                    src={p.avatar}
-                                    alt={p.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  p.name.charAt(0)
-                                )}
-                              </div>
+                                avatar={p.avatar}
+                                name={p.name}
+                                className="w-7 h-7 rounded-full border-2 border-white"
+                              />
                             ))}
                           </div>
                           <span className="text-xs font-semibold text-slate-900">
@@ -344,20 +337,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           </span>
                           <div className="flex -space-x-1.5">
                             {team2.map((p) => (
-                              <div
+                              <PlayerAvatar
                                 key={p.id}
-                                className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
-                              >
-                                {p.avatar ? (
-                                  <img
-                                    src={p.avatar}
-                                    alt={p.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  p.name.charAt(0)
-                                )}
-                              </div>
+                                avatar={p.avatar}
+                                name={p.name}
+                                className="w-7 h-7 rounded-full border-2 border-white"
+                              />
                             ))}
                           </div>
                           <span className="text-xs font-semibold text-slate-900">
@@ -522,17 +507,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         #{idx + 1}
                       </span>
 
-                      {player.avatar ? (
-                        <img
-                          src={player.avatar}
-                          alt={player.name}
-                          className="w-8 h-8 rounded-full object-cover border border-slate-200"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 text-xs font-bold flex items-center justify-center">
-                          {player.name.charAt(0)}
-                        </div>
-                      )}
+                      <PlayerAvatar
+                        avatar={player.avatar}
+                        name={player.name}
+                        className="w-8 h-8 rounded-full border border-slate-200"
+                      />
 
                       <div>
                         <div className="text-xs font-bold text-slate-900">{player.name}</div>

@@ -4,6 +4,7 @@ import { DEFAULT_ROTATION_CONFIG } from '../engine/config';
 import { DinkaholicsLogo } from './DinkaholicsLogo';
 import { PickleballIcon } from './PickleballIcon';
 import { PickleballBounceLoader } from './PickleballBounceLoader';
+import { PlayerAvatar } from './PlayerAvatar';
 import {
   X,
   Play,
@@ -466,17 +467,11 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        {p.avatar ? (
-                          <img
-                            src={p.avatar}
-                            alt={p.name}
-                            className="w-6 h-6 rounded-full object-cover border border-slate-200 shrink-0"
-                          />
-                        ) : (
-                          <div className="w-6 h-6 rounded-full bg-slate-100 text-[#0F382C] font-bold text-[10px] flex items-center justify-center shrink-0 border border-slate-200">
-                            {p.name.charAt(0)}
-                          </div>
-                        )}
+                        <PlayerAvatar
+                          avatar={p.avatar}
+                          name={p.name}
+                          className="w-6 h-6 rounded-full border border-slate-200 shrink-0"
+                        />
 
                         <div className="truncate">
                           <div className="text-xs font-bold truncate text-slate-900 leading-tight">

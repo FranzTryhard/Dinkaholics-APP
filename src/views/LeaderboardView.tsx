@@ -102,7 +102,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
               }`}
               title="Click to view performance trends & player details"
             >
-              <div className="flex items-center gap-3.5 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <span
                   className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center font-mono shrink-0 ${rankBadgeColor}`}
                 >
@@ -121,45 +121,42 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
                   </div>
                 )}
 
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-900 truncate">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-sm font-bold text-slate-900 truncate max-w-[130px] sm:max-w-none" title={player.name}>
                       {player.name}
                     </span>
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-[#0F382C] border border-emerald-100 shrink-0">
                       L{player.skillRating}
                     </span>
+                    {player.streak >= 2 && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold shrink-0 whitespace-nowrap shadow-2xs">
+                        <Flame className="w-3 h-3 fill-amber-500 text-amber-500" />
+                        <span>{player.streak}W Streak</span>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
-                    <span>{games} matches</span>
-                    <span>·</span>
-                    <span className="text-emerald-700 font-semibold">
+                  <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span className="whitespace-nowrap">{games} {games === 1 ? 'match' : 'matches'}</span>
+                    <span className="text-slate-300">·</span>
+                    <span className="text-emerald-700 font-semibold whitespace-nowrap">
                       {wins}W - {losses}L
                     </span>
-                    {player.streak >= 2 && (
-                      <>
-                        <span>·</span>
-                        <span className="inline-flex items-center gap-0.5 text-amber-600 font-semibold text-[10px]">
-                          <Flame className="w-3 h-3 fill-current" />
-                          {player.streak}W streak
-                        </span>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 shrink-0 ml-3">
-                <div className="text-right">
-                  <div className="text-sm sm:text-base font-black font-mono tabular-nums text-[#0F382C]">
+              <div className="flex items-center gap-3 shrink-0 ml-3 text-right">
+                <div>
+                  <div className="text-sm sm:text-base font-black font-mono tabular-nums text-[#0F382C] whitespace-nowrap">
                     {pts} pts
                   </div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-[11px] text-slate-400 whitespace-nowrap">
                     {games > 0 ? `${Math.round((wins / games) * 100)}% win rate` : 'No matches'}
                   </div>
                 </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 text-slate-400 hover:text-[#0F382C] transition">
+                <div className="p-1.5 rounded-lg bg-slate-50 text-slate-400 hover:text-[#0F382C] transition shrink-0 hidden xs:block">
                   <TrendingUp className="w-4 h-4" />
                 </div>
               </div>

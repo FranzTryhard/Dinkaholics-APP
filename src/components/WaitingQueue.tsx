@@ -103,28 +103,25 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
                     </div>
                   )}
 
-                  <div className="truncate">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold text-slate-900 truncate">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-xs font-bold text-slate-900 truncate max-w-[120px]" title={p.name}>
                         {p.name}
                       </span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${colors.bg} ${colors.text}`}>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${colors.bg} ${colors.text} shrink-0`}>
                         L{p.skillRating}
                       </span>
-                    </div>
-                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
-                      <span>{p.sessionGamesPlayed} games</span>
-                      <span>·</span>
-                      <span>{p.sessionWins}W-{p.sessionLosses}L</span>
                       {p.streak >= 2 && (
-                        <>
-                          <span>·</span>
-                          <span className="inline-flex items-center gap-0.5 text-amber-600 font-semibold text-[10px]">
-                            <Flame className="w-3 h-3 fill-current" />
-                            {p.streak}
-                          </span>
-                        </>
+                        <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[9px] font-bold shrink-0 whitespace-nowrap">
+                          <Flame className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
+                          <span>{p.streak}W</span>
+                        </span>
                       )}
+                    </div>
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5 flex-wrap">
+                      <span className="whitespace-nowrap">{p.sessionGamesPlayed} games</span>
+                      <span className="text-slate-300">·</span>
+                      <span className="text-emerald-700 font-semibold whitespace-nowrap">{p.sessionWins}W-{p.sessionLosses}L</span>
                     </div>
                   </div>
                 </div>

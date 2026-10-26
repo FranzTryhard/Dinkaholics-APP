@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Download,
 } from 'lucide-react';
+import { PlayerAvatar } from '../components/PlayerAvatar';
 
 interface HistoryViewProps {
   matches: Match[];
@@ -216,16 +217,12 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                       </span>
                       <div className="flex -space-x-1.5 shrink-0">
                         {team1.map((p) => (
-                          <div
+                          <PlayerAvatar
                             key={p.id}
-                            className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
-                          >
-                            {p.avatar ? (
-                              <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                              p.name.charAt(0)
-                            )}
-                          </div>
+                            avatar={p.avatar}
+                            name={p.name}
+                            className="w-7 h-7 rounded-full border-2 border-white"
+                          />
                         ))}
                       </div>
                       <span
@@ -260,16 +257,12 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                       </span>
                       <div className="flex -space-x-1.5 shrink-0">
                         {team2.map((p) => (
-                          <div
+                          <PlayerAvatar
                             key={p.id}
-                            className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center font-bold text-xs text-slate-700 overflow-hidden"
-                          >
-                            {p.avatar ? (
-                              <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                              p.name.charAt(0)
-                            )}
-                          </div>
+                            avatar={p.avatar}
+                            name={p.name}
+                            className="w-7 h-7 rounded-full border-2 border-white"
+                          />
                         ))}
                       </div>
                       <span

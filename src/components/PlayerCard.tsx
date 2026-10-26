@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Player, SkillLevel, SKILL_LEVEL_COLORS, SKILL_LEVEL_LABELS, PlayerStatus } from '../types';
 import { Edit2, Trash2, Trophy, Flame, AlertCircle, Coffee, Play, Check } from 'lucide-react';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface PlayerCardProps {
   player: Player;
@@ -49,17 +50,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       {/* Top row: Avatar & Identity */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          {player.avatar ? (
-            <img
-              src={player.avatar}
-              alt={player.name}
-              className="w-11 h-11 rounded-full object-cover border border-slate-700"
-            />
-          ) : (
-            <div className="w-11 h-11 rounded-full bg-slate-800 text-lime-400 font-black text-sm flex items-center justify-center border border-slate-700">
-              {player.name.charAt(0)}
-            </div>
-          )}
+          <PlayerAvatar
+            avatar={player.avatar}
+            name={player.name}
+            className="w-11 h-11 rounded-full border border-slate-700"
+          />
 
           <div>
             <div className="flex items-center gap-2">

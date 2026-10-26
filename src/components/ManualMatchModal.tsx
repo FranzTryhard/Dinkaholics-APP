@@ -8,6 +8,7 @@ import {
   Menu,
   Sparkles,
 } from 'lucide-react';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface ManualMatchModalProps {
   courtNumber: number;
@@ -170,13 +171,7 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <Menu className="w-4 h-4 text-slate-400" />
-                      {p.avatar ? (
-                        <img src={p.avatar} alt={p.name} className="w-7 h-7 rounded-full object-cover" />
-                      ) : (
-                        <div className="w-7 h-7 rounded-full bg-slate-100 text-[#0F382C] font-bold text-xs flex items-center justify-center">
-                          {p.name.charAt(0)}
-                        </div>
-                      )}
+                      <PlayerAvatar avatar={p.avatar} name={p.name} className="w-7 h-7 rounded-full" />
                       <div>
                         <div className="text-xs font-bold text-slate-900">{p.name}</div>
                         <div className="text-[10px] text-slate-400">Level {p.skillRating}</div>
@@ -212,13 +207,7 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <Menu className="w-4 h-4 text-slate-400" />
-                      {p.avatar ? (
-                        <img src={p.avatar} alt={p.name} className="w-7 h-7 rounded-full object-cover" />
-                      ) : (
-                        <div className="w-7 h-7 rounded-full bg-slate-100 text-[#0F382C] font-bold text-xs flex items-center justify-center">
-                          {p.name.charAt(0)}
-                        </div>
-                      )}
+                      <PlayerAvatar avatar={p.avatar} name={p.name} className="w-7 h-7 rounded-full" />
                       <div>
                         <div className="text-xs font-bold text-slate-900">{p.name}</div>
                         <div className="text-[10px] text-slate-400">Level {p.skillRating}</div>

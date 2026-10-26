@@ -17,6 +17,7 @@ import confetti from 'canvas-confetti';
 import { courtAudio } from '../utils/audio';
 import { PickleballBounceLoader } from './PickleballBounceLoader';
 import { StorageService } from '../engine/storage';
+import { PlayerAvatar } from './PlayerAvatar';
 
 interface CourtVisualScorekeeperProps {
   match: Match;
@@ -322,17 +323,11 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             <div className="flex items-center justify-center gap-4">
               {winnerPlayers.map((p) => (
                 <div key={p.id} className="flex flex-col items-center">
-                  {p.avatar ? (
-                    <img
-                      src={p.avatar}
-                      alt={p.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-[#D4E938]"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-white/20 text-white font-bold flex items-center justify-center border-2 border-[#D4E938]">
-                      {p.name.charAt(0)}
-                    </div>
-                  )}
+                  <PlayerAvatar
+                    avatar={p.avatar}
+                    name={p.name}
+                    className="w-12 h-12 rounded-full border-2 border-[#D4E938]"
+                  />
                   <span className="text-xs font-semibold text-white mt-1 truncate max-w-[100px]">
                     {p.name}
                   </span>
@@ -789,13 +784,15 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
                   title={`Team 1: ${playerLeftA.name}`}
                 >
                   <div className="flex flex-col items-center">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow ${
-                      isLeftAServing
-                        ? 'bg-emerald-900 border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                        : 'bg-white/20 border border-white/20'
-                    }`}>
-                      {playerLeftA.name.charAt(0)}
-                    </div>
+                    <PlayerAvatar
+                      avatar={playerLeftA.avatar}
+                      name={playerLeftA.name}
+                      className={`w-9 h-9 rounded-full shadow ${
+                        isLeftAServing
+                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
+                          : 'border border-white/20'
+                      }`}
+                    />
                     <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
                       {playerLeftA.name}
                     </span>
@@ -818,13 +815,15 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
                   title={`Team 1: ${playerRightA.name}`}
                 >
                   <div className="flex flex-col items-center">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow ${
-                      isRightAServing
-                        ? 'bg-emerald-900 border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                        : 'bg-white/20 border border-white/20'
-                    }`}>
-                      {playerRightA.name.charAt(0)}
-                    </div>
+                    <PlayerAvatar
+                      avatar={playerRightA.avatar}
+                      name={playerRightA.name}
+                      className={`w-9 h-9 rounded-full shadow ${
+                        isRightAServing
+                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
+                          : 'border border-white/20'
+                      }`}
+                    />
                     <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
                       {playerRightA.name}
                     </span>
@@ -859,13 +858,15 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
                   title={`Team 2: ${playerLeftB.name}`}
                 >
                   <div className="flex flex-col items-center">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow ${
-                      isLeftBServing
-                        ? 'bg-emerald-900 border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                        : 'bg-white/20 border border-white/20'
-                    }`}>
-                      {playerLeftB.name.charAt(0)}
-                    </div>
+                    <PlayerAvatar
+                      avatar={playerLeftB.avatar}
+                      name={playerLeftB.name}
+                      className={`w-9 h-9 rounded-full shadow ${
+                        isLeftBServing
+                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
+                          : 'border border-white/20'
+                      }`}
+                    />
                     <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
                       {playerLeftB.name}
                     </span>
@@ -888,13 +889,15 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
                   title={`Team 2: ${playerRightB.name}`}
                 >
                   <div className="flex flex-col items-center">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shadow ${
-                      isRightBServing
-                        ? 'bg-emerald-900 border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                        : 'bg-white/20 border border-white/20'
-                    }`}>
-                      {playerRightB.name.charAt(0)}
-                    </div>
+                    <PlayerAvatar
+                      avatar={playerRightB.avatar}
+                      name={playerRightB.name}
+                      className={`w-9 h-9 rounded-full shadow ${
+                        isRightBServing
+                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
+                          : 'border border-white/20'
+                      }`}
+                    />
                     <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
                       {playerRightB.name}
                     </span>
