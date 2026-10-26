@@ -54,6 +54,7 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Feature — Dashboard Content Presence]** Ensured all dashboard widgets (Hero Photo Banner, Session Performance 100 Group Points, Rotation Mode, Waiting Queue (4), Top Performers 3-rank cards, Session Insights, and Court recommendations) always exist and render even before a session or players are created.
 - [x] **[Deployment Fix — Vercel ERESOLVE]** Removed pinned conflicting `esbuild` dependency, added `.npmrc` with `legacy-peer-deps=true`, and installed `react-is` for clean production bundle compilation.
 - [x] **[Feature — App Launch Intro Splash Loader]** Integrated a 3-second branded intro splash with the bouncing paddle/pickleball loader, progress bar, Dinkaholics lockup, and tap-to-skip functionality.
+- [x] **[Brand Asset — Dynamic App Logo]** Replaced app logo across navigation, splash intro, and modals with the uploaded dynamic lime & cyan "D" pickleball mark (`denk_93dc4583.webp`).
 
 ---
 

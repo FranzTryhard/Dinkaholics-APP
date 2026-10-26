@@ -38,33 +38,22 @@ export const DinkaholicsLogo: React.FC<DinkaholicsLogoProps> = ({
   return (
     <div className={`inline-flex items-center gap-2.5 ${className}`}>
       <div
-        className={`relative ${sizeMap[size]} shrink-0 ${roundedMap[size]} overflow-hidden shadow-md bg-[#0C3827]`}
+        className={`relative ${sizeMap[size]} shrink-0 ${roundedMap[size]} overflow-hidden shadow-xs border border-slate-200/80 bg-white flex items-center justify-center`}
       >
-        <picture>
-          <source
-            type="image/webp"
-            srcSet="/assets/images/dinkaholics_logo_64.webp 64w, /assets/images/dinkaholics_logo_140.webp 140w, /assets/images/dinkaholics_logo_280.webp 280w"
-            sizes={
-              size === 'xl'
-                ? '(max-width: 640px) 96px, 112px'
-                : `${dim}px`
-            }
-          />
-          <img
-            src={dinkaholicsLogoWebp || '/assets/images/dinkaholics_logo_280.webp'}
-            srcSet="/assets/images/dinkaholics_logo_140.webp 1x, /assets/images/dinkaholics_logo_280.webp 2x"
-            width={dim}
-            height={dim}
-            loading="eager"
-            decoding="async"
-            onError={(e) => {
-              e.currentTarget.src = '/assets/images/dinkaholics_logo_280.jpg';
-            }}
-            alt="Dinkaholics DH Logo"
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover"
-          />
-        </picture>
+        <img
+          src="/assets/aistudio/denk_93dc4583.webp"
+          srcSet="/assets/images/dinkaholics_logo.webp 1x, /assets/aistudio/denk_93dc4583.webp 2x"
+          width={dim}
+          height={dim}
+          loading="eager"
+          decoding="async"
+          onError={(e) => {
+            e.currentTarget.src = '/assets/images/dinkaholics_logo.webp';
+          }}
+          alt="Dinkaholics Logo"
+          referrerPolicy="no-referrer"
+          className="w-full h-full object-contain p-0.5"
+        />
       </div>
 
       {showText && (
