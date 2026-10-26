@@ -34,8 +34,10 @@ import { PickleballIcon } from './components/PickleballIcon';
 import { DinkaholicsLogo } from './components/DinkaholicsLogo';
 import { Layers, Play, Users, RotateCcw } from 'lucide-react';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION } from './engine/mockData';
+import { AppSplashLoader } from './components/AppSplashLoader';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [players, setPlayers] = useState<Player[]>(() => StorageService.getPlayers());
   const [session, setSession] = useState<Session | null>(() => StorageService.getActiveSession());
   const [matches, setMatches] = useState<Match[]>(() => StorageService.getMatches());
@@ -370,6 +372,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8F9F8] text-slate-900 flex flex-col font-sans selection:bg-[#84CC16] selection:text-slate-950">
+      {/* 3-Second App Launch Intro Splash Loader */}
+      {showSplash && (
+        <AppSplashLoader
+          durationMs={3000}
+          onComplete={() => setShowSplash(false)}
+        />
+      )}
+
       <OfflineIndicator />
 
       {/* Top Navigation */}

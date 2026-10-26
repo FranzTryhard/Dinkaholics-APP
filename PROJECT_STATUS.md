@@ -53,6 +53,7 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Bug Fix — UI Layout]** Resolved text collision and word-wrapping overlap where `4W streak` collided with `80% win rate` in `LeaderboardView.tsx`, `PlayersView.tsx`, and `WaitingQueue.tsx`. Repositioned win streak as a dedicated flame badge pill next to player level.
 - [x] **[Feature — Dashboard Content Presence]** Ensured all dashboard widgets (Hero Photo Banner, Session Performance 100 Group Points, Rotation Mode, Waiting Queue (4), Top Performers 3-rank cards, Session Insights, and Court recommendations) always exist and render even before a session or players are created.
 - [x] **[Deployment Fix — Vercel ERESOLVE]** Removed pinned conflicting `esbuild` dependency, added `.npmrc` with `legacy-peer-deps=true`, and installed `react-is` for clean production bundle compilation.
+- [x] **[Feature — App Launch Intro Splash Loader]** Integrated a 3-second branded intro splash with the bouncing paddle/pickleball loader, progress bar, Dinkaholics lockup, and tap-to-skip functionality.
 
 ---
 
