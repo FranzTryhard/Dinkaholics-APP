@@ -1,6 +1,6 @@
 import React from 'react';
 import { Session, RotationMode } from '../types';
-import { Plus, RotateCcw, Trophy } from 'lucide-react';
+import { Plus, RotateCcw, Trophy, Sliders } from 'lucide-react';
 import { PickleballIcon } from './PickleballIcon';
 import { DinkaholicsLogo } from './DinkaholicsLogo';
 
@@ -100,6 +100,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             Players & Waiting
           </button>
           <button
+            onClick={() => onNavigateTab('leaderboard')}
+            className={`transition-colors whitespace-nowrap py-1 ${
+              currentTab === 'leaderboard'
+                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
+                : 'hover:text-slate-900'
+            }`}
+          >
+            Leaderboard
+          </button>
+          <button
             onClick={() => onNavigateTab('history')}
             className={`transition-colors whitespace-nowrap py-1 ${
               currentTab === 'history'
@@ -123,6 +133,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Primary Action Zone */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => onNavigateTab('settings')}
+            className={`touch-target p-2 rounded-xl transition ${
+              currentTab === 'settings'
+                ? 'bg-emerald-50 text-[#0F382C]'
+                : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+            }`}
+            title="Rules & Preferences"
+            aria-label="Rules & Preferences"
+          >
+            <Sliders className="w-4 h-4" />
+          </button>
+
           <button
             onClick={onNewSession}
             className="touch-target px-3.5 py-2 rounded-xl bg-[#0F382C] text-white font-semibold text-xs hover:bg-[#165342] transition active:scale-95 shadow-sm whitespace-nowrap"

@@ -32,7 +32,7 @@ import { SettingsView } from './views/SettingsView';
 import { RoundRobinView } from './views/RoundRobinView';
 import { PickleballIcon } from './components/PickleballIcon';
 import { DinkaholicsLogo } from './components/DinkaholicsLogo';
-import { Layers, Play, Users } from 'lucide-react';
+import { Layers, Play, Users, RotateCcw } from 'lucide-react';
 
 export default function App() {
   const [players, setPlayers] = useState<Player[]>(() => StorageService.getPlayers());
@@ -45,6 +45,7 @@ export default function App() {
   const [customCourtNumber, setCustomCourtNumber] = useState<number | null>(null);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isEndSessionModalOpen, setIsEndSessionModalOpen] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   // Recommendations state: courtNumber -> MatchCandidate
   const [recommendations, setRecommendations] = useState<Record<number, MatchCandidate | null>>({});
@@ -353,7 +354,7 @@ export default function App() {
         activeMatchesCount={activeMatchesCount}
         currentTab={currentTab}
         onNewSession={() => setIsSetupModalOpen(true)}
-        onResetDemo={handleResetDemo}
+        onResetDemo={() => setIsResetConfirmOpen(true)}
         onNavigateTab={(tab) => setCurrentTab(tab)}
       />
 
@@ -539,6 +540,40 @@ export default function App() {
           onClose={() => setIsEndSessionModalOpen(false)}
           onConfirmEnd={handleConfirmEndSession}
         />
+      )}
+
+      {/* Modal: Confirm Reset Demo Data */}
+      {isResetConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-sm rounded-3xl bg-white border border-slate-200 p-6 shadow-2xl relative text-center">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3 border border-amber-200">
+              <RotateCcw className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-black text-slate-900 font-display">Reset to Demo Data?</h3>
+            <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+              This will restore the clean 10-player demo roster and sample courts. Current active matches and unexported game logs will be replaced.
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="touch-target py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-xs hover:bg-slate-50 transition active:scale-95"
+              >
+                Keep Current
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleResetDemo();
+                  setIsResetConfirmOpen(false);
+                }}
+                className="touch-target py-2.5 px-3 rounded-xl bg-amber-600 text-white font-bold text-xs hover:bg-amber-700 transition active:scale-95 shadow-sm"
+              >
+                Reset to Demo
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

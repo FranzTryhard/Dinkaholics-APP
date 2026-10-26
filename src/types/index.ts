@@ -1,11 +1,27 @@
 export type SkillLevel = 1 | 2 | 3 | 4 | 5;
 
 export const SKILL_LEVEL_LABELS: Record<SkillLevel, string> = {
+  1: 'Beginner (DUPR 2.0–2.5)',
+  2: 'Novice (DUPR 3.0)',
+  3: 'Intermediate (DUPR 3.5)',
+  4: 'Advanced (DUPR 4.0)',
+  5: 'Expert (DUPR 4.5+)',
+};
+
+export const SKILL_LEVEL_SHORT_LABELS: Record<SkillLevel, string> = {
   1: 'Beginner',
   2: 'Novice',
   3: 'Intermediate',
   4: 'Advanced',
   5: 'Expert',
+};
+
+export const SKILL_LEVEL_DUPR: Record<SkillLevel, string> = {
+  1: 'DUPR 2.0–2.5',
+  2: 'DUPR 3.0',
+  3: 'DUPR 3.5',
+  4: 'DUPR 4.0',
+  5: 'DUPR 4.5+',
 };
 
 export const SKILL_LEVEL_COLORS: Record<SkillLevel, { bg: string; text: string; border: string; badge: string }> = {

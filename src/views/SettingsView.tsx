@@ -136,7 +136,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <Crown className="w-5 h-5 text-amber-500" />
           <div>
             <h2 className="font-bold text-slate-900 text-sm">Supported Rotation Formats</h2>
-            <p className="text-[11px] text-slate-400">How PickleMatch manages player flow and court assignments</p>
+            <p className="text-[11px] text-slate-400">How Dinkaholics manages player flow and court assignments</p>
           </div>
         </div>
 

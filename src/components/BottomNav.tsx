@@ -4,8 +4,8 @@ import {
   Layers,
   Users,
   History,
-  Sliders,
   Trophy,
+  Award,
 } from 'lucide-react';
 
 export type TabType = 'dashboard' | 'courts' | 'tournament' | 'players' | 'leaderboard' | 'history' | 'settings';
@@ -49,6 +49,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       badge: waitingCount > 0 ? waitingCount : undefined,
     },
     {
+      id: 'leaderboard' as TabType,
+      label: 'Ranks',
+      icon: Award,
+    },
+    {
       id: 'history' as TabType,
       label: 'Logs',
       icon: History,
@@ -56,8 +61,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-2 pt-1 safe-pb shadow-lg">
-      <div className="max-w-md mx-auto grid grid-cols-5 gap-1 items-center">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-1 pt-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-lg select-none">
+      <div className="max-w-lg mx-auto grid grid-cols-6 gap-0.5 items-center">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -69,6 +74,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               className={`touch-target py-1 flex flex-col items-center justify-center relative rounded-xl transition ${
                 isActive ? 'text-[#0F382C] font-bold' : 'text-slate-400 hover:text-slate-600'
               }`}
+              aria-label={tab.label}
             >
               <div className="relative">
                 <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-[1.8]'}`} />
@@ -82,7 +88,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                   </span>
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight leading-none">{tab.label}</span>
+              <span className="text-[10px] mt-1 tracking-tight leading-none truncate max-w-full">{tab.label}</span>
               {isActive && (
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0F382C] mt-0.5" />
               )}

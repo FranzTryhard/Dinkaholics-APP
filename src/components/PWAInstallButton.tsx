@@ -55,7 +55,7 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
               <Smartphone className="w-6 h-6 text-lime-400" />
             </div>
 
-            <h3 className="text-lg font-bold text-white tracking-tight">Install PickleMatch on iPhone</h3>
+            <h3 className="text-lg font-bold text-white tracking-tight">Install Dinkaholics on iPhone</h3>
             <p className="mt-1 text-xs text-slate-400">
               Run full-screen without Safari browser bars, with instant offline launch from your Home Screen.
             </p>

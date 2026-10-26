@@ -462,12 +462,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         Match Currently Live
                       </div>
                     ) : (
-                      <button
-                        onClick={() => onManualCustomMatch(courtNum)}
-                        className="touch-target w-full py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-700 text-xs font-bold hover:bg-slate-100 transition"
-                      >
-                        Select Players Manually
-                      </button>
+                      <div className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/90 text-center space-y-2">
+                        <div className="text-[11px] font-semibold text-slate-500">
+                          {waitingCount === 0
+                            ? 'All available players are currently playing'
+                            : `Need 4 players · ${waitingCount} available in queue`}
+                        </div>
+                        <button
+                          onClick={() => onManualCustomMatch(courtNum)}
+                          className="touch-target w-full py-2 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold hover:bg-slate-50 transition active:scale-95 shadow-2xs"
+                        >
+                          Select Players Manually
+                        </button>
+                      </div>
                     )}
                   </div>
                 );

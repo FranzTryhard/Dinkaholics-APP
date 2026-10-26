@@ -146,8 +146,8 @@ export const CourtCard: React.FC<CourtCardProps> = ({
                 {activeMatch.teamA.map((id) => {
                   const p = getPlayer(id);
                   return (
-                    <div key={id} className="flex items-center justify-between gap-2 text-xs">
-                      <span className="font-semibold text-slate-800 truncate">{p.name}</span>
+                    <div key={id} className="flex items-center justify-between gap-2 text-xs min-w-0">
+                      <span className="font-semibold text-slate-800 truncate" title={p.name}>{p.name}</span>
                       <span className="text-[10px] text-slate-500 font-mono tabular-nums shrink-0">
                         L{p.skillRating}
                       </span>
@@ -167,8 +167,8 @@ export const CourtCard: React.FC<CourtCardProps> = ({
                 {activeMatch.teamB.map((id) => {
                   const p = getPlayer(id);
                   return (
-                    <div key={id} className="flex items-center justify-between gap-2 text-xs">
-                      <span className="font-semibold text-slate-800 truncate">{p.name}</span>
+                    <div key={id} className="flex items-center justify-between gap-2 text-xs min-w-0">
+                      <span className="font-semibold text-slate-800 truncate" title={p.name}>{p.name}</span>
                       <span className="text-[10px] text-slate-500 font-mono tabular-nums shrink-0">
                         L{p.skillRating}
                       </span>
@@ -230,9 +230,9 @@ export const CourtCard: React.FC<CourtCardProps> = ({
                     </div>
                     <div className="space-y-1">
                       {recommendedMatch.teamA.map((id) => (
-                        <div key={id} className="text-slate-800 truncate text-[11px] font-medium flex justify-between">
-                          <span>{getPlayer(id).name}</span>
-                          <span className="text-slate-400 font-mono text-[10px]">L{getPlayer(id).skillRating}</span>
+                        <div key={id} className="text-slate-800 text-[11px] font-medium flex justify-between items-center gap-1 min-w-0">
+                          <span className="truncate" title={getPlayer(id).name}>{getPlayer(id).name}</span>
+                          <span className="text-slate-400 font-mono text-[10px] shrink-0">L{getPlayer(id).skillRating}</span>
                         </div>
                       ))}
                     </div>
@@ -245,9 +245,9 @@ export const CourtCard: React.FC<CourtCardProps> = ({
                     </div>
                     <div className="space-y-1">
                       {recommendedMatch.teamB.map((id) => (
-                        <div key={id} className="text-slate-800 truncate text-[11px] font-medium flex justify-between">
-                          <span>{getPlayer(id).name}</span>
-                          <span className="text-slate-400 font-mono text-[10px]">L{getPlayer(id).skillRating}</span>
+                        <div key={id} className="text-slate-800 text-[11px] font-medium flex justify-between items-center gap-1 min-w-0">
+                          <span className="truncate" title={getPlayer(id).name}>{getPlayer(id).name}</span>
+                          <span className="text-slate-400 font-mono text-[10px] shrink-0">L{getPlayer(id).skillRating}</span>
                         </div>
                       ))}
                     </div>

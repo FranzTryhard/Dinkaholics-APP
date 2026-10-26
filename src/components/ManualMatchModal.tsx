@@ -104,7 +104,7 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-3 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-3 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-200">
       <div className="w-full max-w-sm rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Top Header */}
         <div className="p-4 pb-2 border-b border-slate-100">
@@ -138,6 +138,7 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
           <div className="relative">
             <input
               type="text"
+              autoFocus
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search available players..."

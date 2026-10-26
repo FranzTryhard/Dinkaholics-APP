@@ -23,6 +23,9 @@ import {
   Grid,
   FileText,
   Plus,
+  Minus,
+  Edit3,
+  X,
 } from 'lucide-react';
 import { PickleballIcon } from '../components/PickleballIcon';
 import { PickleballBounceLoader } from '../components/PickleballBounceLoader';
@@ -50,6 +53,14 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
   const [roundsCount, setRoundsCount] = useState<number>(5);
   const [targetScore, setTargetScore] = useState<number>(11);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [customScoreMatch, setCustomScoreMatch] = useState<{
+    roundNumber: number;
+    matchId: string;
+    teamAName: string;
+    teamBName: string;
+    scoreA: number;
+    scoreB: number;
+  } | null>(null);
 
   // Stored rounds state
   const [rounds, setRounds] = useState<RoundRobinRound[]>(() => {
@@ -470,32 +481,52 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                         </div>
                       </div>
 
-                      {/* Quick Scoring Actions */}
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                      {/* Quick & Custom Scoring Actions */}
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
                         {match.completed ? (
                           <button
                             onClick={() => handleResetMatch(currentRound.roundNumber, match.id)}
-                            className="touch-target text-xs text-slate-400 hover:text-slate-700 underline"
+                            className="touch-target text-xs text-slate-500 hover:text-slate-800 font-medium underline flex items-center gap-1"
                           >
-                            Edit / Clear Score
+                            <RotateCcw className="w-3 h-3" />
+                            <span>Edit / Reset Score</span>
                           </button>
                         ) : (
-                          <div className="flex items-center gap-1.5 w-full">
+                          <div className="w-full space-y-2">
+                            <div className="grid grid-cols-2 gap-1.5">
+                              <button
+                                onClick={() =>
+                                  handleScoreMatch(currentRound.roundNumber, match.id, 11, 7)
+                                }
+                                className="touch-target py-2 px-2 rounded-xl bg-slate-100 hover:bg-[#0F382C] hover:text-white text-slate-800 font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
+                              >
+                                <span>T1 Wins (11-7)</span>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleScoreMatch(currentRound.roundNumber, match.id, 7, 11)
+                                }
+                                className="touch-target py-2 px-2 rounded-xl bg-slate-100 hover:bg-[#0F382C] hover:text-white text-slate-800 font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
+                              >
+                                <span>T2 Wins (7-11)</span>
+                              </button>
+                            </div>
+
                             <button
                               onClick={() =>
-                                handleScoreMatch(currentRound.roundNumber, match.id, 11, 7)
+                                setCustomScoreMatch({
+                                  roundNumber: currentRound.roundNumber,
+                                  matchId: match.id,
+                                  teamAName: `${teamA1.name} & ${teamA2.name}`,
+                                  teamBName: `${teamB1.name} & ${teamB2.name}`,
+                                  scoreA: 11,
+                                  scoreB: 9,
+                                })
                               }
-                              className="touch-target flex-1 py-2 rounded-xl bg-slate-100 hover:bg-[#0F382C] hover:text-white text-slate-700 font-bold text-xs transition"
+                              className="touch-target w-full py-1.5 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1 shadow-2xs"
                             >
-                              Team 1 Wins (11-7)
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleScoreMatch(currentRound.roundNumber, match.id, 7, 11)
-                              }
-                              className="touch-target flex-1 py-2 rounded-xl bg-slate-100 hover:bg-[#0F382C] hover:text-white text-slate-700 font-bold text-xs transition"
-                            >
-                              Team 2 Wins (7-11)
+                              <Edit3 className="w-3.5 h-3.5 text-slate-400" />
+                              <span>Custom Score Stepper...</span>
                             </button>
                           </div>
                         )}
@@ -683,6 +714,159 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Custom Score Stepper */}
+      {customScoreMatch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-150">
+          <div className="w-full max-w-sm rounded-3xl bg-white border border-slate-200 p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm font-display">Record Match Score</h3>
+                <p className="text-[11px] text-slate-400">Round {customScoreMatch.roundNumber}</p>
+              </div>
+              <button
+                onClick={() => setCustomScoreMatch(null)}
+                className="touch-target p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Quick Score Chips */}
+            <div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
+                Standard Presets
+              </span>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[
+                  [11, 9],
+                  [11, 7],
+                  [11, 5],
+                  [11, 3],
+                  [9, 11],
+                  [7, 11],
+                  [5, 11],
+                  [3, 11],
+                ].map(([a, b]) => (
+                  <button
+                    key={`${a}-${b}`}
+                    type="button"
+                    onClick={() =>
+                      setCustomScoreMatch((prev) => (prev ? { ...prev, scoreA: a, scoreB: b } : null))
+                    }
+                    className={`py-1.5 px-1 rounded-lg text-xs font-mono font-bold transition border ${
+                      customScoreMatch.scoreA === a && customScoreMatch.scoreB === b
+                        ? 'border-[#0F382C] bg-emerald-50 text-[#0F382C]'
+                        : 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {a}-{b}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Steppers */}
+            <div className="space-y-3 pt-1">
+              {/* Team 1 Stepper */}
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                <div className="min-w-0 pr-2">
+                  <span className="text-[10px] font-black text-slate-400 uppercase">Team 1</span>
+                  <div className="text-xs font-bold text-slate-900 truncate" title={customScoreMatch.teamAName}>
+                    {customScoreMatch.teamAName}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomScoreMatch((prev) =>
+                        prev ? { ...prev, scoreA: Math.max(0, prev.scoreA - 1) } : null
+                      )
+                    }
+                    className="touch-target w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center transition active:scale-95"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="w-7 text-center font-black font-mono text-base text-slate-900">
+                    {customScoreMatch.scoreA}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomScoreMatch((prev) => (prev ? { ...prev, scoreA: prev.scoreA + 1 } : null))
+                    }
+                    className="touch-target w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center transition active:scale-95"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Team 2 Stepper */}
+              <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                <div className="min-w-0 pr-2">
+                  <span className="text-[10px] font-black text-slate-400 uppercase">Team 2</span>
+                  <div className="text-xs font-bold text-slate-900 truncate" title={customScoreMatch.teamBName}>
+                    {customScoreMatch.teamBName}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomScoreMatch((prev) =>
+                        prev ? { ...prev, scoreB: Math.max(0, prev.scoreB - 1) } : null
+                      )
+                    }
+                    className="touch-target w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center transition active:scale-95"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="w-7 text-center font-black font-mono text-base text-slate-900">
+                    {customScoreMatch.scoreB}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomScoreMatch((prev) => (prev ? { ...prev, scoreB: prev.scoreB + 1 } : null))
+                    }
+                    className="touch-target w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 flex items-center justify-center transition active:scale-95"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setCustomScoreMatch(null)}
+                className="touch-target py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-xs hover:bg-slate-50 transition active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleScoreMatch(
+                    customScoreMatch.roundNumber,
+                    customScoreMatch.matchId,
+                    customScoreMatch.scoreA,
+                    customScoreMatch.scoreB
+                  );
+                  setCustomScoreMatch(null);
+                }}
+                className="touch-target py-2.5 px-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 shadow-sm"
+              >
+                Confirm Score
+              </button>
+            </div>
           </div>
         </div>
       )}

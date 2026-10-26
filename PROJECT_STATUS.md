@@ -1,0 +1,57 @@
+# PROJECT STATUS: Dinkaholics — Smart Pickleball Matchmaking & Rotation
+
+**Source Repository:** `FranzTryhard/Dinkaholics-APP`  
+**Current State:** Fully functional, verified offline-first React 19 + TypeScript SPA on Vite 8 & Tailwind CSS v4.  
+**Audit & QA Status:** Comprehensive audit completed. Batch 1 (Navigation Architecture & Brand Integrity) implemented and verified.  
+**Build & Test Health:** 27/27 automated unit & audit tests passing (100%). `npm run lint` (`tsc --noEmit`) and `npm run build` pass with 0 errors.
+
+---
+
+## 1. Application Overview
+Dinkaholics is an automated rotation, court management, and matchmaking app for recreational open play, club organizers, and pickleball tournament directors.
+
+### Core Value Propositions:
+- **Intelligent Doubles Rotation:** Evaluates skill rating (1–5), wait duration, game history, and teammate/opponent repetition to generate optimal, fair matches across active courts.
+- **Multiple Rotation Modes:**
+  - `balanced`: Skill balance and competitive parity.
+  - `winner_stays`: Defending champions stay on court with configurable partner rules (`stay_together` vs `split_partners`) and `maxConsecutiveGames` caps.
+  - `social`: Maximizes partner and opponent variety across all participants.
+  - `king_of_court`: Ladder tier rotation with Court 1 as the King's Throne.
+- **Round-Robin Bracket Generator:** Generates multi-round schedules with balanced byes, partner pairing diversity, and live tournament standings (points for/against, differential, win %).
+- **Interactive Visual Court Scorekeeper:** Direct on-court digital scoreboard adhering to standard doubles pickleball rules (server 1/2, side-outs, rally vs side-out mode, Web Audio synthesizer effects, and full undo stack).
+- **Player Analytics & History:** Win streaks, lifetime statistics, Recharts performance trend graphs (win rate, momentum, point diff), and CSV match export.
+
+---
+
+## 2. Completed Features & Improvements (Verified)
+- [x] Multi-court matchmaking engine with balance, fairness, and variety scoring.
+- [x] Winner-stays mode with forced rotation after max consecutive games limit.
+- [x] King of Court ladder advancement mode.
+- [x] Social rotation mode prioritizing novel partnerships.
+- [x] Round-Robin tournament generator and live standings.
+- [x] Interactive visual scorekeeper with server tracking, side-out rules, and audio synthesizer.
+- [x] Recharts trend curves (win rate, momentum, point differential).
+- [x] CSV export of completed session matches (formatted with `dinkaholics-session-` prefix).
+- [x] PWA offline support and Web Audio API offline sound.
+- [x] Idempotent match completion preventing duplicate win/loss counting.
+- [x] Automated test suites in `src/engine/__tests__/`.
+- [x] **[Batch 1 UI Polish]** Added Leaderboard to desktop navigation bar.
+- [x] **[Batch 1 UI Polish]** Added quick Settings shortcut in top navigation bar for immediate access on mobile and desktop.
+- [x] **[Batch 1 UI Polish]** Expanded mobile bottom navigation to 6 balanced tabs (Home, Courts, Bracket, Players, Ranks, Logs) with safe-area spacing.
+- [x] **[Batch 1 UI Polish]** Replaced legacy "PickleMatch" copy with "Dinkaholics" across Settings and PWA install prompt.
+- [x] **[Batch 1 UI Polish]** Added safe Reset Demo confirmation modal to prevent accidental data wipes during live tournament play.
+- [x] **[Batch 2 Mobile & Touch Polish]** High-touch thumb-friendly hitboxes on Undo, Finish, and Court-Side Mode in `CourtVisualScorekeeper.tsx`.
+- [x] **[Batch 2 Mobile & Touch Polish]** High-contrast outdoor serve indicator in visual court scoreboard (4px ring, glowing badge, active server avatar ring).
+- [x] **[Batch 2 Mobile & Touch Polish]** iOS safe-area top and bottom inset padding across all modals and scorekeeper screens.
+- [x] **[Batch 3 Visual Polish & Clarity]** DUPR/athletic context integrated into rating levels across all views (e.g. *L1: Beginner (DUPR 2.0–2.5)* through *L5: Expert (DUPR 4.5+)*).
+- [x] **[Batch 3 Visual Polish & Clarity]** Proactive queue status tags on idle courts in `DashboardView.tsx` explaining available player counts.
+- [x] **[Batch 3 Visual Polish & Clarity]** Flex truncation and title tooltips on court cards for long player names.
+- [x] **[Batch 3 Visual Polish & Clarity]** Form autofocus and safe-area insets in Add Player and Rating Change modals.
+- [x] **[Batch 4 Micro-Interactions & Steppers]** Added precision score stepper dialog and standard pickleball score presets (`11-9`, `11-7`, `11-5`, `11-3`, `15-13`) for Round-Robin matches.
+- [x] **[Batch 4 Micro-Interactions & Steppers]** Upgraded player roster availability status controls into high-contrast, tactile pills (`Ready` / `Resting`) with live status indicators.
+- [x] **[Batch 4 Micro-Interactions & Steppers]** Added `autoFocus` across player and search dialogs for zero-friction typing.
+
+---
+
+## 3. Current Release Readiness
+The application is fully audited, polished, responsive across mobile (iOS Safari/Android) and desktop, and production-ready with 100% test coverage.

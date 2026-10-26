@@ -259,19 +259,19 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                     ) : isResting ? (
                       <button
                         onClick={() => onUpdatePlayerStatus(player.id, 'available')}
-                        className="touch-target px-2.5 py-1.5 rounded-lg border border-amber-300 bg-amber-50 text-amber-800 font-semibold text-xs hover:bg-amber-100 transition flex items-center gap-1"
-                        title="Resting (tap to ready)"
+                        className="touch-target px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 font-bold text-xs hover:bg-amber-100 transition active:scale-95 flex items-center gap-1.5 shadow-2xs"
+                        title="Resting (tap to set Ready for play)"
                       >
-                        <Play className="w-3 h-3 fill-current text-amber-700" />
+                        <Play className="w-3.5 h-3.5 fill-current text-amber-600" />
                         <span>Resting</span>
                       </button>
                     ) : (
                       <button
                         onClick={() => onUpdatePlayerStatus(player.id, 'resting')}
-                        className="touch-target px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 font-medium text-xs hover:bg-slate-100 transition flex items-center gap-1"
-                        title="Available (tap to take a rest)"
+                        className="touch-target px-3 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 font-bold text-xs hover:bg-emerald-100 transition active:scale-95 flex items-center gap-1.5 shadow-2xs"
+                        title="Ready for play (tap to rest)"
                       >
-                        <Coffee className="w-3 h-3" />
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         <span>Ready</span>
                       </button>
                     )}
@@ -327,7 +327,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
 
       {/* Add Player Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-150">
           <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl space-y-4 border border-slate-200">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <h3 className="font-bold text-slate-900 text-base">Add New Player</h3>
@@ -344,6 +344,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                 <label className="text-xs font-bold text-slate-700 block mb-1">Player Name *</label>
                 <input
                   type="text"
+                  autoFocus
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="e.g. Alex Morgan"
@@ -360,18 +361,18 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                       key={lvl}
                       type="button"
                       onClick={() => setNewRating(lvl)}
-                      className={`touch-target py-2 rounded-lg text-xs font-bold transition ${
+                      className={`touch-target py-2 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center ${
                         newRating === lvl
-                          ? 'bg-[#0F382C] text-white shadow-xs'
+                          ? 'bg-[#0F382C] text-white shadow-xs ring-1 ring-[#0F382C]'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
-                      L{lvl}
+                      <span>L{lvl}</span>
                     </button>
                   ))}
                 </div>
-                <div className="text-[11px] text-slate-500 mt-1.5">
-                  Level {newRating}: <strong>{SKILL_LEVEL_LABELS[newRating]}</strong>
+                <div className="text-[11px] text-slate-600 mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 leading-snug">
+                  Level {newRating}: <strong className="text-slate-900">{SKILL_LEVEL_LABELS[newRating]}</strong>
                 </div>
               </div>
 
@@ -421,7 +422,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
 
       {/* Confirmation Modal for Rating Change */}
       {ratingConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-150">
           <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl space-y-3 border border-slate-200">
             <div className="flex items-center gap-2 text-amber-700 font-bold text-sm">
               <AlertCircle className="w-5 h-5 text-amber-600" />
