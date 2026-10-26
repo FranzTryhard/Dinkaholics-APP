@@ -51,6 +51,7 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Batch 4 Micro-Interactions & Steppers]** Upgraded player roster availability status controls into high-contrast, tactile pills (`Ready` / `Resting`) with live status indicators.
 - [x] **[Batch 4 Micro-Interactions & Steppers]** Added `autoFocus` across player and search dialogs for zero-friction typing.
 - [x] **[Bug Fix — UI Layout]** Resolved text collision and word-wrapping overlap where `4W streak` collided with `80% win rate` in `LeaderboardView.tsx`, `PlayersView.tsx`, and `WaitingQueue.tsx`. Repositioned win streak as a dedicated flame badge pill next to player level.
+- [x] **[Feature — Dashboard Content Presence]** Ensured all dashboard widgets (Hero Photo Banner, Session Performance 100 Group Points, Rotation Mode, Waiting Queue (4), Top Performers 3-rank cards, Session Insights, and Court recommendations) always exist and render even before a session or players are created.
 
 ---
 

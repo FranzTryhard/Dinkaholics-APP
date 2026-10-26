@@ -33,6 +33,7 @@ import { RoundRobinView } from './views/RoundRobinView';
 import { PickleballIcon } from './components/PickleballIcon';
 import { DinkaholicsLogo } from './components/DinkaholicsLogo';
 import { Layers, Play, Users, RotateCcw } from 'lucide-react';
+import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION } from './engine/mockData';
 
 export default function App() {
   const [players, setPlayers] = useState<Player[]>(() => StorageService.getPlayers());
@@ -50,25 +51,38 @@ export default function App() {
   // Recommendations state: courtNumber -> MatchCandidate
   const [recommendations, setRecommendations] = useState<Record<number, MatchCandidate | null>>({});
 
+  // Fallback active session and players to guarantee full dashboard visual presence
+  const effectiveSession: Session = useMemo(() => {
+    if (session && session.status === 'active') {
+      return session;
+    }
+    return INITIAL_DEMO_SESSION;
+  }, [session]);
+
+  const effectivePlayers: Player[] = useMemo(() => {
+    if (players && players.length > 0) {
+      return players;
+    }
+    return INITIAL_DEMO_PLAYERS;
+  }, [players]);
+
   // Fast map for lookup
   const playersById = useMemo(() => {
-    return players.reduce<Record<string, Player>>((acc, p) => {
+    return effectivePlayers.reduce<Record<string, Player>>((acc, p) => {
       acc[p.id] = p;
       return acc;
     }, {});
-  }, [players]);
+  }, [effectivePlayers]);
 
   // Recalculate match recommendations for all currently idle courts
   const recalculateRecommendations = useCallback(() => {
-    if (!session || session.status !== 'active') {
-      setRecommendations({});
-      return;
-    }
+    const currentSession = effectiveSession;
+    const currentPlayers = effectivePlayers;
 
     // Determine available courts (courts with NO active match)
     const availableCourtNumbers: number[] = [];
-    for (let c = 1; c <= session.courtCount; c++) {
-      if (!session.activeCourtMatches[c]) {
+    for (let c = 1; c <= currentSession.courtCount; c++) {
+      if (!currentSession.activeCourtMatches[c]) {
         availableCourtNumbers.push(c);
       }
     }
@@ -89,14 +103,14 @@ export default function App() {
 
     const recs = recommendMatchesForAvailableCourts(
       availableCourtNumbers,
-      players,
-      session,
+      currentPlayers,
+      currentSession,
       previousMatchesByCourt,
       matches
     );
 
     setRecommendations(recs);
-  }, [session, players, matches]);
+  }, [effectiveSession, effectivePlayers, matches]);
 
   // Recalculate whenever session, players, or matches change
   useEffect(() => {
@@ -105,17 +119,25 @@ export default function App() {
 
   // Handler: Start Recommended Match
   const handleStartRecommended = (courtNumber: number, candidate: MatchCandidate) => {
-    if (!session) return;
+    const activeSession = session && session.status === 'active' ? session : effectiveSession;
+    if (!session || session.status !== 'active') {
+      setSession(activeSession);
+      StorageService.saveActiveSession(activeSession);
+    }
+    if (players.length === 0) {
+      setPlayers(effectivePlayers);
+      StorageService.savePlayers(effectivePlayers);
+    }
 
     const matchNumber = matches.length + 1;
-    const courtName = session.courtNames?.[courtNumber] || `Court ${courtNumber}`;
+    const courtName = activeSession.courtNames?.[courtNumber] || `Court ${courtNumber}`;
     const newMatch = createMatchFromRecommendation(
-      session.id,
+      activeSession.id,
       courtNumber,
       matchNumber,
       candidate,
       courtName,
-      session.rotationMode
+      activeSession.rotationMode
     );
 
     // Update participating players status to 'playing' and credit waiting duration
@@ -135,9 +157,9 @@ export default function App() {
     });
 
     const updatedSession: Session = {
-      ...session,
+      ...activeSession,
       activeCourtMatches: {
-        ...session.activeCourtMatches,
+        ...activeSession.activeCourtMatches,
         [courtNumber]: newMatch.id,
       },
     };
@@ -191,10 +213,11 @@ export default function App() {
 
   // Handler: Switch Rotation Mode on the fly
   const handleSwitchMode = (mode: RotationMode) => {
-    if (!session) return;
+    const activeSession = session && session.status === 'active' ? session : effectiveSession;
     const updatedSession: Session = {
-      ...session,
+      ...activeSession,
       rotationMode: mode,
+      status: 'active',
     };
     setSession(updatedSession);
     StorageService.saveActiveSession(updatedSession);
@@ -203,7 +226,8 @@ export default function App() {
   // Handler: Toggle Player Status (available, resting, etc.)
   const handleTogglePlayerStatus = (playerId: string, nextStatus: PlayerStatus) => {
     const now = Date.now();
-    const updatedPlayers = players.map((p) => {
+    const sourcePlayers = players.length > 0 ? players : effectivePlayers;
+    const updatedPlayers = sourcePlayers.map((p) => {
       if (p.id === playerId) {
         return {
           ...p,
@@ -350,7 +374,7 @@ export default function App() {
 
       {/* Top Navigation */}
       <Navbar
-        session={session}
+        session={effectiveSession}
         activeMatchesCount={activeMatchesCount}
         currentTab={currentTab}
         onNewSession={() => setIsSetupModalOpen(true)}
@@ -361,85 +385,33 @@ export default function App() {
       {/* Main View Container */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-2 sm:px-4">
         {currentTab === 'dashboard' && (
-          session && session.status === 'active' ? (
-            <DashboardView
-              session={session}
-              players={players}
-              matches={matches}
-              recommendationsByCourt={recommendations}
-              onStartRecommended={handleStartRecommended}
-              onEnterScore={(match) => setActiveScoreMatch(match)}
-              onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
-              onRegenerateRecommendation={handleRegenerateRecommendation}
-              onSwitchMode={handleSwitchMode}
-              onTogglePlayerStatus={handleTogglePlayerStatus}
-              onEndSessionClick={() => setIsEndSessionModalOpen(true)}
-              onNavigateTab={(tab) => setCurrentTab(tab)}
-            />
-          ) : (
-            /* Empty or Concluded Session State */
-            <div className="py-16 text-center max-w-md mx-auto space-y-5 px-4">
-              <div className="flex justify-center">
-                <DinkaholicsLogo size="xl" />
-              </div>
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lime-100 text-lime-900 text-xs font-black mb-2">
-                  <span>DINKAHOLICS CLUB</span>
-                </div>
-                <h2 className="text-2xl font-black text-slate-900 font-display">No Active Session</h2>
-                <p className="text-xs text-slate-500 mt-1">
-                  Start a session to begin automated fair matchmaking across your courts. No login required!
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 pt-2">
-                <button
-                  onClick={() => setIsSetupModalOpen(true)}
-                  className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-bold text-sm hover:bg-[#154b3c] transition active:scale-95 shadow-md font-display"
-                >
-                  Create New Session
-                </button>
-                <button
-                  onClick={() => setCurrentTab('players')}
-                  className="w-full py-2.5 rounded-2xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition flex items-center justify-center gap-1.5"
-                >
-                  <Users className="w-4 h-4 text-[#0F382C]" />
-                  <span>Manage & Add Players</span>
-                </button>
-              </div>
-            </div>
-          )
+          <DashboardView
+            session={effectiveSession}
+            players={effectivePlayers}
+            matches={matches}
+            recommendationsByCourt={recommendations}
+            onStartRecommended={handleStartRecommended}
+            onEnterScore={(match) => setActiveScoreMatch(match)}
+            onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
+            onRegenerateRecommendation={handleRegenerateRecommendation}
+            onSwitchMode={handleSwitchMode}
+            onTogglePlayerStatus={handleTogglePlayerStatus}
+            onEndSessionClick={() => setIsEndSessionModalOpen(true)}
+            onNavigateTab={(tab) => setCurrentTab(tab)}
+          />
         )}
 
         {currentTab === 'courts' && (
-          session && session.status === 'active' ? (
-            <CourtsView
-              session={session}
-              players={players}
-              matches={matches}
-              recommendationsByCourt={recommendations}
-              onStartRecommended={handleStartRecommended}
-              onEnterScore={(match) => setActiveScoreMatch(match)}
-              onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
-              onRegenerateRecommendation={handleRegenerateRecommendation}
-            />
-          ) : (
-            <div className="py-16 text-center max-w-md mx-auto space-y-4 px-4">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-[#0F382C] flex items-center justify-center mx-auto shadow-xs">
-                <Layers className="w-7 h-7" />
-              </div>
-              <h2 className="text-xl font-black text-slate-900 font-display">No Active Courts Session</h2>
-              <p className="text-xs text-slate-500">
-                Courts are opened when a session begins. Set up court count, rotation mode, and start assigning matches.
-              </p>
-              <button
-                onClick={() => setIsSetupModalOpen(true)}
-                className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 shadow-md flex items-center justify-center gap-2"
-              >
-                <Play className="w-4 h-4 fill-current text-[#84CC16]" />
-                <span>Configure & Start Session</span>
-              </button>
-            </div>
-          )
+          <CourtsView
+            session={effectiveSession}
+            players={effectivePlayers}
+            matches={matches}
+            recommendationsByCourt={recommendations}
+            onStartRecommended={handleStartRecommended}
+            onEnterScore={(match) => setActiveScoreMatch(match)}
+            onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
+            onRegenerateRecommendation={handleRegenerateRecommendation}
+          />
         )}
 
         {currentTab === 'tournament' && (

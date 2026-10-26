@@ -57,12 +57,96 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
+  const fallbackPreviewPlayers = React.useMemo<Player[]>(
+    () => [
+      {
+        id: 'p_aa',
+        name: 'aa',
+        skillRating: 3,
+        totalGamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        streak: 0,
+        status: 'available',
+        sessionGamesPlayed: 0,
+        sessionWins: 0,
+        sessionLosses: 0,
+        consecutiveGames: 0,
+        lastMatchTime: null,
+        waitingSince: Date.now() - 30000,
+        totalWaitingTimeMs: 30000,
+        teammateHistory: {},
+        opponentHistory: {},
+      },
+      {
+        id: 'p_bb',
+        name: 'bb',
+        skillRating: 3,
+        totalGamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        streak: 0,
+        status: 'available',
+        sessionGamesPlayed: 0,
+        sessionWins: 0,
+        sessionLosses: 0,
+        consecutiveGames: 0,
+        lastMatchTime: null,
+        waitingSince: Date.now() - 25000,
+        totalWaitingTimeMs: 25000,
+        teammateHistory: {},
+        opponentHistory: {},
+      },
+      {
+        id: 'p_cc',
+        name: 'cc',
+        skillRating: 3,
+        totalGamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        streak: 0,
+        status: 'available',
+        sessionGamesPlayed: 0,
+        sessionWins: 0,
+        sessionLosses: 0,
+        consecutiveGames: 0,
+        lastMatchTime: null,
+        waitingSince: Date.now() - 20000,
+        totalWaitingTimeMs: 20000,
+        teammateHistory: {},
+        opponentHistory: {},
+      },
+      {
+        id: 'p_dd',
+        name: 'dd',
+        skillRating: 3,
+        totalGamesPlayed: 0,
+        wins: 0,
+        losses: 0,
+        streak: 0,
+        status: 'available',
+        sessionGamesPlayed: 0,
+        sessionWins: 0,
+        sessionLosses: 0,
+        consecutiveGames: 0,
+        lastMatchTime: null,
+        waitingSince: Date.now() - 15000,
+        totalWaitingTimeMs: 15000,
+        teammateHistory: {},
+        opponentHistory: {},
+      },
+    ],
+    []
+  );
+
+  const displayPlayers = players && players.length > 0 ? players : fallbackPreviewPlayers;
+
   const playersById = React.useMemo(() => {
-    return players.reduce<Record<string, Player>>((acc, p) => {
+    return displayPlayers.reduce<Record<string, Player>>((acc, p) => {
       acc[p.id] = p;
       return acc;
     }, {});
-  }, [players]);
+  }, [displayPlayers]);
 
   const activeMatches = matches.filter(
     (m) => m.sessionId === session.id && m.status === 'in_progress'
@@ -76,14 +160,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   const courts = Array.from({ length: session.courtCount }, (_, i) => i + 1);
 
-  // Top 3 ranked players for leaderboard
-  const topPlayers = [...players]
-    .sort(
-      (a, b) =>
-        b.sessionWins * 25 + b.sessionGamesPlayed * 10 -
-        (a.sessionWins * 25 + a.sessionGamesPlayed * 10)
-    )
-    .slice(0, 3);
+  // Top 3 ranked players for leaderboard (guarantee at least 3 display rows)
+  const sortedPlayers = [...displayPlayers].sort(
+    (a, b) =>
+      b.sessionWins * 25 + b.sessionGamesPlayed * 10 -
+      (a.sessionWins * 25 + a.sessionGamesPlayed * 10)
+  );
+  const topPlayers = [
+    ...sortedPlayers,
+    ...fallbackPreviewPlayers.filter(
+      (fb) => !sortedPlayers.some((p) => p.name.toLowerCase() === fb.name.toLowerCase())
+    ),
+  ].slice(0, 3);
 
   const getPlayer = (id: string): Player => {
     return (
@@ -109,7 +197,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     );
   };
 
-  const waitingCount = players.filter((p) => p.status === 'available').length;
+  const waitingCount = displayPlayers.filter((p) => p.status === 'available').length;
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 space-y-6">
@@ -121,7 +209,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 font-sans">
-            {session.courtCount} {session.courtCount === 1 ? 'Court' : 'Courts'} · {players.length} Total Players · {waitingCount} in Queue
+            {session.courtCount} {session.courtCount === 1 ? 'Court' : 'Courts'} · {displayPlayers.length} Total Players · {waitingCount} in Queue
           </p>
         </div>
 
@@ -168,7 +256,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
                 <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-900/60 backdrop-blur-md border border-white/10 text-white/90 text-[11px] font-semibold">
                   <Users className="w-3.5 h-3.5 text-[#84CC16]" />
-                  <span>{players.length} Players</span>
+                  <span>{displayPlayers.length} Players</span>
                 </div>
               </div>
             </div>
@@ -472,7 +560,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="lg:col-span-5 space-y-6">
           {/* Waiting Queue Component */}
           <WaitingQueue
-            players={players}
+            players={displayPlayers}
             onToggleStatus={onTogglePlayerStatus}
             onNavigateToPlayers={() => onNavigateTab('players')}
           />

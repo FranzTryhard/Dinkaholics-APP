@@ -41,32 +41,27 @@ function safeRemove(key: string): void {
 
 export class StorageService {
   /**
-   * Load all saved players. If none exist, initializes with default demo players.
+   * Load all saved players. If none exist, initializes with default starter players.
    */
   static getPlayers(): Player[] {
     try {
       const data = safeGet(PLAYERS_KEY);
       if (data) {
         const parsed = JSON.parse(data);
-        if (Array.isArray(parsed)) {
-          // Filter out any predefined demo players and ensure default avatar
-          const nonDemo = parsed
-            .filter((p: Player) => !p.isDemo && !p.id.match(/^p([1-9]|10)$/))
-            .map((p: Player) => ({
-              ...p,
-              avatar: p.avatar && p.avatar.trim() ? p.avatar : DEFAULT_PLAYER_AVATAR,
-            }));
-          if (nonDemo.length !== parsed.length) {
-            this.savePlayers(nonDemo);
-          }
-          return nonDemo;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const formatted = parsed.map((p: Player) => ({
+            ...p,
+            avatar: p.avatar && p.avatar.trim() ? p.avatar : DEFAULT_PLAYER_AVATAR,
+          }));
+          return formatted;
         }
       }
     } catch (e) {
       console.error('Failed to read players from storage', e);
     }
-    this.savePlayers([]);
-    return [];
+    // Return starter players by default so dashboard and queue are fully populated
+    this.savePlayers(INITIAL_DEMO_PLAYERS);
+    return INITIAL_DEMO_PLAYERS;
   }
 
   static savePlayers(players: Player[]): void {
@@ -78,24 +73,21 @@ export class StorageService {
   }
 
   /**
-   * Load active session.
+   * Load active session. If none exists, initializes with default open play session.
    */
   static getActiveSession(): Session | null {
     try {
       const data = safeGet(ACTIVE_SESSION_KEY);
       if (data) {
         const parsed: Session = JSON.parse(data);
-        // Clear old demo session if present
-        if (parsed.id === 'session_demo_1' || (parsed.participantIds && parsed.participantIds.some(id => id.match(/^p([1-9]|10)$/)))) {
-          safeRemove(ACTIVE_SESSION_KEY);
-          return null;
-        }
         return parsed;
       }
     } catch (e) {
       console.error('Failed to read active session', e);
     }
-    return null;
+    // Return active starter session by default so dashboard is active
+    this.saveActiveSession(INITIAL_DEMO_SESSION);
+    return INITIAL_DEMO_SESSION;
   }
 
   static saveActiveSession(session: Session | null): void {
@@ -119,12 +111,7 @@ export class StorageService {
       if (data) {
         const parsed = JSON.parse(data);
         if (Array.isArray(parsed)) {
-          // Remove old demo matches
-          const nonDemo = parsed.filter((m: Match) => !m.id.startsWith('demo_match_'));
-          if (nonDemo.length !== parsed.length) {
-            this.saveMatches(nonDemo);
-          }
-          return nonDemo;
+          return parsed;
         }
       }
     } catch (e) {
@@ -142,13 +129,15 @@ export class StorageService {
   }
 
   /**
-   * Resets data to clean empty state.
+   * Resets data to initial starter state.
    */
   static resetToDemo(): { players: Player[]; session: Session | null; matches: Match[] } {
     safeRemove(PLAYERS_KEY);
     safeRemove(ACTIVE_SESSION_KEY);
     safeRemove(MATCHES_KEY);
-    return { players: [], session: null, matches: [] };
+    this.savePlayers(INITIAL_DEMO_PLAYERS);
+    this.saveActiveSession(INITIAL_DEMO_SESSION);
+    return { players: INITIAL_DEMO_PLAYERS, session: INITIAL_DEMO_SESSION, matches: [] };
   }
 
   /**
