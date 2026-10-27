@@ -88,7 +88,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                   </span>
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight leading-none truncate max-w-full">{tab.label}</span>
+              <span className="text-[10px] mt-1 tracking-tight leading-none truncate max-w-full whitespace-nowrap">{tab.label}</span>
               {isActive && (
                 <span className="w-1.5 h-1.5 rounded-full bg-[#35D879] mt-0.5" />
               )}

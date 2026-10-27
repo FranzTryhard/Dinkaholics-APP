@@ -178,14 +178,14 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
               <button
                 type="button"
                 onClick={() => setManualWinner('teamA')}
-                className={`mt-3 w-full py-1.5 text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1 ${
+                className={`mt-3 w-full py-1.5 px-2 text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1 ${
                   calculatedWinner === 'teamA'
                     ? 'bg-[#103F32] text-white shadow-2xs'
                     : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
                 }`}
               >
-                {calculatedWinner === 'teamA' && <CheckCircle className="w-3.5 h-3.5" />}
-                <span>{calculatedWinner === 'teamA' ? 'Winner' : 'Set as Winner'}</span>
+                {calculatedWinner === 'teamA' && <CheckCircle className="w-3.5 h-3.5 shrink-0" />}
+                <span className="whitespace-nowrap">{calculatedWinner === 'teamA' ? 'Winner' : 'Set as Winner'}</span>
               </button>
             </div>
 
@@ -223,14 +223,14 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
               <button
                 type="button"
                 onClick={() => setManualWinner('teamB')}
-                className={`mt-3 w-full py-1.5 text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1 ${
+                className={`mt-3 w-full py-1.5 px-2 text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1 ${
                   calculatedWinner === 'teamB'
                     ? 'bg-[#103F32] text-white shadow-2xs'
                     : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
                 }`}
               >
-                {calculatedWinner === 'teamB' && <CheckCircle className="w-3.5 h-3.5" />}
-                <span>{calculatedWinner === 'teamB' ? 'Winner' : 'Set as Winner'}</span>
+                {calculatedWinner === 'teamB' && <CheckCircle className="w-3.5 h-3.5 shrink-0" />}
+                <span className="whitespace-nowrap">{calculatedWinner === 'teamB' ? 'Winner' : 'Set as Winner'}</span>
               </button>
             </div>
           </div>

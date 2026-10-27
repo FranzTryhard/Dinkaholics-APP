@@ -61,25 +61,25 @@ export const HeroScoreCard: React.FC<HeroScoreCardProps> = ({
         </div>
       </div>
 
-      {/* Unboxed inline metadata bottom bar */}
-      <div className="px-5 py-3 bg-[#0A2B22]/90 border-t border-white/10 flex items-center justify-between text-xs font-medium text-[#E5F8EC]/90">
-        <div className="flex items-center gap-3">
-          <span>
-            <strong className="text-white font-mono tabular-nums text-sm">{totalMatches}</strong> matches played
+      {/* Metadata bottom bar */}
+      <div className="px-5 py-2.5 sm:py-3 bg-[#0A2B22]/90 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-medium text-[#E5F8EC]/90">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <span className="whitespace-nowrap">
+            <strong className="text-white font-mono tabular-nums text-sm">{totalMatches}</strong> matches
           </span>
           <span className="text-[#35D879]/40">·</span>
-          <span>
+          <span className="whitespace-nowrap">
             <strong className="text-[#35D879] font-mono tabular-nums text-sm">{totalWins}</strong> wins
           </span>
           <span className="text-[#35D879]/40">·</span>
-          <span>
+          <span className="whitespace-nowrap">
             <strong className="text-[#E5F8EC] font-mono tabular-nums text-sm">{totalLosses}</strong> losses
           </span>
         </div>
 
-        <div className="flex items-center gap-1 text-[11px] text-[#E5F8EC]/80 hover:text-white transition-colors">
-          <span>View leaderboard</span>
-          <ChevronRight className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-1 text-[11px] text-[#E5F8EC]/80 hover:text-white transition-colors whitespace-nowrap ml-auto sm:ml-0">
+          <span>Leaderboard</span>
+          <ChevronRight className="w-3.5 h-3.5 shrink-0" />
         </div>
       </div>
     </div>

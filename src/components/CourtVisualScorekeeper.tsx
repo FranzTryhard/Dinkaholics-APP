@@ -713,38 +713,46 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
           </button>
         )}
 
-        {/* Scoring Mode Toggle */}
-        <div className="flex items-center justify-between w-full mt-2 mb-1 px-1">
-          <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
-            <button
-              type="button"
-              onClick={() => setScoringMode('side_out')}
-              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
-                scoringMode === 'side_out'
-                  ? 'bg-[#0F382C] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Side-Out (1-2-Sideout)
-            </button>
-            <button
-              type="button"
-              onClick={() => setScoringMode('rally')}
-              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
-                scoringMode === 'rally'
-                  ? 'bg-[#0F382C] text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Rally Scoring
-            </button>
+        {/* Scoring Mode Toggle & Supporting Description */}
+        <div className="w-full mt-2.5 mb-1 px-1 space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200 shrink-0">
+              <button
+                type="button"
+                onClick={() => setScoringMode('side_out')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
+                  scoringMode === 'side_out'
+                    ? 'bg-[#0F382C] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Side-Out
+              </button>
+              <button
+                type="button"
+                onClick={() => setScoringMode('rally')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
+                  scoringMode === 'rally'
+                    ? 'bg-[#0F382C] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Rally
+              </button>
+            </div>
+            <span className="text-[11px] text-[#103F32] font-semibold bg-[#E5F8EC] border border-[#C4EED3] px-2 py-0.5 rounded-md whitespace-nowrap">
+              {scoringMode === 'side_out' ? 'Fault = Next Server' : 'Point on Rally'}
+            </span>
           </div>
-          <span className="text-[10px] text-slate-400 font-medium">
-            {scoringMode === 'side_out' ? 'Fault = Next Server' : 'Point on every rally'}
-          </span>
+
+          <p className="text-[11px] text-slate-500 leading-normal">
+            {scoringMode === 'side_out'
+              ? 'Traditional 1–2-Sideout: Serve must be held to score points.'
+              : 'Rally Point: A point is awarded to the rally winner on every turn.'}
+          </p>
         </div>
 
-        <div className="text-xs font-medium text-slate-600 mt-1 text-center">
+        <div className="text-xs font-medium text-slate-600 mt-0.5 text-center">
           Tap court area or buttons below to score:
         </div>
 
@@ -927,9 +935,9 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
                 : 'bg-[#1b4b3c] hover:bg-[#235d4b]'
             }`}
           >
-            <span>+1 Team 1 ({scoreA})</span>
+            <span className="whitespace-nowrap">+1 Team 1 ({scoreA})</span>
             {servingTeam === 'teamA' && (
-              <span className="block text-[9px] text-[#84CC16] font-normal">
+              <span className="block text-[9px] text-[#84CC16] font-normal whitespace-nowrap">
                 Serving #{serverNumber}
               </span>
             )}
@@ -937,11 +945,11 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
 
           <button
             onClick={handleSideOut}
-            className="touch-target px-3 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex flex-col items-center justify-center transition active:scale-95 shrink-0"
+            className="touch-target px-2.5 sm:px-3 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex flex-col items-center justify-center transition active:scale-95 shrink-0"
             title="Fault / Change Server"
           >
-            <span className="text-[10px] text-slate-500 font-medium">Fault / Change</span>
-            <span className="text-[11px] text-[#0F382C] font-extrabold">
+            <span className="text-[10px] text-slate-500 font-medium whitespace-nowrap">Fault / Change</span>
+            <span className="text-[11px] text-[#0F382C] font-extrabold whitespace-nowrap">
               {scoringMode === 'side_out' && serverNumber === 1 ? 'Server #2' : 'Side Out'}
             </span>
           </button>
@@ -954,9 +962,9 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
                 : 'bg-[#1b4b3c] hover:bg-[#235d4b]'
             }`}
           >
-            <span>+1 Team 2 ({scoreB})</span>
+            <span className="whitespace-nowrap">+1 Team 2 ({scoreB})</span>
             {servingTeam === 'teamB' && (
-              <span className="block text-[9px] text-[#84CC16] font-normal">
+              <span className="block text-[9px] text-[#84CC16] font-normal whitespace-nowrap">
                 Serving #{serverNumber}
               </span>
             )}

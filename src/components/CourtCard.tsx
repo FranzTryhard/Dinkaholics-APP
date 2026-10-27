@@ -184,7 +184,8 @@ export const CourtCard: React.FC<CourtCardProps> = ({
               className="cssbuttons-io-button w-full justify-center"
             >
               <Trophy className="w-4 h-4 text-[#0A2B22]" />
-              <span>Record Score & Next Match</span>
+              <span className="hidden sm:inline">Record Score & Next Match</span>
+              <span className="sm:hidden">Record Score</span>
             </button>
           </div>
         ) : (

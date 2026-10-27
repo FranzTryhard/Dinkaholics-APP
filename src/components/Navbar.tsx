@@ -149,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <button
             onClick={onNewSession}
-            className="cssbuttons-io-button btn-sm"
+            className="cssbuttons-io-button btn-sm whitespace-nowrap"
           >
             <svg
               height="18"
@@ -160,7 +160,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               <path d="M0 0h24v24H0z" fill="none"></path>
               <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
             </svg>
-            <span>New Session</span>
+            <span className="hidden xs:inline">New Session</span>
+            <span className="xs:hidden">New</span>
           </button>
 
           <button

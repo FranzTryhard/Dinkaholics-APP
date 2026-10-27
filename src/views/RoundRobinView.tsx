@@ -222,10 +222,10 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
         </div>
 
         {/* View Switcher Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold self-start sm:self-auto">
+        <div className="flex items-center gap-1 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold self-start sm:self-auto overflow-x-auto no-scrollbar max-w-full">
           <button
             onClick={() => setActiveTab('bracket')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition ${
               activeTab === 'bracket'
                 ? 'bg-[#103F32] text-white shadow-xs'
                 : 'text-[#64748B] hover:text-[#172033]'
@@ -235,18 +235,18 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('standings')}
-            className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
+            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition flex items-center gap-1 ${
               activeTab === 'standings'
                 ? 'bg-[#103F32] text-white shadow-xs'
                 : 'text-[#64748B] hover:text-[#172033]'
             }`}
           >
-            <Medal className="w-3.5 h-3.5 text-amber-400" />
+            <Medal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span>Live Standings</span>
           </button>
           <button
             onClick={() => setActiveTab('matrix')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition ${
               activeTab === 'matrix'
                 ? 'bg-[#103F32] text-white shadow-xs'
                 : 'text-[#64748B] hover:text-[#172033]'
@@ -298,7 +298,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
       {activeTab === 'bracket' && (
         <div className="space-y-5">
           {/* Round Selector Bar */}
-          <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs overflow-x-auto">
+          <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs overflow-x-auto no-scrollbar touch-pan-x">
             <div className="flex items-center gap-1.5">
               {rounds.map((r, idx) => {
                 const roundMatchesCompleted = r.matches.every((m) => m.completed);
@@ -501,7 +501,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                                 }
                                 className="touch-target py-2 px-2 rounded-xl bg-[#F6F8F7] hover:bg-[#103F32] hover:text-white border border-[#E0E7E4] text-[#172033] font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
                               >
-                                <span>T1 Wins (11-7)</span>
+                                <span className="whitespace-nowrap font-mono">T1 (11–7)</span>
                               </button>
                               <button
                                 onClick={() =>
@@ -509,7 +509,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                                 }
                                 className="touch-target py-2 px-2 rounded-xl bg-[#F6F8F7] hover:bg-[#103F32] hover:text-white border border-[#E0E7E4] text-[#172033] font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
                               >
-                                <span>T2 Wins (7-11)</span>
+                                <span className="whitespace-nowrap font-mono">T2 (7–11)</span>
                               </button>
                             </div>
 
@@ -524,10 +524,10 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                                   scoreB: 9,
                                 })
                               }
-                              className="touch-target w-full py-1.5 px-3 rounded-xl border border-[#E0E7E4] bg-white hover:bg-[#F6F8F7] text-[#103F32] font-semibold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1 shadow-2xs"
+                              className="touch-target w-full py-2 px-3 rounded-xl border border-[#E0E7E4] bg-white hover:bg-[#F6F8F7] text-[#103F32] font-semibold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1 shadow-2xs"
                             >
-                              <Edit3 className="w-3.5 h-3.5 text-[#64748B]" />
-                              <span>Custom Score Stepper...</span>
+                              <Edit3 className="w-3.5 h-3.5 text-[#64748B] shrink-0" />
+                              <span className="whitespace-nowrap">Custom Score...</span>
                             </button>
                           </div>
                         )}

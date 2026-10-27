@@ -224,10 +224,10 @@ export const ManualMatchModal: React.FC<ManualMatchModalProps> = ({
           {isReady && (
             <button
               onClick={handleAutoBalanceSelected}
-              className="touch-target w-full py-2.5 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] font-bold text-xs hover:bg-[#C4EED3]/60 transition flex items-center justify-center gap-1.5"
+              className="touch-target w-full py-2.5 px-3 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] font-bold text-xs hover:bg-[#C4EED3]/60 transition flex items-center justify-center gap-1.5"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#103F32]" />
-              <span>Auto-Balance These 4 Players (Rating Diff: {diff})</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#103F32] shrink-0" />
+              <span className="whitespace-nowrap">Auto-Balance Teams (Diff: {diff})</span>
             </button>
           )}
 
