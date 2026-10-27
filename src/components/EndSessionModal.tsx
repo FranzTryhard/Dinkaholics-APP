@@ -43,16 +43,16 @@ export const EndSessionModal: React.FC<EndSessionModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden flex flex-col">
+      <div className="w-full max-w-md rounded-3xl bg-white border border-[#E0E7E4] shadow-2xl overflow-hidden flex flex-col">
         {/* Header Banner */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-900 via-[#0F382C] to-slate-900 text-white flex items-center justify-between shrink-0">
+        <div className="px-6 py-4 bg-gradient-to-r from-[#0A2B22] via-[#103F32] to-[#0A2B22] text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
-              <Trophy className="w-5 h-5 text-[#84CC16]" />
+              <Trophy className="w-5 h-5 text-[#35D879]" />
             </div>
             <div>
               <h3 className="font-black text-white text-base font-display">Conclude Session</h3>
-              <p className="text-[11px] text-white/70">Finalize stats and review highlights</p>
+              <p className="text-[11px] text-white/75">Finalize stats and review highlights</p>
             </div>
           </div>
           <button
@@ -65,14 +65,14 @@ export const EndSessionModal: React.FC<EndSessionModalProps> = ({
 
         <div className="p-5 sm:p-6 space-y-4">
           <div className="text-center py-1">
-            <h4 className="text-lg font-black text-slate-900 font-display">{session.name}</h4>
-            <p className="text-xs text-slate-500 mt-1 flex items-center justify-center gap-2">
+            <h4 className="text-lg font-black text-[#172033] font-display">{session.name}</h4>
+            <p className="text-xs text-[#64748B] mt-1 flex items-center justify-center gap-2">
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-slate-400" />
-                {durationMinutes} mins
+                <Clock className="w-3.5 h-3.5 text-[#64748B]" />
+                <span className="font-mono tabular-nums">{durationMinutes} mins</span>
               </span>
               <span>•</span>
-              <span className="font-semibold text-slate-700">
+              <span className="font-semibold text-[#172033] font-mono tabular-nums">
                 {sessionMatches.length} completed matches
               </span>
             </p>
@@ -80,47 +80,47 @@ export const EndSessionModal: React.FC<EndSessionModalProps> = ({
 
           {/* Highlights grid */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center">
-              <Award className="w-4 h-4 text-emerald-700 mx-auto mb-1" />
-              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Top Wins</div>
-              <div className="text-xs font-black text-slate-900 mt-0.5 truncate">
+            <div className="p-3 rounded-2xl bg-[#E5F8EC] border border-[#C4EED3] text-center">
+              <Award className="w-4 h-4 text-[#103F32] mx-auto mb-1" />
+              <div className="text-[10px] text-[#64748B] uppercase font-bold tracking-wider">Top Wins</div>
+              <div className="text-xs font-black text-[#172033] mt-0.5 truncate">
                 {topWinPlayer ? topWinPlayer.name : '—'}
               </div>
-              <div className="text-[11px] text-emerald-700 font-mono font-bold mt-0.5">
+              <div className="text-[11px] text-[#103F32] font-mono font-bold mt-0.5 tabular-nums">
                 {topWinPlayer ? `${topWinPlayer.sessionWins} wins` : ''}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-100 text-center">
+            <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-center">
               <Flame className="w-4 h-4 text-amber-500 fill-amber-500 mx-auto mb-1" />
-              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Hot Streak</div>
-              <div className="text-xs font-black text-slate-900 mt-0.5 truncate">
+              <div className="text-[10px] text-[#64748B] uppercase font-bold tracking-wider">Hot Streak</div>
+              <div className="text-xs font-black text-[#172033] mt-0.5 truncate">
                 {topStreakPlayer && topStreakPlayer.streak > 0 ? topStreakPlayer.name : '—'}
               </div>
-              <div className="text-[11px] text-amber-600 font-mono font-bold mt-0.5">
+              <div className="text-[11px] text-amber-800 font-mono font-bold mt-0.5 tabular-nums">
                 {topStreakPlayer && topStreakPlayer.streak > 0 ? `${topStreakPlayer.streak}W streak` : 'None'}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/90 text-center">
-              <Users className="w-4 h-4 text-[#0F382C] mx-auto mb-1" />
-              <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Most Active</div>
-              <div className="text-xs font-black text-slate-900 mt-0.5 truncate">
+            <div className="p-3 rounded-2xl bg-[#F6F8F7] border border-[#E0E7E4] text-center">
+              <Users className="w-4 h-4 text-[#103F32] mx-auto mb-1" />
+              <div className="text-[10px] text-[#64748B] uppercase font-bold tracking-wider">Most Active</div>
+              <div className="text-xs font-black text-[#172033] mt-0.5 truncate">
                 {mostActivePlayer ? mostActivePlayer.name : '—'}
               </div>
-              <div className="text-[11px] text-slate-700 font-mono font-bold mt-0.5">
+              <div className="text-[11px] text-[#172033] font-mono font-bold mt-0.5 tabular-nums">
                 {mostActivePlayer ? `${mostActivePlayer.sessionGamesPlayed} games` : ''}
               </div>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 text-xs text-slate-600 leading-relaxed">
+          <div className="p-3.5 rounded-2xl bg-[#F6F8F7] border border-[#E0E7E4] text-xs text-[#64748B] leading-relaxed">
             Ending this session will finalize all ratings, archive active court games, and store the full match history. You can start another session anytime.
           </div>
 
           <div className="pt-2">
             {isEnding ? (
-              <div className="py-2 px-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center">
+              <div className="py-2 px-4 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] flex flex-col items-center justify-center">
                 <PickleballBounceLoader
                   size="sm"
                   theme="light"
@@ -132,7 +132,7 @@ export const EndSessionModal: React.FC<EndSessionModalProps> = ({
               <div className="flex items-center gap-3">
                 <button
                   onClick={onClose}
-                  className="touch-target flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition"
+                  className="touch-target flex-1 py-2.5 rounded-xl border border-[#E0E7E4] bg-white text-[#64748B] hover:bg-[#F6F8F7] hover:text-[#172033] text-xs font-bold transition"
                 >
                   Resume Play
                 </button>

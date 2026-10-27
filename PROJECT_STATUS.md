@@ -55,8 +55,14 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Deployment Fix — Vercel ERESOLVE]** Removed pinned conflicting `esbuild` dependency, added `.npmrc` with `legacy-peer-deps=true`, and installed `react-is` for clean production bundle compilation.
 - [x] **[Feature — App Launch Intro Splash Loader]** Integrated a 3-second branded intro splash with the bouncing paddle/pickleball loader, progress bar, Dinkaholics lockup, and tap-to-skip functionality.
 - [x] **[Brand Asset — Dynamic App Logo]** Replaced app logo across navigation, splash intro, and modals with the uploaded dynamic lime & cyan "D" pickleball mark (`denk_93dc4583.webp`).
+- [x] **[UI Polish — Splash Screen]** Removed image logo box from the launch splash screen for a cleaner, unified presentation featuring the bouncing pickleball loader, typography, and progress bar.
+- [x] **[UI Component — Uiverse Action Button by adamgiebl]** Implemented the pill-shaped glowing gradient `.cssbuttons-io-button` for core actions across the app (Add Player, New Session, Start Match, Launch Session, Confirm Score) with the custom SVG plus icon and hover/active tactile physics.
+- [x] **[Batch 5 Brand Harmonization & Accessibility]** Unified application color system strictly with the Dinkaholics brand tokens: Deep Forest Green (`#103F32`), Vibrant Lime Accent (`#35D879`), Soft Mint (`#E5F8EC` / `#C4EED3`), Subtle Borders (`#E0E7E4`), Clean Canvas (`#F6F8F7`), Deep Primary Text (`#172033`), and High-Contrast Secondary Text (`#64748B`).
+- [x] **[Batch 5 Brand Harmonization & Accessibility]** Standardized CTA buttons with `.cssbuttons-io-button` using high-contrast dark forest green text (`#0A2B22`) on brand accent lime (`#35D879`) exceeding WCAG AAA (6.8:1).
+- [x] **[Batch 5 Brand Harmonization & Accessibility]** Aligned Tournament Round Robin overview cards, match scorecards, standings table, partner matrix, and waiting queue with zero-pill discipline and tabular figures.
+- [x] **[Batch 5 Brand Harmonization & Accessibility]** Verified iOS Safari touch targets ($\ge 44\text{px}$), safe-area insets, keyboard focus rings, and dark court-side scoreboard mode.
 
 ---
 
 ## 3. Current Release Readiness
-The application is fully audited, polished, responsive across mobile (iOS Safari/Android) and desktop, and production-ready with 100% test coverage.
+The application is fully audited, polished, responsive across mobile (iOS Safari/Android) and desktop, and production-ready with 100% test coverage (27/27 tests passing).

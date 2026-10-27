@@ -22,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigateTab,
 }) => {
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E0E7E4] transition-all">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-6">
         {/* Brand Zone */}
         <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => onNavigateTab('dashboard')}>
@@ -30,19 +30,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-slate-900 text-lg tracking-tight leading-none font-display">
+              <span className="font-black text-[#172033] text-lg tracking-tight leading-none font-display">
                 Dinkaholics
               </span>
-              <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#0F382C] text-lime-400">
+              <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#103F32] text-[#35D879] shadow-2xs">
                 DH
               </span>
             </div>
             {session ? (
-              <div className="text-[11px] text-slate-500 font-medium truncate max-w-[140px] sm:max-w-xs mt-0.5">
+              <div className="text-[11px] text-[#64748B] font-medium truncate max-w-[140px] sm:max-w-xs mt-0.5">
                 {session.name}
               </div>
             ) : (
-              <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+              <div className="text-[11px] text-[#64748B] font-medium mt-0.5">
                 Matchmaking & Courts
               </div>
             )}
@@ -50,13 +50,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#64748B]">
           <button
             onClick={() => onNavigateTab('dashboard')}
             className={`transition-colors whitespace-nowrap py-1 ${
               currentTab === 'dashboard'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             Dashboard
@@ -65,14 +65,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigateTab('courts')}
             className={`transition-colors whitespace-nowrap py-1 flex items-center gap-1.5 ${
               currentTab === 'courts'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             <span>Courts</span>
             {activeMatchesCount > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                {activeMatchesCount} live
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#35D879] animate-pulse" />
+                <span>{activeMatchesCount} live</span>
               </span>
             )}
           </button>
@@ -80,12 +81,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigateTab('tournament')}
             className={`transition-colors whitespace-nowrap py-1 flex items-center gap-1.5 ${
               currentTab === 'tournament'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             <span>Round Robin</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3]">
               Bracket
             </span>
           </button>
@@ -93,8 +94,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigateTab('players')}
             className={`transition-colors whitespace-nowrap py-1 ${
               currentTab === 'players'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             Players & Waiting
@@ -103,8 +104,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigateTab('leaderboard')}
             className={`transition-colors whitespace-nowrap py-1 ${
               currentTab === 'leaderboard'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             Leaderboard
@@ -113,8 +114,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigateTab('history')}
             className={`transition-colors whitespace-nowrap py-1 ${
               currentTab === 'history'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             Match Logs
@@ -123,8 +124,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigateTab('settings')}
             className={`transition-colors whitespace-nowrap py-1 ${
               currentTab === 'settings'
-                ? 'text-[#0F382C] border-b-2 border-[#0F382C]'
-                : 'hover:text-slate-900'
+                ? 'text-[#103F32] border-b-2 border-[#103F32] font-bold'
+                : 'hover:text-[#172033]'
             }`}
           >
             Rotation Rules
@@ -148,9 +149,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           <button
             onClick={onNewSession}
-            className="touch-target px-3.5 py-2 rounded-xl bg-[#0F382C] text-white font-semibold text-xs hover:bg-[#165342] transition active:scale-95 shadow-sm whitespace-nowrap"
+            className="cssbuttons-io-button btn-sm"
           >
-            <Plus className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+            <svg
+              height="18"
+              width="18"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
+            </svg>
             <span>New Session</span>
           </button>
 

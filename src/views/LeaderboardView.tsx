@@ -41,23 +41,23 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 font-display">
-            <Trophy className="w-6 h-6 text-[#0F382C]" />
+          <h1 className="text-xl sm:text-2xl font-black text-[#172033] tracking-tight flex items-center gap-2 font-display">
+            <Trophy className="w-6 h-6 text-[#103F32]" />
             <span>Player Standings & Rankings</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[#64748B] mt-0.5">
             Competitive performance points weighted by win rate, level, and games played
           </p>
         </div>
 
         {/* Scope Toggle */}
-        <div className="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold border border-slate-200">
+        <div className="inline-flex items-center gap-1 bg-[#F6F8F7] p-1 rounded-xl text-xs font-bold border border-[#E0E7E4]">
           <button
             onClick={() => setScope('session')}
             className={`touch-target px-3.5 py-1.5 rounded-lg transition ${
               scope === 'session'
-                ? 'bg-[#0F382C] text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#103F32] text-white shadow-2xs'
+                : 'text-[#64748B] hover:text-[#172033]'
             }`}
           >
             Session ({rankedPlayers.filter((p) => p.sessionGamesPlayed > 0).length})
@@ -66,8 +66,8 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
             onClick={() => setScope('lifetime')}
             className={`touch-target px-3.5 py-1.5 rounded-lg transition ${
               scope === 'lifetime'
-                ? 'bg-[#0F382C] text-white shadow-2xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#103F32] text-white shadow-2xs'
+                : 'text-[#64748B] hover:text-[#172033]'
             }`}
           >
             All-Time
@@ -83,7 +83,6 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
           const losses = scope === 'session' ? player.sessionLosses : player.losses;
           const pts = wins * 25 + games * 10 + player.skillRating * 15;
 
-          const isTop3 = index < 3;
           const rankBadgeColor =
             index === 0
               ? 'bg-amber-100 text-amber-900 border-amber-300 font-black'
@@ -91,20 +90,20 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
               ? 'bg-slate-200 text-slate-800 border-slate-300 font-black'
               : index === 2
               ? 'bg-amber-50 text-amber-800 border-amber-200 font-black'
-              : 'bg-slate-100 text-slate-500 border-slate-200 font-bold';
+              : 'bg-[#F6F8F7] text-[#64748B] border-[#E0E7E4] font-bold';
 
           return (
             <div
               key={player.id}
               onClick={() => setSelectedPlayer(player)}
-              className={`flex items-center justify-between p-4 rounded-2xl bg-white border shadow-xs hover:border-[#0F382C]/50 hover:shadow-sm cursor-pointer transition ${
-                index === 0 ? 'border-amber-200/80 bg-gradient-to-r from-amber-50/20 to-white' : 'border-slate-200/90'
+              className={`flex items-center justify-between p-4 rounded-2xl bg-white border shadow-xs hover:border-[#103F32]/50 hover:shadow-sm cursor-pointer transition ${
+                index === 0 ? 'border-amber-300/80 bg-gradient-to-r from-amber-50/30 to-white' : 'border-[#E0E7E4]'
               }`}
               title="Click to view performance trends & player details"
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <span
-                  className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center font-mono shrink-0 ${rankBadgeColor}`}
+                  className={`w-7 h-7 rounded-lg border text-xs flex items-center justify-center font-mono tabular-nums shrink-0 ${rankBadgeColor}`}
                 >
                   #{index + 1}
                 </span>
@@ -113,34 +112,34 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
                   <img
                     src={player.avatar}
                     alt={player.name}
-                    className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
+                    className="w-10 h-10 rounded-full object-cover border border-[#E0E7E4] shrink-0"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-slate-100 text-[#0F382C] font-bold text-sm flex items-center justify-center shrink-0 border border-slate-200">
+                  <div className="w-10 h-10 rounded-full bg-[#E5F8EC] text-[#103F32] font-bold text-sm flex items-center justify-center shrink-0 border border-[#C4EED3]">
                     {player.name.charAt(0)}
                   </div>
                 )}
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-sm font-bold text-slate-900 truncate max-w-[130px] sm:max-w-none" title={player.name}>
+                    <span className="text-sm font-bold text-[#172033] truncate max-w-[130px] sm:max-w-none" title={player.name}>
                       {player.name}
                     </span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-[#0F382C] border border-emerald-100 shrink-0">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] shrink-0">
                       L{player.skillRating}
                     </span>
                     {player.streak >= 2 && (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold shrink-0 whitespace-nowrap shadow-2xs">
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold shrink-0 whitespace-nowrap shadow-2xs font-mono tabular-nums">
                         <Flame className="w-3 h-3 fill-amber-500 text-amber-500" />
                         <span>{player.streak}W Streak</span>
                       </span>
                     )}
                   </div>
 
-                  <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                  <div className="text-[11px] text-[#64748B] mt-1 flex items-center gap-1.5 flex-wrap font-mono tabular-nums">
                     <span className="whitespace-nowrap">{games} {games === 1 ? 'match' : 'matches'}</span>
-                    <span className="text-slate-300">·</span>
-                    <span className="text-emerald-700 font-semibold whitespace-nowrap">
+                    <span className="text-[#64748B]/60">·</span>
+                    <span className="text-[#103F32] font-semibold whitespace-nowrap">
                       {wins}W - {losses}L
                     </span>
                   </div>
@@ -149,14 +148,14 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ players, match
 
               <div className="flex items-center gap-3 shrink-0 ml-3 text-right">
                 <div>
-                  <div className="text-sm sm:text-base font-black font-mono tabular-nums text-[#0F382C] whitespace-nowrap">
+                  <div className="text-sm sm:text-base font-black font-mono tabular-nums text-[#103F32] whitespace-nowrap">
                     {pts} pts
                   </div>
-                  <div className="text-[11px] text-slate-400 whitespace-nowrap">
+                  <div className="text-[11px] text-[#64748B] whitespace-nowrap font-mono tabular-nums">
                     {games > 0 ? `${Math.round((wins / games) * 100)}% win rate` : 'No matches'}
                   </div>
                 </div>
-                <div className="p-1.5 rounded-lg bg-slate-50 text-slate-400 hover:text-[#0F382C] transition shrink-0 hidden xs:block">
+                <div className="p-1.5 rounded-lg bg-[#F6F8F7] text-[#64748B] hover:text-[#103F32] transition shrink-0 hidden xs:block border border-[#E0E7E4]">
                   <TrendingUp className="w-4 h-4" />
                 </div>
               </div>

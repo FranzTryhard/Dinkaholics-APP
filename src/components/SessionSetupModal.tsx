@@ -123,16 +123,16 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-3 sm:p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-200">
-      <div className="w-full max-w-xl max-h-[92vh] rounded-3xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden flex flex-col">
+      <div className="w-full max-w-xl max-h-[92vh] rounded-3xl bg-white border border-[#E0E7E4] shadow-2xl overflow-hidden flex flex-col">
         {/* Header - Signature Dinkaholics Emerald Gradient */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-900 via-[#0F382C] to-slate-900 text-white flex items-center justify-between shrink-0">
+        <div className="px-6 py-4 bg-gradient-to-r from-[#0A2B22] via-[#103F32] to-[#0A2B22] text-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <DinkaholicsLogo size="md" />
             <div>
               <h2 className="text-lg font-black text-white tracking-tight font-display flex items-center gap-2">
                 <span>Configure New Session</span>
               </h2>
-              <p className="text-xs text-white/70 mt-0.5">
+              <p className="text-xs text-white/75 mt-0.5">
                 Set up court count, matchmaking algorithm, and player roster
               </p>
             </div>
@@ -527,7 +527,7 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
         </form>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 shrink-0">
+        <div className="px-6 py-4 bg-[#F6F8F7] border-t border-[#E0E7E4] flex items-center justify-between gap-3 shrink-0">
           {isStarting ? (
             <div className="w-full flex items-center justify-center py-1">
               <PickleballBounceLoader
@@ -542,7 +542,7 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="touch-target px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 text-xs font-bold transition"
+                className="touch-target px-4 py-2.5 rounded-xl border border-[#E0E7E4] bg-white text-[#64748B] hover:bg-[#F6F8F7] hover:text-[#172033] text-xs font-bold transition"
               >
                 Cancel
               </button>
@@ -551,9 +551,9 @@ export const SessionSetupModal: React.FC<SessionSetupModalProps> = ({
                 type="button"
                 onClick={handleSubmit}
                 disabled={!isPlayerCountValid}
-                className="touch-target px-6 py-2.5 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 shadow-md font-display"
+                className="cssbuttons-io-button disabled:opacity-50 disabled:pointer-events-none"
               >
-                <Play className="w-4 h-4 fill-current text-[#84CC16]" />
+                <Play className="w-4 h-4 fill-current" />
                 <span>Launch Session ({selectedPlayerIds.length} Players)</span>
               </button>
             </>

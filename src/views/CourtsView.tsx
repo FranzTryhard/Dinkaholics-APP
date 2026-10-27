@@ -38,16 +38,16 @@ export const CourtsView: React.FC<CourtsViewProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 font-display">
-            <Layers className="w-6 h-6 text-[#0F382C]" />
+          <h1 className="text-xl sm:text-2xl font-black text-[#172033] tracking-tight flex items-center gap-2 font-display">
+            <Layers className="w-6 h-6 text-[#103F32]" />
             <span>Courts & Assignments</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[#64748B] mt-0.5">
             Monitor live games, record scores, or start recommended doubles matchups.
           </p>
         </div>
 
-        <span className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-emerald-50 text-[#0F382C] border border-emerald-200 text-xs font-bold">
+        <span className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] text-xs font-bold font-mono tabular-nums">
           {session.courtCount} Active {session.courtCount === 1 ? 'Court' : 'Courts'}
         </span>
       </div>

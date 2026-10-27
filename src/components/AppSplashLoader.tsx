@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { PickleballIcon } from './PickleballIcon';
 
 interface AppSplashLoaderProps {
   durationMs?: number; // default 3000ms
@@ -65,21 +64,8 @@ export const AppSplashLoader: React.FC<AppSplashLoaderProps> = ({
           <div className="loader scale-[1.7] transform-gpu" aria-hidden="true" />
         </div>
 
-        {/* Brand Logo & Lockup */}
-        <div className="mt-2 space-y-2 flex flex-col items-center">
-          <div className="w-16 h-16 rounded-2xl bg-white p-1 shadow-lg border border-white/20 overflow-hidden flex items-center justify-center">
-            <img
-              src="/assets/aistudio/denk_93dc4583.webp"
-              alt="Dinkaholics Logo"
-              className="w-full h-full object-contain"
-            />
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#84CC16]/15 border border-[#84CC16]/30 text-[#A3E635] text-[11px] font-black uppercase tracking-widest font-mono">
-            <PickleballIcon className="w-3.5 h-3.5 text-[#84CC16]" />
-            <span>Open Play Engine</span>
-          </div>
-
+        {/* Brand Lockup */}
+        <div className="mt-3 space-y-2 flex flex-col items-center">
           <h1 className="text-3xl font-black tracking-tight text-white font-display flex items-center justify-center gap-1">
             <span>DINK</span>
             <span className="text-[#84CC16]">AHOLICS</span>

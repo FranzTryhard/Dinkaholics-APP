@@ -84,18 +84,18 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-150">
-      <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden flex flex-col">
+      <div className="w-full max-w-md rounded-2xl bg-white border border-[#E0E7E4] shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E0E7E4] bg-[#F6F8F7]">
           <div>
-            <h3 className="font-bold text-slate-900 text-base">Record Final Score</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="font-bold text-[#172033] text-base font-display">Record Final Score</h3>
+            <p className="text-xs text-[#64748B] mt-0.5">
               {match.courtName || `Court ${match.courtNumber}`} · Match #{match.matchNumber}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="touch-target p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+            className="touch-target p-1.5 rounded-lg text-[#64748B] hover:text-[#172033] hover:bg-slate-100 transition"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -112,7 +112,7 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
 
           {/* Quick Score Presets */}
           <div>
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-2">
+            <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block mb-2">
               Common Final Scores
             </span>
             <div className="grid grid-cols-4 gap-2">
@@ -130,10 +130,10 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
                   type="button"
                   key={`${a}-${b}`}
                   onClick={() => handleQuickPreset(a, b)}
-                  className={`py-2 text-xs font-mono font-semibold rounded-lg border transition ${
+                  className={`py-2 text-xs font-mono font-semibold rounded-lg border transition tabular-nums ${
                     scoreA === a && scoreB === b
-                      ? 'border-[#0F382C] bg-emerald-50 text-[#0F382C]'
-                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      ? 'border-[#103F32] bg-[#E5F8EC] text-[#103F32] font-bold shadow-2xs'
+                      : 'border-[#E0E7E4] bg-white text-[#172033] hover:bg-[#F6F8F7]'
                   }`}
                 >
                   {a} - {b}
@@ -148,28 +148,28 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
             <div
               className={`p-4 rounded-xl border transition ${
                 calculatedWinner === 'teamA'
-                  ? 'border-emerald-600 bg-emerald-50/40 ring-1 ring-emerald-600'
-                  : 'border-slate-200 bg-white'
+                  ? 'border-[#103F32] bg-[#E5F8EC]/40 ring-1 ring-[#103F32]'
+                  : 'border-[#E0E7E4] bg-white'
               }`}
             >
-              <div className="text-xs font-bold text-slate-900 truncate mb-0.5">
+              <div className="text-xs font-bold text-[#172033] truncate mb-0.5">
                 {getNames(match.teamA)}
               </div>
-              <div className="text-[11px] text-slate-500 mb-3 font-medium">Team 1</div>
+              <div className="text-[11px] text-[#64748B] mb-3 font-medium">Team 1</div>
 
               <div className="flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => setScoreA(Math.max(0, scoreA - 1))}
-                  className="touch-target w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold flex items-center justify-center transition active:scale-95"
+                  className="touch-target w-10 h-10 rounded-xl border border-[#E0E7E4] hover:bg-[#F6F8F7] text-[#172033] font-bold flex items-center justify-center transition active:scale-95"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="text-3xl font-black font-mono text-slate-900">{scoreA}</span>
+                <span className="text-3xl font-black font-mono text-[#172033] tabular-nums">{scoreA}</span>
                 <button
                   type="button"
                   onClick={() => setScoreA(scoreA + 1)}
-                  className="touch-target w-10 h-10 rounded-xl bg-[#0F382C] hover:bg-[#165342] text-white font-bold flex items-center justify-center transition active:scale-95"
+                  className="touch-target w-10 h-10 rounded-xl bg-[#103F32] hover:bg-[#0A2B22] text-white font-bold flex items-center justify-center transition active:scale-95 shadow-xs"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -180,8 +180,8 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
                 onClick={() => setManualWinner('teamA')}
                 className={`mt-3 w-full py-1.5 text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1 ${
                   calculatedWinner === 'teamA'
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#103F32] text-white shadow-2xs'
+                    : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
                 }`}
               >
                 {calculatedWinner === 'teamA' && <CheckCircle className="w-3.5 h-3.5" />}
@@ -193,28 +193,28 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
             <div
               className={`p-4 rounded-xl border transition ${
                 calculatedWinner === 'teamB'
-                  ? 'border-emerald-600 bg-emerald-50/40 ring-1 ring-emerald-600'
-                  : 'border-slate-200 bg-white'
+                  ? 'border-[#103F32] bg-[#E5F8EC]/40 ring-1 ring-[#103F32]'
+                  : 'border-[#E0E7E4] bg-white'
               }`}
             >
-              <div className="text-xs font-bold text-slate-900 truncate mb-0.5">
+              <div className="text-xs font-bold text-[#172033] truncate mb-0.5">
                 {getNames(match.teamB)}
               </div>
-              <div className="text-[11px] text-slate-500 mb-3 font-medium">Team 2</div>
+              <div className="text-[11px] text-[#64748B] mb-3 font-medium">Team 2</div>
 
               <div className="flex items-center justify-between">
                 <button
                   type="button"
                   onClick={() => setScoreB(Math.max(0, scoreB - 1))}
-                  className="touch-target w-10 h-10 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold flex items-center justify-center transition active:scale-95"
+                  className="touch-target w-10 h-10 rounded-xl border border-[#E0E7E4] hover:bg-[#F6F8F7] text-[#172033] font-bold flex items-center justify-center transition active:scale-95"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="text-3xl font-black font-mono text-slate-900">{scoreB}</span>
+                <span className="text-3xl font-black font-mono text-[#172033] tabular-nums">{scoreB}</span>
                 <button
                   type="button"
                   onClick={() => setScoreB(scoreB + 1)}
-                  className="touch-target w-10 h-10 rounded-xl bg-[#0F382C] hover:bg-[#165342] text-white font-bold flex items-center justify-center transition active:scale-95"
+                  className="touch-target w-10 h-10 rounded-xl bg-[#103F32] hover:bg-[#0A2B22] text-white font-bold flex items-center justify-center transition active:scale-95 shadow-xs"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -225,8 +225,8 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
                 onClick={() => setManualWinner('teamB')}
                 className={`mt-3 w-full py-1.5 text-[11px] font-bold rounded-lg transition flex items-center justify-center gap-1 ${
                   calculatedWinner === 'teamB'
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-[#103F32] text-white shadow-2xs'
+                    : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
                 }`}
               >
                 {calculatedWinner === 'teamB' && <CheckCircle className="w-3.5 h-3.5" />}
@@ -244,7 +244,7 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
 
           {/* Action buttons */}
           {isSubmitting ? (
-            <div className="pt-2 pb-1 flex flex-col items-center justify-center bg-slate-50 border border-emerald-100 rounded-xl p-3">
+            <div className="pt-2 pb-1 flex flex-col items-center justify-center bg-[#F6F8F7] border border-[#C4EED3] rounded-xl p-3">
               <PickleballBounceLoader
                 size="sm"
                 theme="light"
@@ -257,17 +257,17 @@ export const ScoreEntryModal: React.FC<ScoreEntryModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="touch-target flex-1 py-3 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition"
+                className="touch-target flex-1 py-3 rounded-xl border border-[#E0E7E4] bg-white text-[#64748B] hover:bg-[#F6F8F7] hover:text-[#172033] text-xs font-bold transition"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting || scoreA === scoreB}
-                className="touch-target flex-1 py-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#165342] transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-sm flex items-center justify-center gap-1.5"
+                className="cssbuttons-io-button flex-1 justify-center disabled:opacity-50 disabled:pointer-events-none"
               >
                 <span>Finalize & Next</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 ml-1.5" />
               </button>
             </div>
           )}

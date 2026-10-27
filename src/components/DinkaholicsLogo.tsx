@@ -61,7 +61,7 @@ export const DinkaholicsLogo: React.FC<DinkaholicsLogoProps> = ({
           <span className="font-black text-slate-900 text-lg tracking-tight leading-none font-display">
             Dinkaholics
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-lime-600">
+          <span className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-[#14A73E] via-[#84CC16] to-[#00D2C4] bg-clip-text text-transparent">
             Pickleball Club
           </span>
         </div>

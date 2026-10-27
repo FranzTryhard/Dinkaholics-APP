@@ -103,24 +103,24 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 font-display">
-            <Clock className="w-6 h-6 text-[#0F382C]" />
+          <h1 className="text-xl sm:text-2xl font-black text-[#172033] tracking-tight flex items-center gap-2 font-display">
+            <Clock className="w-6 h-6 text-[#103F32]" />
             <span>Match History & Activity</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[#64748B] mt-0.5">
             Detailed record of completed doubles games, scores, and matchups
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Tab Toggle: History | In Progress */}
-          <div className="inline-flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold border border-slate-200">
+          <div className="inline-flex items-center gap-1 bg-[#F6F8F7] p-1 rounded-xl text-xs font-bold border border-[#E0E7E4]">
             <button
               onClick={() => setActiveTab('history')}
               className={`touch-target px-3 py-1 rounded-lg transition ${
                 activeTab === 'history'
-                  ? 'bg-[#0F382C] text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#103F32] text-white shadow-2xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
               }`}
             >
               Completed ({completedMatches.length})
@@ -129,8 +129,8 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               onClick={() => setActiveTab('ongoing')}
               className={`touch-target px-3 py-1 rounded-lg transition ${
                 activeTab === 'ongoing'
-                  ? 'bg-[#0F382C] text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#103F32] text-white shadow-2xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
               }`}
             >
               Live ({activeMatches.length})
@@ -141,7 +141,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
           {completedMatches.length > 0 && (
             <button
               onClick={handleExportCSV}
-              className="touch-target px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-[#0F382C] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
+              className="touch-target px-3 py-2 rounded-xl border border-[#E0E7E4] bg-white text-[#172033] hover:bg-[#F6F8F7] hover:text-[#103F32] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
               title="Export all match results to CSV spreadsheet"
             >
               <Download className="w-3.5 h-3.5" />
@@ -153,19 +153,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
 
       {/* Search Input */}
       <div className="relative">
-        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Filter matches by player name..."
-          className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-white border border-slate-200/90 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#0F382C] focus:ring-1 focus:ring-[#0F382C] transition shadow-2xs"
+          className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-white border border-[#E0E7E4] text-xs text-[#172033] placeholder:text-[#64748B] focus:outline-none focus:border-[#103F32] focus:ring-1 focus:ring-[#103F32] transition shadow-2xs"
         />
       </div>
 
       {/* Match Cards Grid */}
       {filteredMatches.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-white border border-slate-200/90 text-xs text-slate-400">
+        <div className="p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] text-xs text-[#64748B]">
           No matches found.
         </div>
       ) : (
@@ -179,12 +179,12 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             return (
               <div
                 key={match.id}
-                className="rounded-2xl bg-white border border-slate-200/90 p-4 shadow-xs space-y-3 flex flex-col justify-between"
+                className="rounded-2xl bg-white border border-[#E0E7E4] p-4 shadow-xs space-y-3 flex flex-col justify-between"
               >
                 {/* Header Row */}
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100 text-xs">
-                  <div className="flex items-center gap-1.5 text-slate-500 font-medium">
-                    <span className="font-bold text-slate-900">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E0E7E4] text-xs">
+                  <div className="flex items-center gap-1.5 text-[#64748B] font-medium">
+                    <span className="font-bold text-[#172033]">
                       Match #{match.matchNumber}
                     </span>
                     <span>·</span>
@@ -192,12 +192,12 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                   </div>
 
                   {match.status === 'completed' ? (
-                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md flex items-center gap-1">
-                      <Trophy className="w-3 h-3 text-emerald-600" />
+                    <span className="text-[11px] font-bold text-[#103F32] bg-[#E5F8EC] border border-[#C4EED3] px-2 py-0.5 rounded-md flex items-center gap-1 font-mono">
+                      <Trophy className="w-3 h-3 text-[#103F32]" />
                       <span>Final</span>
                     </span>
                   ) : (
-                    <span className="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
+                    <span className="text-[11px] font-bold text-[#103F32] bg-[#E5F8EC] border border-[#C4EED3] px-2 py-0.5 rounded-md">
                       Live
                     </span>
                   )}
@@ -208,11 +208,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                   {/* Team 1 */}
                   <div
                     className={`flex items-center justify-between p-2 rounded-xl transition ${
-                      isWinnerA ? 'bg-emerald-50/70 border border-emerald-100' : 'bg-slate-50'
+                      isWinnerA ? 'bg-[#E5F8EC]/60 border border-[#C4EED3]' : 'bg-[#F6F8F7]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[10px] font-mono font-bold text-slate-400 w-4">
+                      <span className="text-[10px] font-mono font-bold text-[#64748B] w-4">
                         T1
                       </span>
                       <div className="flex -space-x-1.5 shrink-0">
@@ -227,7 +227,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                       </div>
                       <span
                         className={`text-xs truncate ${
-                          isWinnerA ? 'font-bold text-slate-900' : 'text-slate-600'
+                          isWinnerA ? 'font-bold text-[#172033]' : 'text-[#64748B]'
                         }`}
                       >
                         {team1.map((p) => p.name).join(' & ')}
@@ -235,10 +235,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                     </div>
 
                     <span
-                      className={`w-8 h-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 ml-2 ${
+                      className={`w-8 h-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 ml-2 tabular-nums ${
                         isWinnerA
-                          ? 'bg-[#0F382C] text-white shadow-2xs'
-                          : 'bg-white border border-slate-200 text-slate-700'
+                          ? 'bg-[#103F32] text-white shadow-2xs'
+                          : 'bg-white border border-[#E0E7E4] text-[#172033]'
                       }`}
                     >
                       {match.scoreA !== null ? match.scoreA : '-'}
@@ -248,11 +248,11 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                   {/* Team 2 */}
                   <div
                     className={`flex items-center justify-between p-2 rounded-xl transition ${
-                      isWinnerB ? 'bg-emerald-50/70 border border-emerald-100' : 'bg-slate-50'
+                      isWinnerB ? 'bg-[#E5F8EC]/60 border border-[#C4EED3]' : 'bg-[#F6F8F7]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[10px] font-mono font-bold text-slate-400 w-4">
+                      <span className="text-[10px] font-mono font-bold text-[#64748B] w-4">
                         T2
                       </span>
                       <div className="flex -space-x-1.5 shrink-0">
@@ -267,7 +267,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                       </div>
                       <span
                         className={`text-xs truncate ${
-                          isWinnerB ? 'font-bold text-slate-900' : 'text-slate-600'
+                          isWinnerB ? 'font-bold text-[#172033]' : 'text-[#64748B]'
                         }`}
                       >
                         {team2.map((p) => p.name).join(' & ')}
@@ -275,10 +275,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                     </div>
 
                     <span
-                      className={`w-8 h-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 ml-2 ${
+                      className={`w-8 h-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 ml-2 tabular-nums ${
                         isWinnerB
-                          ? 'bg-[#0F382C] text-white shadow-2xs'
-                          : 'bg-white border border-slate-200 text-slate-700'
+                          ? 'bg-[#103F32] text-white shadow-2xs'
+                          : 'bg-white border border-[#E0E7E4] text-[#172033]'
                       }`}
                     >
                       {match.scoreB !== null ? match.scoreB : '-'}
@@ -288,7 +288,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
 
                 {/* Recommendation Reason note if available */}
                 {match.explanation && (
-                  <div className="text-[11px] text-slate-500 bg-slate-50/70 px-2.5 py-1.5 rounded-lg border border-slate-100 truncate">
+                  <div className="text-[11px] text-[#64748B] bg-[#F6F8F7] px-2.5 py-1.5 rounded-lg border border-[#E0E7E4] truncate">
                     Reason: {match.explanation}
                   </div>
                 )}

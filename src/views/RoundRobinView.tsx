@@ -205,30 +205,30 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 space-y-6">
-      {/* Top Header */}
+      {/* Top Header & View Switcher Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] flex items-center justify-center">
               <Trophy className="w-4 h-4 stroke-[2.5]" />
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-display">
+            <h1 className="text-xl sm:text-2xl font-black text-[#172033] tracking-tight font-display">
               Round Robin Tournament
             </h1>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[#64748B] mt-0.5">
             Fixed doubles matrix · Every player rotates partners and opponents across all rounds.
           </p>
         </div>
 
         {/* View Switcher Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl text-xs font-bold self-start sm:self-auto">
+        <div className="flex items-center gap-1 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold self-start sm:self-auto">
           <button
             onClick={() => setActiveTab('bracket')}
             className={`px-3 py-1.5 rounded-lg transition ${
               activeTab === 'bracket'
-                ? 'bg-[#0F382C] text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#103F32] text-white shadow-xs'
+                : 'text-[#64748B] hover:text-[#172033]'
             }`}
           >
             Round Schedule
@@ -237,8 +237,8 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
             onClick={() => setActiveTab('standings')}
             className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1 ${
               activeTab === 'standings'
-                ? 'bg-[#0F382C] text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#103F32] text-white shadow-xs'
+                : 'text-[#64748B] hover:text-[#172033]'
             }`}
           >
             <Medal className="w-3.5 h-3.5 text-amber-400" />
@@ -248,8 +248,8 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
             onClick={() => setActiveTab('matrix')}
             className={`px-3 py-1.5 rounded-lg transition ${
               activeTab === 'matrix'
-                ? 'bg-[#0F382C] text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-[#103F32] text-white shadow-xs'
+                : 'text-[#64748B] hover:text-[#172033]'
             }`}
           >
             Partner Matrix
@@ -259,36 +259,36 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
       {/* Overview Stats Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="text-[11px] text-slate-400 font-semibold uppercase">Tournament Progress</div>
-          <div className="text-xl font-black text-slate-900 font-mono mt-0.5">
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs">
+          <div className="text-[11px] text-[#64748B] font-semibold uppercase tracking-wider">Tournament Progress</div>
+          <div className="text-xl font-black text-[#172033] font-mono mt-0.5">
             {completedMatchesCount} / {totalMatchesCount}{' '}
-            <span className="text-xs text-slate-400 font-normal">matches</span>
+            <span className="text-xs text-[#64748B] font-normal">matches</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="text-[11px] text-slate-400 font-semibold uppercase">Total Rounds</div>
-          <div className="text-xl font-black text-[#0F382C] font-mono mt-0.5">
-            {rounds.length} <span className="text-xs text-slate-400 font-normal">rounds scheduled</span>
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs">
+          <div className="text-[11px] text-[#64748B] font-semibold uppercase tracking-wider">Total Rounds</div>
+          <div className="text-xl font-black text-[#103F32] font-mono mt-0.5">
+            {rounds.length} <span className="text-xs text-[#64748B] font-normal">rounds</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-          <div className="text-[11px] text-slate-400 font-semibold uppercase">Roster Size</div>
-          <div className="text-xl font-black text-slate-900 font-mono mt-0.5">
-            {availablePlayers.length} <span className="text-xs text-slate-400 font-normal">players</span>
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs">
+          <div className="text-[11px] text-[#64748B] font-semibold uppercase tracking-wider">Roster Size</div>
+          <div className="text-xl font-black text-[#172033] font-mono mt-0.5">
+            {availablePlayers.length} <span className="text-xs text-[#64748B] font-normal">players</span>
           </div>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between">
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs flex items-center justify-between">
           <div>
-            <div className="text-[11px] text-slate-400 font-semibold uppercase">Current Leader</div>
-            <div className="text-sm font-bold text-slate-900 truncate max-w-[120px] mt-0.5">
+            <div className="text-[11px] text-[#64748B] font-semibold uppercase tracking-wider">Current Leader</div>
+            <div className="text-sm font-bold text-[#172033] truncate max-w-[120px] mt-0.5">
               {standings[0]?.player.name || 'Pending'}
             </div>
           </div>
-          <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+          <div className="w-8 h-8 rounded-full bg-[#E5F8EC] border border-[#C4EED3] flex items-center justify-center text-[#103F32]">
             <Trophy className="w-4 h-4 fill-amber-400 stroke-amber-600" />
           </div>
         </div>
@@ -298,7 +298,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
       {activeTab === 'bracket' && (
         <div className="space-y-5">
           {/* Round Selector Bar */}
-          <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-slate-200/90 shadow-2xs overflow-x-auto">
+          <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs overflow-x-auto">
             <div className="flex items-center gap-1.5">
               {rounds.map((r, idx) => {
                 const roundMatchesCompleted = r.matches.every((m) => m.completed);
@@ -311,13 +311,13 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                     disabled={isGenerating}
                     className={`touch-target px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                       isSelected
-                        ? 'bg-[#0F382C] text-white shadow-xs'
-                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                        ? 'bg-[#103F32] text-white shadow-xs'
+                        : 'bg-[#F6F8F7] text-[#172033] hover:bg-[#E5F8EC]/50 hover:text-[#103F32]'
                     }`}
                   >
                     <span>Round {r.roundNumber}</span>
                     {roundMatchesCompleted && (
-                      <CheckCircle2 className={`w-3.5 h-3.5 ${isSelected ? 'text-[#84CC16]' : 'text-emerald-600'}`} />
+                      <CheckCircle2 className={`w-3.5 h-3.5 ${isSelected ? 'text-[#35D879]' : 'text-emerald-600'}`} />
                     )}
                   </button>
                 );
@@ -328,10 +328,10 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
               <button
                 onClick={handleGenerateSchedule}
                 disabled={isGenerating}
-                className="touch-target px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-60"
+                className="touch-target px-3 py-1.5 rounded-xl border border-[#E0E7E4] bg-[#F6F8F7] hover:bg-white text-[#172033] text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-60"
                 title="Regenerate round schedule"
               >
-                <RotateCcw className={`w-3.5 h-3.5 text-[#0F382C] ${isGenerating ? 'animate-spin' : ''}`} />
+                <RotateCcw className={`w-3.5 h-3.5 text-[#103F32] ${isGenerating ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Regenerate</span>
               </button>
             </div>
@@ -339,7 +339,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
           {/* Current Round Details */}
           {isGenerating ? (
-            <div className="py-16 px-4 rounded-3xl bg-white border border-slate-200/90 shadow-2xs flex flex-col items-center justify-center animate-in fade-in duration-150">
+            <div className="py-16 px-4 rounded-3xl bg-white border border-[#E0E7E4] shadow-2xs flex flex-col items-center justify-center animate-in fade-in duration-150">
               <PickleballBounceLoader
                 size="md"
                 theme="light"
@@ -351,17 +351,17 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-black text-slate-900 font-display">
+                  <h2 className="text-lg font-black text-[#172033] font-display">
                     Round {currentRound.roundNumber} Matches
                   </h2>
-                  <span className="text-xs text-slate-500 font-medium">
+                  <span className="text-xs text-[#64748B] font-medium">
                     ({currentRound.matches.filter((m) => m.completed).length} / {currentRound.matches.length} completed)
                   </span>
                 </div>
 
                 {/* Resting / Bye Players callout */}
                 {currentRound.byes.length > 0 && (
-                  <div className="inline-flex items-center gap-1.5 text-xs text-amber-800 bg-amber-50 border border-amber-200/80 px-2.5 py-1 rounded-xl">
+                  <div className="inline-flex items-center gap-1.5 text-xs text-[#103F32] bg-[#E5F8EC] border border-[#C4EED3] px-2.5 py-1 rounded-xl">
                     <span className="font-bold">Bye / Resting:</span>
                     <span>{currentRound.byes.map((id) => getPlayer(id).name).join(', ')}</span>
                   </div>
@@ -384,28 +384,28 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                       key={match.id}
                       className={`p-4 rounded-2xl bg-white border shadow-xs transition space-y-4 ${
                         match.completed
-                          ? 'border-emerald-200 bg-emerald-50/20'
-                          : 'border-slate-200/90'
+                          ? 'border-emerald-200 bg-[#E5F8EC]/15'
+                          : 'border-[#E0E7E4]'
                       }`}
                     >
                       {/* Court Title & Status */}
-                      <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                      <div className="flex items-center justify-between pb-2 border-b border-[#E0E7E4]">
                         <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-lg bg-[#0F382C] text-white flex items-center justify-center text-xs font-mono font-bold">
+                          <span className="w-6 h-6 rounded-lg bg-[#103F32] text-white flex items-center justify-center text-xs font-mono font-bold">
                             C{match.courtNumber}
                           </span>
-                          <span className="font-bold text-slate-900 text-xs">
+                          <span className="font-bold text-[#172033] text-xs">
                             Court {match.courtNumber} Doubles
                           </span>
                         </div>
 
                         {match.completed ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                            <CheckCircle2 className="w-3 h-3" />
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#103F32] bg-[#E5F8EC] border border-[#C4EED3] px-2 py-0.5 rounded-full">
+                            <CheckCircle2 className="w-3 h-3 text-[#35D879]" />
                             Final
                           </span>
                         ) : (
-                          <span className="text-[11px] font-semibold text-slate-400">
+                          <span className="text-[11px] font-semibold text-[#64748B]">
                             Scheduled
                           </span>
                         )}
@@ -417,19 +417,19 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                         <div
                           className={`p-2.5 rounded-xl flex items-center justify-between transition ${
                             isWinnerA
-                              ? 'bg-emerald-100/70 border border-emerald-300 font-bold'
-                              : 'bg-slate-50 border border-slate-100'
+                              ? 'bg-[#E5F8EC] border border-[#35D879]/50 font-bold'
+                              : 'bg-[#F6F8F7] border border-[#E0E7E4]'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono font-black text-slate-400 w-5">
+                            <span className="text-[10px] font-mono font-black text-[#64748B] w-5">
                               T1
                             </span>
                             <div className="flex flex-col">
-                              <span className="text-xs text-slate-900">
+                              <span className="text-xs text-[#172033]">
                                 {teamA1.name} & {teamA2.name}
                               </span>
-                              <span className="text-[10px] text-slate-400 font-mono">
+                              <span className="text-[10px] text-[#64748B] font-mono">
                                 Lvl {teamA1.skillRating} + {teamA2.skillRating}
                               </span>
                             </div>
@@ -437,7 +437,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
                           <div className="flex items-center gap-2">
                             {match.completed && (
-                              <span className="text-base font-black font-mono text-slate-900 px-2">
+                              <span className="text-base font-black font-mono text-[#172033] px-2">
                                 {match.scoreA}
                               </span>
                             )}
@@ -451,19 +451,19 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                         <div
                           className={`p-2.5 rounded-xl flex items-center justify-between transition ${
                             isWinnerB
-                              ? 'bg-emerald-100/70 border border-emerald-300 font-bold'
-                              : 'bg-slate-50 border border-slate-100'
+                              ? 'bg-[#E5F8EC] border border-[#35D879]/50 font-bold'
+                              : 'bg-[#F6F8F7] border border-[#E0E7E4]'
                           }`}
                         >
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono font-black text-slate-400 w-5">
+                            <span className="text-[10px] font-mono font-black text-[#64748B] w-5">
                               T2
                             </span>
                             <div className="flex flex-col">
-                              <span className="text-xs text-slate-900">
+                              <span className="text-xs text-[#172033]">
                                 {teamB1.name} & {teamB2.name}
                               </span>
-                              <span className="text-[10px] text-slate-400 font-mono">
+                              <span className="text-[10px] text-[#64748B] font-mono">
                                 Lvl {teamB1.skillRating} + {teamB2.skillRating}
                               </span>
                             </div>
@@ -471,7 +471,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
                           <div className="flex items-center gap-2">
                             {match.completed && (
-                              <span className="text-base font-black font-mono text-slate-900 px-2">
+                              <span className="text-base font-black font-mono text-[#172033] px-2">
                                 {match.scoreB}
                               </span>
                             )}
@@ -483,11 +483,11 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                       </div>
 
                       {/* Quick & Custom Scoring Actions */}
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                      <div className="pt-2 border-t border-[#E0E7E4] flex items-center justify-between gap-2 flex-wrap">
                         {match.completed ? (
                           <button
                             onClick={() => handleResetMatch(currentRound.roundNumber, match.id)}
-                            className="touch-target text-xs text-slate-500 hover:text-slate-800 font-medium underline flex items-center gap-1"
+                            className="touch-target text-xs text-[#64748B] hover:text-[#172033] font-medium underline flex items-center gap-1"
                           >
                             <RotateCcw className="w-3 h-3" />
                             <span>Edit / Reset Score</span>
@@ -499,7 +499,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                                 onClick={() =>
                                   handleScoreMatch(currentRound.roundNumber, match.id, 11, 7)
                                 }
-                                className="touch-target py-2 px-2 rounded-xl bg-slate-100 hover:bg-[#0F382C] hover:text-white text-slate-800 font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
+                                className="touch-target py-2 px-2 rounded-xl bg-[#F6F8F7] hover:bg-[#103F32] hover:text-white border border-[#E0E7E4] text-[#172033] font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
                               >
                                 <span>T1 Wins (11-7)</span>
                               </button>
@@ -507,7 +507,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                                 onClick={() =>
                                   handleScoreMatch(currentRound.roundNumber, match.id, 7, 11)
                                 }
-                                className="touch-target py-2 px-2 rounded-xl bg-slate-100 hover:bg-[#0F382C] hover:text-white text-slate-800 font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
+                                className="touch-target py-2 px-2 rounded-xl bg-[#F6F8F7] hover:bg-[#103F32] hover:text-white border border-[#E0E7E4] text-[#172033] font-bold text-xs transition active:scale-95 flex items-center justify-center gap-1"
                               >
                                 <span>T2 Wins (7-11)</span>
                               </button>
@@ -524,9 +524,9 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                                   scoreB: 9,
                                 })
                               }
-                              className="touch-target w-full py-1.5 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1 shadow-2xs"
+                              className="touch-target w-full py-1.5 px-3 rounded-xl border border-[#E0E7E4] bg-white hover:bg-[#F6F8F7] text-[#103F32] font-semibold text-xs transition active:scale-95 text-center flex items-center justify-center gap-1 shadow-2xs"
                             >
-                              <Edit3 className="w-3.5 h-3.5 text-slate-400" />
+                              <Edit3 className="w-3.5 h-3.5 text-[#64748B]" />
                               <span>Custom Score Stepper...</span>
                             </button>
                           </div>
@@ -543,22 +543,22 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
       {/* TAB 2: LIVE STANDINGS */}
       {activeTab === 'standings' && (
-        <div className="rounded-2xl bg-white border border-slate-200/90 overflow-hidden shadow-xs">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div className="rounded-2xl bg-white border border-[#E0E7E4] overflow-hidden shadow-xs">
+          <div className="p-4 border-b border-[#E0E7E4] flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-slate-900 text-sm">Individual Standings Table</h2>
-              <p className="text-[11px] text-slate-400">
+              <h2 className="font-bold text-[#172033] text-sm">Individual Standings Table</h2>
+              <p className="text-[11px] text-[#64748B]">
                 Ranked by Wins, then Point Differential (+/-), then Points Scored
               </p>
             </div>
-            <span className="text-xs font-mono font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
+            <span className="text-xs font-mono font-bold text-[#103F32] bg-[#E5F8EC] border border-[#C4EED3] px-2.5 py-1 rounded-md">
               {completedMatchesCount} Matches Scored
             </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+              <thead className="bg-[#F6F8F7] text-[#64748B] font-bold uppercase text-[10px] tracking-wider border-b border-[#E0E7E4]">
                 <tr>
                   <th className="py-3 px-3">Rank</th>
                   <th className="py-3 px-3">Player</th>
@@ -570,35 +570,34 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                   <th className="py-3 px-3 text-right">Diff (+/-)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#E0E7E4]">
                 {standings.map((row, index) => {
-                  const isTop3 = index < 3;
                   return (
                     <tr
                       key={row.player.id}
-                      className={`hover:bg-slate-50/80 transition ${
-                        index === 0 ? 'bg-amber-50/40 font-semibold' : ''
+                      className={`hover:bg-[#E5F8EC]/20 transition ${
+                        index === 0 ? 'bg-[#E5F8EC]/30 font-semibold' : ''
                       }`}
                     >
                       <td className="py-3 px-3 font-mono font-bold">
                         <div className="flex items-center gap-1.5">
                           {index === 0 && (
-                            <span className="w-5 h-5 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center text-[10px]">
+                            <span className="w-5 h-5 rounded-full bg-[#35D879] text-[#103F32] flex items-center justify-center text-[10px] font-black">
                               1
                             </span>
                           )}
                           {index === 1 && (
-                            <span className="w-5 h-5 rounded-full bg-slate-300 text-slate-800 flex items-center justify-center text-[10px]">
+                            <span className="w-5 h-5 rounded-full bg-slate-200 text-[#172033] flex items-center justify-center text-[10px]">
                               2
                             </span>
                           )}
                           {index === 2 && (
-                            <span className="w-5 h-5 rounded-full bg-amber-600/30 text-amber-900 flex items-center justify-center text-[10px]">
+                            <span className="w-5 h-5 rounded-full bg-amber-100 text-amber-900 border border-amber-200 flex items-center justify-center text-[10px]">
                               3
                             </span>
                           )}
                           {index > 2 && (
-                            <span className="text-slate-400 pl-1.5">#{index + 1}</span>
+                            <span className="text-[#64748B] pl-1.5">#{index + 1}</span>
                           )}
                         </div>
                       </td>
@@ -607,45 +606,45 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                           <PlayerAvatar
                             avatar={row.player.avatar}
                             name={row.player.name}
-                            className="w-7 h-7 rounded-full border border-slate-200"
+                            className="w-7 h-7 rounded-full border border-[#E0E7E4]"
                           />
                           <div>
-                            <div className="font-bold text-slate-900">{row.player.name}</div>
-                            <div className="text-[10px] text-slate-400">Level {row.player.skillRating}</div>
+                            <div className="font-bold text-[#172033]">{row.player.name}</div>
+                            <div className="text-[10px] text-[#64748B]">Level {row.player.skillRating}</div>
                           </div>
                         </div>
                       </td>
-                      <td className="py-3 px-3 text-center font-mono">{row.played}</td>
-                      <td className="py-3 px-3 text-center font-mono font-bold text-slate-900">
+                      <td className="py-3 px-3 text-center font-mono text-[#172033]">{row.played}</td>
+                      <td className="py-3 px-3 text-center font-mono font-bold text-[#172033]">
                         {row.wins} - {row.losses}
                       </td>
                       <td className="py-3 px-3 text-center font-mono">
                         <span
                           className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
                             row.winPct >= 60
-                              ? 'bg-emerald-100 text-emerald-800'
+                              ? 'bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3]'
                               : row.winPct <= 30
-                              ? 'bg-rose-100 text-rose-800'
-                              : 'bg-slate-100 text-slate-700'
+                              ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                              : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4]'
                           }`}
                         >
                           {row.winPct}%
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-center font-mono text-slate-600">
+                      <td className="py-3 px-3 text-center font-mono text-[#172033]">
                         {row.pointsFor}
                       </td>
-                      <td className="py-3 px-3 text-center font-mono text-slate-600">
+                      <td className="py-3 px-3 text-center font-mono text-[#64748B]">
                         {row.pointsAgainst}
                       </td>
                       <td className="py-3 px-3 text-right font-mono font-bold">
                         <span
                           className={
                             row.pointDiff > 0
-                              ? 'text-emerald-600'
+                              ? 'text-[#103F32]'
                               : row.pointDiff < 0
                               ? 'text-rose-600'
-                              : 'text-slate-500'
+                              : 'text-[#64748B]'
                           }
                         >
                           {row.pointDiff > 0 ? `+${row.pointDiff}` : row.pointDiff}
@@ -662,15 +661,15 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
       {/* TAB 3: PARTNER MATRIX */}
       {activeTab === 'matrix' && (
-        <div className="rounded-2xl bg-white border border-slate-200/90 p-5 space-y-4 shadow-xs">
+        <div className="rounded-2xl bg-white border border-[#E0E7E4] p-5 space-y-4 shadow-xs">
           <div>
-            <h2 className="font-bold text-slate-900 text-sm">Round Robin Doubles Fairness Matrix</h2>
-            <p className="text-[11px] text-slate-400">
+            <h2 className="font-bold text-[#172033] text-sm">Round Robin Doubles Fairness Matrix</h2>
+            <p className="text-[11px] text-[#64748B]">
               Visualizes how tournament pairings rotate across all {availablePlayers.length} participating players
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 space-y-2">
+          <div className="p-4 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] text-xs text-[#64748B] space-y-2">
             <p>
               In this American Doubles Round Robin format, every player is scheduled to partner with new players across the {rounds.length} rounds.
               Points scored in every game contribute directly to your personal ranking on the Live Standings table.
@@ -696,14 +695,14 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
               return (
                 <div
                   key={player.id}
-                  className="p-3 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-1.5"
+                  className="p-3 rounded-xl border border-[#E0E7E4] bg-white shadow-2xs space-y-1.5"
                 >
-                  <div className="font-bold text-slate-900 text-xs flex items-center justify-between">
+                  <div className="font-bold text-[#172033] text-xs flex items-center justify-between">
                     <span>{player.name}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">Lvl {player.skillRating}</span>
+                    <span className="text-[10px] text-[#64748B] font-mono">Lvl {player.skillRating}</span>
                   </div>
-                  <div className="text-[11px] text-slate-500">
-                    <span className="font-semibold text-slate-700">Partners: </span>
+                  <div className="text-[11px] text-[#64748B]">
+                    <span className="font-semibold text-[#103F32]">Partners: </span>
                     {partnersList.length > 0 ? partnersList.join(', ') : 'Resting'}
                   </div>
                 </div>
@@ -857,9 +856,9 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                   );
                   setCustomScoreMatch(null);
                 }}
-                className="touch-target py-2.5 px-3 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#144637] transition active:scale-95 shadow-sm"
+                className="cssbuttons-io-button justify-center"
               >
-                Confirm Score
+                <span>Confirm Score</span>
               </button>
             </div>
           </div>

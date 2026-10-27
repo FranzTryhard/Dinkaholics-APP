@@ -494,9 +494,9 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             </button>
             <button
               onClick={handleConfirmFinish}
-              className="touch-target px-3 py-1.5 rounded-xl bg-[#84CC16] text-[#0A271E] font-black text-xs hover:bg-lime-400 transition shadow-sm"
+              className="cssbuttons-io-button-logo btn-sm"
             >
-              Finish
+              <span>Finish Match</span>
             </button>
           </div>
         </div>
@@ -508,7 +508,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             onClick={() => handleScorePoint(leftTeam)}
             className={`rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition active:scale-[0.99] border-2 relative overflow-hidden ${
               isLeftServing
-                ? 'bg-gradient-to-b from-[#0F382C] to-[#0A271E] border-[#84CC16]/80 shadow-[0_0_30px_rgba(132,204,22,0.15)]'
+                ? 'bg-gradient-to-b from-[#103F32] to-[#0A271E] border-[#35D879]/80 shadow-[0_0_30px_rgba(53,216,121,0.2)]'
                 : 'bg-[#0A2017] border-emerald-900/50 hover:border-emerald-800'
             }`}
           >
@@ -524,8 +524,8 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               </div>
 
               {isLeftServing && (
-                <div className="inline-flex items-center gap-1.5 bg-[#84CC16] text-[#081F19] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
-                  <PickleballIcon className="w-4 h-4 text-[#081F19]" />
+                <div className="inline-flex items-center gap-1.5 bg-[#35D879] text-[#0A2B22] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
+                  <PickleballIcon className="w-4 h-4 text-[#0A2B22]" />
                   <span>SERVING · {activeServerPlayer.name} (#{serverNumber})</span>
                 </div>
               )}
@@ -534,7 +534,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             {/* Huge Score Number */}
             <div className="flex items-center justify-center my-auto py-4">
               <span className={`text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] font-black font-mono tabular-nums leading-none tracking-tighter ${
-                isLeftServing ? 'text-[#D4E938]' : 'text-white'
+                isLeftServing ? 'text-[#35D879]' : 'text-white'
               }`}>
                 {leftScore}
               </span>
@@ -554,7 +554,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             onClick={() => handleScorePoint(rightTeam)}
             className={`rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition active:scale-[0.99] border-2 relative overflow-hidden ${
               isRightServing
-                ? 'bg-gradient-to-b from-[#0F382C] to-[#0A271E] border-[#84CC16]/80 shadow-[0_0_30px_rgba(132,204,22,0.15)]'
+                ? 'bg-gradient-to-b from-[#103F32] to-[#0A271E] border-[#35D879]/80 shadow-[0_0_30px_rgba(53,216,121,0.2)]'
                 : 'bg-[#0A2017] border-emerald-900/50 hover:border-emerald-800'
             }`}
           >
@@ -570,8 +570,8 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               </div>
 
               {isRightServing && (
-                <div className="inline-flex items-center gap-1.5 bg-[#84CC16] text-[#081F19] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
-                  <PickleballIcon className="w-4 h-4 text-[#081F19]" />
+                <div className="inline-flex items-center gap-1.5 bg-[#35D879] text-[#0A2B22] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
+                  <PickleballIcon className="w-4 h-4 text-[#0A2B22]" />
                   <span>SERVING · {activeServerPlayer.name} (#{serverNumber})</span>
                 </div>
               )}
@@ -580,7 +580,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             {/* Huge Score Number */}
             <div className="flex items-center justify-center my-auto py-4">
               <span className={`text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] font-black font-mono tabular-nums leading-none tracking-tighter ${
-                isRightServing ? 'text-[#D4E938]' : 'text-white'
+                isRightServing ? 'text-[#35D879]' : 'text-white'
               }`}>
                 {rightScore}
               </span>
@@ -620,13 +620,13 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#F8F9F8] flex flex-col justify-between overflow-y-auto animate-in fade-in duration-200 pt-[env(safe-area-inset-top)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <div className="fixed inset-0 z-50 bg-[#F6F8F7] flex flex-col justify-between overflow-y-auto animate-in fade-in duration-200 pt-[env(safe-area-inset-top)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       {/* Top Bar */}
-      <div className="p-3 sm:p-4 flex items-center justify-between border-b border-slate-200 bg-white">
+      <div className="p-3 sm:p-4 flex items-center justify-between border-b border-[#E0E7E4] bg-white">
         <div className="flex items-center gap-2">
           <button
             onClick={onClose}
-            className="touch-target p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition"
+            className="touch-target p-2 rounded-xl text-[#172033] hover:bg-slate-100 transition"
             title="Exit scorekeeper"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -635,8 +635,8 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             onClick={toggleSound}
             className={`touch-target p-2 rounded-xl transition ${
               soundEnabled
-                ? 'text-[#0F382C] bg-emerald-50 hover:bg-emerald-100'
-                : 'text-slate-400 hover:bg-slate-100'
+                ? 'text-[#103F32] bg-[#E5F8EC] hover:bg-[#C4EED3]'
+                : 'text-[#64748B] hover:bg-slate-100'
             }`}
             title={soundEnabled ? 'Mute court audio' : 'Unmute court audio'}
             aria-label={soundEnabled ? 'Mute court audio' : 'Unmute court audio'}
@@ -645,27 +645,27 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
           </button>
           <button
             onClick={() => setIsBigDigitMode(true)}
-            className="touch-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 text-[#0F382C] font-bold text-xs transition shadow-2xs"
+            className="touch-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E5F8EC] hover:bg-[#C4EED3] border border-[#C4EED3] text-[#103F32] font-bold text-xs transition shadow-2xs"
             title="Switch to Court-Side Tripod Fullscreen Mode"
           >
-            <Maximize2 className="w-4 h-4 text-[#0F382C]" />
+            <Maximize2 className="w-4 h-4 text-[#103F32]" />
             <span className="hidden sm:inline">Court-Side Mode</span>
           </button>
         </div>
 
         <div className="text-center">
-          <h2 className="font-bold text-slate-900 text-sm tracking-tight font-display">
+          <h2 className="font-bold text-[#172033] text-sm tracking-tight font-display">
             {match.courtName || `Court ${match.courtNumber}`} · Live
           </h2>
-          <div className="inline-flex items-center gap-1 text-[11px] font-mono tabular-nums font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full mt-0.5">
-            <Clock className="w-3 h-3 text-slate-400" />
+          <div className="inline-flex items-center gap-1 text-[11px] font-mono tabular-nums font-medium text-[#64748B] bg-[#F6F8F7] border border-[#E0E7E4] px-2 py-0.5 rounded-full mt-0.5">
+            <Clock className="w-3 h-3 text-[#64748B]" />
             {formatTimer(elapsed)}
           </div>
         </div>
 
         <button
           onClick={handleConfirmFinish}
-          className="touch-target px-3.5 py-1.5 rounded-xl bg-[#0F382C] text-white font-bold text-xs hover:bg-[#165342] transition shadow-xs active:scale-95"
+          className="touch-target px-3.5 py-1.5 rounded-xl bg-[#103F32] text-white font-bold text-xs hover:bg-[#0A2B22] transition shadow-xs active:scale-95"
         >
           Finish Game
         </button>
