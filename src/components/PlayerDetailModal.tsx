@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Player, Match, Session, SkillLevel, SKILL_LEVEL_LABELS, PlayerStatus } from '../types';
 import { PlayerPerformanceTrendsChart } from './PlayerPerformanceTrendsChart';
 import { PlayerAvatar } from './PlayerAvatar';
+import { getPlayerChemistryInsights } from '../engine/synergyEngine';
 import {
   X,
   Trophy,
@@ -13,7 +14,7 @@ import {
   UserCheck,
   Swords,
   Clock,
-  Sparkles,
+  HeartHandshake,
 } from 'lucide-react';
 
 interface PlayerDetailModalProps {
@@ -24,6 +25,7 @@ interface PlayerDetailModalProps {
   onClose: () => void;
   onUpdatePlayerRating?: (playerId: string, newRating: SkillLevel) => void;
   onUpdatePlayerStatus?: (playerId: string, newStatus: PlayerStatus) => void;
+  onOpenHeadToHead?: (playerId: string) => void;
 }
 
 export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
@@ -34,7 +36,11 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
   onClose,
   onUpdatePlayerRating,
   onUpdatePlayerStatus,
+  onOpenHeadToHead,
 }) => {
+  const insights = useMemo(() => {
+    return getPlayerChemistryInsights(player, Object.values(playersById), matches);
+  }, [player, playersById, matches]);
   // Chronological list of completed matches for this player in session
   const playerSessionMatches = matches
     .filter((m) => {
@@ -199,6 +205,86 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
             playersById={playersById}
             currentSessionId={session?.id}
           />
+
+          {/* Chemistry & Rivalry Insights */}
+          <div className="rounded-2xl bg-gradient-to-b from-[#F6F8F7] to-white border border-[#E0E7E4] p-4 sm:p-5 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <HeartHandshake className="w-4 h-4 text-[#103F32]" />
+                <h3 className="font-bold text-slate-900 text-sm font-display">
+                  Chemistry & Rivalry Insights
+                </h3>
+              </div>
+              {onOpenHeadToHead && (
+                <button
+                  type="button"
+                  onClick={() => onOpenHeadToHead(player.id)}
+                  className="touch-target px-3 py-1.5 rounded-xl bg-[#103F32] hover:bg-[#0c3127] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                >
+                  <Swords className="w-3.5 h-3.5 text-[#84CC16]" />
+                  <span>Compare Head-to-Head</span>
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Best Partner */}
+              <div className="p-3 rounded-xl bg-white border border-[#E0E7E4] flex items-center gap-3">
+                {insights?.bestPartner ? (
+                  <>
+                    <PlayerAvatar
+                      avatar={insights.bestPartner.player.avatar}
+                      name={insights.bestPartner.player.name}
+                      className="w-10 h-10 rounded-full border border-slate-200 shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">
+                        ★ Best Partner
+                      </div>
+                      <div className="text-xs font-black text-[#172033] truncate">
+                        {insights.bestPartner.player.name}
+                      </div>
+                      <div className="text-[11px] text-[#64748B]">
+                        {insights.bestPartner.wins}W / {insights.bestPartner.matches} matches ({insights.bestPartner.winPct}%)
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-xs text-[#64748B] italic py-1">
+                    No partner history yet in completed matches.
+                  </div>
+                )}
+              </div>
+
+              {/* Toughest Rival */}
+              <div className="p-3 rounded-xl bg-white border border-[#E0E7E4] flex items-center gap-3">
+                {insights?.toughestRival ? (
+                  <>
+                    <PlayerAvatar
+                      avatar={insights.toughestRival.player.avatar}
+                      name={insights.toughestRival.player.name}
+                      className="w-10 h-10 rounded-full border border-slate-200 shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[10px] font-bold text-rose-800 uppercase tracking-wider">
+                        ⚔ Toughest Rival
+                      </div>
+                      <div className="text-xs font-black text-[#172033] truncate">
+                        {insights.toughestRival.player.name}
+                      </div>
+                      <div className="text-[11px] text-[#64748B]">
+                        {insights.toughestRival.lossesAgainst} losses against in {insights.toughestRival.matches} battles
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-xs text-[#64748B] italic py-1">
+                    No opponent rivalry data yet.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Session Match-by-Match History List */}
           <div className="rounded-2xl bg-white border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-3">

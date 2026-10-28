@@ -6,6 +6,9 @@ import {
   generateRoundRobinSchedule,
   calculateStandings,
   PlayerStanding,
+  generateInitialKingLadder,
+  advanceKingCourtLadder,
+  TournamentFormat,
 } from '../engine/roundRobin';
 import { courtAudio } from '../utils/audio';
 import confetti from 'canvas-confetti';
@@ -27,6 +30,10 @@ import {
   Minus,
   Edit3,
   X,
+  Crown,
+  Printer,
+  ArrowUpRight,
+  ArrowDownRight,
 } from 'lucide-react';
 import { PickleballIcon } from '../components/PickleballIcon';
 import { PickleballBounceLoader } from '../components/PickleballBounceLoader';
@@ -53,6 +60,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
   const LEGACY_STORAGE_KEY = 'picklematch_roundrobin_rounds';
 
   const [activeTab, setActiveTab] = useState<'bracket' | 'standings' | 'matrix'>('bracket');
+  const [tournamentFormat, setTournamentFormat] = useState<TournamentFormat>('round_robin');
   const [selectedRoundIndex, setSelectedRoundIndex] = useState(0);
   const [roundsCount, setRoundsCount] = useState<number>(5);
   const [targetScore, setTargetScore] = useState<number>(11);
@@ -98,15 +106,33 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
     setIsGenerating(true);
     setIsConfirmRegenerateOpen(false);
     setTimeout(() => {
-      const newSchedule = generateRoundRobinSchedule(
-        availablePlayers,
-        session?.courtCount || 2,
-        roundsCount
-      );
+      let newSchedule: RoundRobinRound[];
+      if (tournamentFormat === 'king_of_court') {
+        newSchedule = [generateInitialKingLadder(availablePlayers, session?.courtCount || 2)];
+      } else {
+        newSchedule = generateRoundRobinSchedule(
+          availablePlayers,
+          session?.courtCount || 2,
+          roundsCount
+        );
+      }
       saveRounds(newSchedule);
       setSelectedRoundIndex(0);
       setIsGenerating(false);
-    }, 500);
+    }, 400);
+  };
+
+  const handleAdvanceKingLadder = () => {
+    const current = rounds[selectedRoundIndex] || rounds[rounds.length - 1];
+    if (!current) return;
+    const nextRound = advanceKingCourtLadder(current, availablePlayers, session?.courtCount || 2);
+    const updatedRounds = [...rounds, nextRound];
+    saveRounds(updatedRounds);
+    setSelectedRoundIndex(updatedRounds.length - 1);
+    courtAudio.playMatchWin();
+    try {
+      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    } catch (e) {}
   };
 
   const handleTriggerRegenerate = () => {
@@ -224,50 +250,106 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] flex items-center justify-center">
-              <Trophy className="w-4 h-4 stroke-[2.5]" />
+              {tournamentFormat === 'king_of_court' ? (
+                <Crown className="w-4 h-4 text-amber-500 fill-amber-400" />
+              ) : (
+                <Trophy className="w-4 h-4 stroke-[2.5]" />
+              )}
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-[#172033] tracking-tight font-display">
-              Round Robin Tournament
+              {tournamentFormat === 'king_of_court' ? 'King of the Court Ladder' : 'Round Robin Tournament'}
             </h1>
           </div>
           <p className="text-xs text-[#64748B] mt-0.5">
-            Fixed doubles matrix · Every player rotates partners and opponents across all rounds.
+            {tournamentFormat === 'king_of_court'
+              ? 'Competitive ladder rotation · Court 1 Crown defense · Winners promote up, runners-up relegate down'
+              : 'Fixed doubles matrix · Every player rotates partners and opponents across all rounds.'}
           </p>
         </div>
 
-        {/* View Switcher Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold self-start sm:self-auto overflow-x-auto no-scrollbar max-w-full">
+        {/* Action Controls: Format Selector & Print & Tabs */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Format Selector */}
+          <div className="flex items-center gap-1 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold">
+            <button
+              onClick={() => {
+                if (tournamentFormat !== 'round_robin') {
+                  setTournamentFormat('round_robin');
+                }
+              }}
+              className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap transition flex items-center gap-1 ${
+                tournamentFormat === 'round_robin'
+                  ? 'bg-[#103F32] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-400" />
+              <span>Round Robin</span>
+            </button>
+            <button
+              onClick={() => {
+                if (tournamentFormat !== 'king_of_court') {
+                  setTournamentFormat('king_of_court');
+                  const initialLadder = [generateInitialKingLadder(availablePlayers, session?.courtCount || 2)];
+                  saveRounds(initialLadder);
+                  setSelectedRoundIndex(0);
+                }
+              }}
+              className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap transition flex items-center gap-1 ${
+                tournamentFormat === 'king_of_court'
+                  ? 'bg-[#103F32] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Crown className="w-3.5 h-3.5 text-amber-400" />
+              <span>King Ladder</span>
+            </button>
+          </div>
+
+          {/* Print Button */}
           <button
-            onClick={() => setActiveTab('bracket')}
-            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition ${
-              activeTab === 'bracket'
-                ? 'bg-[#103F32] text-white shadow-xs'
-                : 'text-[#64748B] hover:text-[#172033]'
-            }`}
+            onClick={() => window.print()}
+            title="Print printable scorecard sheet"
+            className="touch-target px-2.5 py-1.5 rounded-xl border border-[#E0E7E4] bg-white hover:bg-[#F6F8F7] text-[#172033] text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
           >
-            Round Schedule
+            <Printer className="w-3.5 h-3.5 text-[#103F32]" />
+            <span className="hidden sm:inline">Print Sheet</span>
           </button>
-          <button
-            onClick={() => setActiveTab('standings')}
-            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition flex items-center gap-1 ${
-              activeTab === 'standings'
-                ? 'bg-[#103F32] text-white shadow-xs'
-                : 'text-[#64748B] hover:text-[#172033]'
-            }`}
-          >
-            <Medal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span>Live Standings</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('matrix')}
-            className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition ${
-              activeTab === 'matrix'
-                ? 'bg-[#103F32] text-white shadow-xs'
-                : 'text-[#64748B] hover:text-[#172033]'
-            }`}
-          >
-            Partner Matrix
-          </button>
+
+          {/* View Switcher Tabs */}
+          <div className="flex items-center gap-1 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold self-start sm:self-auto overflow-x-auto no-scrollbar max-w-full">
+            <button
+              onClick={() => setActiveTab('bracket')}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition ${
+                activeTab === 'bracket'
+                  ? 'bg-[#103F32] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              Schedule
+            </button>
+            <button
+              onClick={() => setActiveTab('standings')}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition flex items-center gap-1 ${
+                activeTab === 'standings'
+                  ? 'bg-[#103F32] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              <Medal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span>Standings</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('matrix')}
+              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition ${
+                activeTab === 'matrix'
+                  ? 'bg-[#103F32] text-white shadow-xs'
+                  : 'text-[#64748B] hover:text-[#172033]'
+              }`}
+            >
+              Matrix
+            </button>
+          </div>
         </div>
       </div>
 
@@ -405,11 +487,19 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                       {/* Court Title & Status */}
                       <div className="flex items-center justify-between pb-2 border-b border-[#E0E7E4]">
                         <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-lg bg-[#103F32] text-white flex items-center justify-center text-xs font-mono font-bold">
-                            C{match.courtNumber}
+                          <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-mono font-bold ${
+                            tournamentFormat === 'king_of_court' && match.courtNumber === 1
+                              ? 'bg-amber-400 text-amber-950 shadow-2xs'
+                              : 'bg-[#103F32] text-white'
+                          }`}>
+                            {tournamentFormat === 'king_of_court' && match.courtNumber === 1 ? '👑' : `C${match.courtNumber}`}
                           </span>
                           <span className="font-bold text-[#172033] text-xs">
-                            Court {match.courtNumber} Doubles
+                            {tournamentFormat === 'king_of_court' && match.courtNumber === 1
+                              ? "Court 1: King's Court"
+                              : tournamentFormat === 'king_of_court'
+                              ? `Court ${match.courtNumber} (Challenger)`
+                              : `Court ${match.courtNumber} Doubles`}
                           </span>
                         </div>
 
@@ -550,6 +640,37 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                   );
                 })}
               </div>
+
+              {/* King of the Court Advance Ladder Action Bar */}
+              {tournamentFormat === 'king_of_court' && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#103F32] via-[#144f3f] to-[#103F32] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm border border-[#35D879]/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-400 text-amber-950 flex items-center justify-center font-bold shrink-0 shadow-2xs">
+                      <Crown className="w-5 h-5 fill-current" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black tracking-tight font-display text-white flex items-center gap-2">
+                        <span>King of the Court Ladder Rotation</span>
+                        <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-[#84CC16] text-[#0A271E]">
+                          Round {currentRound.roundNumber}
+                        </span>
+                      </h4>
+                      <p className="text-xs text-white/70 mt-0.5">
+                        Winners promote up toward Court 1. Runners-up move down. Waiting queue enters lowest court.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleAdvanceKingLadder}
+                    className="touch-target px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs transition flex items-center justify-center gap-2 shadow-sm cursor-pointer whitespace-nowrap active:scale-95"
+                  >
+                    <Crown className="w-4 h-4 fill-current" />
+                    <span>Advance Ladder to Next Round</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

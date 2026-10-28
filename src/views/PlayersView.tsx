@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Trash2,
   TrendingUp,
+  Swords,
 } from 'lucide-react';
 import { PlayerDetailModal } from '../components/PlayerDetailModal';
 
@@ -24,6 +25,7 @@ interface PlayersViewProps {
   onUpdatePlayerStatus: (playerId: string, newStatus: PlayerStatus) => void;
   onDeletePlayer: (playerId: string) => void;
   onUpdatePlayerDetails: (player: Player) => void;
+  onOpenHeadToHead?: (playerAId?: string) => void;
 }
 
 export const PlayersView: React.FC<PlayersViewProps> = ({
@@ -36,6 +38,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
   onUpdatePlayerStatus,
   onDeletePlayer,
   onUpdatePlayerDetails,
+  onOpenHeadToHead,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number | 'all'>('all');
@@ -114,14 +117,27 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsAddModalOpen(true)}
-          className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
-        >
-          <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
-          <span>Add New Player</span>
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {onOpenHeadToHead && (
+            <button
+              type="button"
+              onClick={() => onOpenHeadToHead()}
+              className="touch-target inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-[#F6F8F7] text-[#103F32] font-bold text-xs shadow-2xs transition active:scale-95 border border-[#E0E7E4]"
+            >
+              <Swords className="w-4 h-4 text-[#103F32]" />
+              <span>Head-to-Head</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
+          >
+            <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
+            <span>Add New Player</span>
+          </button>
+        </div>
       </div>
 
       {/* Search & Filter Bar */}
@@ -440,6 +456,10 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
           onClose={() => setSelectedPlayer(null)}
           onUpdatePlayerRating={onUpdatePlayerRating}
           onUpdatePlayerStatus={onUpdatePlayerStatus}
+          onOpenHeadToHead={(pId) => {
+            setSelectedPlayer(null);
+            onOpenHeadToHead?.(pId);
+          }}
         />
       )}
 

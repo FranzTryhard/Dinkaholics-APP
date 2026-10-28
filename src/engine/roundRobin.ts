@@ -225,3 +225,166 @@ export function calculateStandings(
     return b.pointsFor - a.pointsFor;
   });
 }
+
+export type TournamentFormat = 'round_robin' | 'king_of_court';
+
+export interface KingCourtLadderState {
+  currentRound: number;
+  courtAssignments: {
+    courtNumber: number;
+    isKingCourt: boolean;
+    courtLabel: string;
+    teamA: [string, string];
+    teamB: [string, string];
+    scoreA: number | null;
+    scoreB: number | null;
+    winnerTeam: 'teamA' | 'teamB' | null;
+    completed: boolean;
+  }[];
+  waitingQueue: string[];
+}
+
+/**
+ * Generates initial round for King of the Court Ladder format.
+ * Court 1 is the King's Court.
+ */
+export function generateInitialKingLadder(
+  participants: Player[],
+  availableCourts: number = 2
+): RoundRobinRound {
+  if (participants.length < 4) return { roundNumber: 1, matches: [], byes: [] };
+
+  // Seed by skill rating descending
+  const sorted = [...participants].sort((a, b) => b.skillRating - a.skillRating);
+  const playerIds = sorted.map((p) => p.id);
+
+  const courtsCount = Math.min(availableCourts, Math.floor(playerIds.length / 4));
+  const activeIds = playerIds.slice(0, courtsCount * 4);
+  const byes = playerIds.slice(courtsCount * 4);
+
+  const matches: RoundRobinMatch[] = [];
+
+  for (let c = 1; c <= courtsCount; c++) {
+    const startIdx = (c - 1) * 4;
+    const courtFour = activeIds.slice(startIdx, startIdx + 4);
+    matches.push({
+      id: `kotc_r1_c${c}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      roundNumber: 1,
+      courtNumber: c,
+      teamA: [courtFour[0], courtFour[3]],
+      teamB: [courtFour[1], courtFour[2]],
+      scoreA: null,
+      scoreB: null,
+      winnerTeam: null,
+      completed: false,
+    });
+  }
+
+  return {
+    roundNumber: 1,
+    matches,
+    byes,
+  };
+}
+
+/**
+ * Advances King of the Court to next round:
+ * - Court 1 (King) Winners STAY on Court 1 (split or stay)
+ * - Court 1 Losers DROP to Court 2
+ * - Court 2 Winners MOVE UP to Court 1
+ * - Court 2 Losers DROP to Court 3 (or Byes)
+ * - Waiting players enter lowest court
+ */
+export function advanceKingCourtLadder(
+  previousRound: RoundRobinRound,
+  allParticipants: Player[],
+  availableCourts: number
+): RoundRobinRound {
+  const nextRoundNum = previousRound.roundNumber + 1;
+  const courts = [...previousRound.matches].sort((a, b) => a.courtNumber - b.courtNumber);
+  const numCourts = courts.length;
+
+  const winnersByCourt: Record<number, [string, string]> = {};
+  const losersByCourt: Record<number, [string, string]> = {};
+
+  courts.forEach((m) => {
+    const isWinnerA = m.winnerTeam === 'teamA' || ((m.scoreA ?? 0) >= (m.scoreB ?? 0));
+    winnersByCourt[m.courtNumber] = isWinnerA ? m.teamA : m.teamB;
+    losersByCourt[m.courtNumber] = isWinnerA ? m.teamB : m.teamA;
+  });
+
+  const nextMatches: RoundRobinMatch[] = [];
+  const incomingByes = [...previousRound.byes];
+  const newByes: string[] = [];
+
+  for (let c = 1; c <= numCourts; c++) {
+    let courtPlayers: string[] = [];
+
+    if (c === 1) {
+      // Court 1: King Court
+      // Winners from Court 1 stay (split to play with incoming winners from Court 2)
+      const kingStayers = winnersByCourt[1] || courts[0].teamA;
+      const court2Promoters = numCourts >= 2 ? (winnersByCourt[2] || courts[1].teamA) : (losersByCourt[1] || courts[0].teamB);
+
+      // Pair 1 king with 1 challenger for fair King of Court play
+      const teamA: [string, string] = [kingStayers[0], court2Promoters[0]];
+      const teamB: [string, string] = [kingStayers[1], court2Promoters[1]];
+
+      nextMatches.push({
+        id: `kotc_r${nextRoundNum}_c1_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        roundNumber: nextRoundNum,
+        courtNumber: 1,
+        teamA,
+        teamB,
+        scoreA: null,
+        scoreB: null,
+        winnerTeam: null,
+        completed: false,
+      });
+    } else {
+      // Court c (c >= 2)
+      // Losers from Court c-1 drop down to Court c
+      const droppedFromAbove = losersByCourt[c - 1] || [];
+      
+      let incomingLower: string[] = [];
+      if (c === numCourts) {
+        // Lowest court: if there are players in byes queue, rotate them in!
+        if (incomingByes.length >= 2) {
+          incomingLower = incomingByes.splice(0, 2);
+          // Lowest court losers go to byes
+          const lowestLosers = losersByCourt[c] || [];
+          newByes.push(...lowestLosers);
+        } else {
+          incomingLower = losersByCourt[c] || [];
+        }
+      } else {
+        // Winners from court c+1 move up to court c
+        incomingLower = winnersByCourt[c + 1] || [];
+      }
+
+      const teamA: [string, string] = [droppedFromAbove[0] || '', incomingLower[0] || ''];
+      const teamB: [string, string] = [droppedFromAbove[1] || '', incomingLower[1] || ''];
+
+      nextMatches.push({
+        id: `kotc_r${nextRoundNum}_c${c}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        roundNumber: nextRoundNum,
+        courtNumber: c,
+        teamA,
+        teamB,
+        scoreA: null,
+        scoreB: null,
+        winnerTeam: null,
+        completed: false,
+      });
+    }
+  }
+
+  newByes.push(...incomingByes);
+
+  return {
+    roundNumber: nextRoundNum,
+    matches: nextMatches,
+    byes: newByes,
+  };
+}
+

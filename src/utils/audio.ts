@@ -125,6 +125,11 @@ class CourtAudio {
       });
     } catch {}
   }
+
+  // Gentle tactile click for court buttons and toggles
+  public playCourtClick() {
+    this.playPaddleHit();
+  }
 }
 
 export const courtAudio = new CourtAudio();
