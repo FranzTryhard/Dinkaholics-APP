@@ -12,8 +12,12 @@ import {
   Trash2,
   TrendingUp,
   Swords,
+  ArrowUpDown,
 } from 'lucide-react';
 import { PlayerDetailModal } from '../components/PlayerDetailModal';
+
+export type PlayerSortBy = 'name' | 'skill';
+export type PlayerSortDirection = 'asc' | 'desc';
 
 interface PlayersViewProps {
   players: Player[];
@@ -51,6 +55,43 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
   const [ratingConfirm, setRatingConfirm] = useState<{ player: Player; newRating: SkillLevel } | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
+  // Sorting state: order by alphabetical name or skill level rating
+  const [sortBy, setSortBy] = useState<PlayerSortBy>(() => {
+    try {
+      const saved = localStorage.getItem('picklematch_player_sort_by');
+      if (saved === 'skill' || saved === 'name') return saved;
+    } catch {}
+    return 'name';
+  });
+
+  const [sortDirection, setSortDirection] = useState<PlayerSortDirection>(() => {
+    try {
+      const saved = localStorage.getItem('picklematch_player_sort_direction');
+      if (saved === 'asc' || saved === 'desc') return saved;
+    } catch {}
+    return 'asc';
+  });
+
+  const handleSortChange = (newSortBy: PlayerSortBy) => {
+    if (sortBy === newSortBy) {
+      // Toggle sort direction
+      const nextDir: PlayerSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      setSortDirection(nextDir);
+      try {
+        localStorage.setItem('picklematch_player_sort_direction', nextDir);
+      } catch {}
+    } else {
+      setSortBy(newSortBy);
+      // Sensible defaults: alphabetical A-Z, skill level 5 to 1 (desc)
+      const nextDir: PlayerSortDirection = newSortBy === 'skill' ? 'desc' : 'asc';
+      setSortDirection(nextDir);
+      try {
+        localStorage.setItem('picklematch_player_sort_by', newSortBy);
+        localStorage.setItem('picklematch_player_sort_direction', nextDir);
+      } catch {}
+    }
+  };
+
   const playersById = useMemo(() => {
     return players.reduce<Record<string, Player>>((acc, p) => {
       acc[p.id] = p;
@@ -72,6 +113,29 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
     const matchesRating = ratingFilter === 'all' || p.skillRating === ratingFilter;
     return matchesSearch && matchesRating;
   });
+
+  // Apply active sorting ordering (Alphabetical vs Skill Level)
+  const displayedPlayers = useMemo(() => {
+    return [...filteredPlayers].sort((a, b) => {
+      if (sortBy === 'skill') {
+        const ratingDiff =
+          sortDirection === 'desc'
+            ? b.skillRating - a.skillRating
+            : a.skillRating - b.skillRating;
+        if (ratingDiff !== 0) return ratingDiff;
+        // Secondary sort: Alphabetical by name
+        return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      } else {
+        // Alphabetical sort by name
+        const nameComp = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+        if (nameComp !== 0) {
+          return sortDirection === 'asc' ? nameComp : -nameComp;
+        }
+        // Secondary sort: Skill rating high-to-low
+        return b.skillRating - a.skillRating;
+      }
+    });
+  }, [filteredPlayers, sortBy, sortDirection]);
 
   const handleCreatePlayer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,8 +267,8 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
         </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="p-4 rounded-2xl bg-white border border-[#E0E7E4] shadow-xs space-y-3">
+      {/* Search, Filter & Sort Controls */}
+      <div className="p-4 rounded-2xl bg-white border border-[#E0E7E4] shadow-xs space-y-3.5">
         <div className="relative">
           <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -227,53 +291,133 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
           )}
         </div>
 
-        {/* Rating filter segmented tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-          <span className="text-xs font-semibold text-[#64748B] mr-1 shrink-0">Filter Level:</span>
-          <button
-            onClick={() => setRatingFilter('all')}
-            className={`touch-target px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-              ratingFilter === 'all'
-                ? 'bg-[#103F32] text-white shadow-xs'
-                : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
-            }`}
-          >
-            All ({players.length})
-          </button>
-          {([1, 2, 3, 4, 5] as SkillLevel[]).map((lvl) => {
-            const count = players.filter((p) => p.skillRating === lvl).length;
-            return (
+        {/* Filter & Sort Controls Bar */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-2.5 border-t border-[#F1F5F3]">
+          {/* Rating filter segmented tabs */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+            <span className="text-xs font-semibold text-[#64748B] mr-1 shrink-0">Filter:</span>
+            <button
+              type="button"
+              onClick={() => setRatingFilter('all')}
+              className={`touch-target px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                ratingFilter === 'all'
+                  ? 'bg-[#103F32] text-white shadow-xs'
+                  : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
+              }`}
+            >
+              All ({players.length})
+            </button>
+            {([1, 2, 3, 4, 5] as SkillLevel[]).map((lvl) => {
+              const count = players.filter((p) => p.skillRating === lvl).length;
+              return (
+                <button
+                  key={lvl}
+                  type="button"
+                  onClick={() => setRatingFilter(lvl)}
+                  className={`touch-target px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+                    ratingFilter === lvl
+                      ? 'bg-[#103F32] text-white shadow-xs'
+                      : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
+                  }`}
+                >
+                  L{lvl} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sorting Toggle: Alphabetical vs Skill Level */}
+          <div className="flex items-center gap-2 shrink-0 self-start md:self-auto">
+            <span className="text-xs font-semibold text-[#64748B] shrink-0 flex items-center gap-1">
+              <ArrowUpDown className="w-3.5 h-3.5 text-[#103F32]" />
+              <span>Sort:</span>
+            </span>
+
+            <div className="inline-flex items-center p-0.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] text-xs font-bold shadow-2xs">
+              {/* Alphabetical Sort Button */}
               <button
-                key={lvl}
-                onClick={() => setRatingFilter(lvl)}
-                className={`touch-target px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
-                  ratingFilter === lvl
-                    ? 'bg-[#103F32] text-white shadow-xs'
-                    : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
+                type="button"
+                onClick={() => handleSortChange('name')}
+                className={`touch-target px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 ${
+                  sortBy === 'name'
+                    ? 'bg-[#103F32] text-white shadow-2xs'
+                    : 'text-[#64748B] hover:text-[#172033]'
                 }`}
+                title="Sort roster alphabetically by name (click again to reverse order)"
+                aria-pressed={sortBy === 'name'}
               >
-                L{lvl} ({count})
+                <span>Alphabetical</span>
+                <span
+                  className={`text-[10px] px-1 py-0.5 rounded font-mono font-bold leading-none ${
+                    sortBy === 'name' ? 'bg-white/20 text-white' : 'bg-white border border-[#E0E7E4] text-[#64748B]'
+                  }`}
+                >
+                  {sortBy === 'name' && sortDirection === 'desc' ? 'Z→A' : 'A→Z'}
+                </span>
               </button>
-            );
-          })}
+
+              {/* Skill Level Sort Button */}
+              <button
+                type="button"
+                onClick={() => handleSortChange('skill')}
+                className={`touch-target px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 ${
+                  sortBy === 'skill'
+                    ? 'bg-[#103F32] text-white shadow-2xs'
+                    : 'text-[#64748B] hover:text-[#172033]'
+                }`}
+                title="Sort roster by skill rating (click again to reverse order)"
+                aria-pressed={sortBy === 'skill'}
+              >
+                <span>Skill Level</span>
+                <span
+                  className={`text-[10px] px-1 py-0.5 rounded font-mono font-bold leading-none ${
+                    sortBy === 'skill' ? 'bg-white/20 text-white' : 'bg-white border border-[#E0E7E4] text-[#64748B]'
+                  }`}
+                >
+                  {sortBy === 'skill' && sortDirection === 'asc' ? '1→5' : '5→1'}
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Active sort & filter feedback summary */}
+        {players.length > 0 && (
+          <div className="flex items-center justify-between text-[11px] text-[#64748B] pt-1">
+            <span>
+              Showing <strong className="text-[#172033]">{displayedPlayers.length}</strong> of{' '}
+              <strong className="text-[#172033]">{players.length}</strong> players
+            </span>
+            <span className="font-medium">
+              Order: <strong className="text-[#103F32]">
+                {sortBy === 'name'
+                  ? sortDirection === 'asc'
+                    ? 'Name (A to Z)'
+                    : 'Name (Z to A)'
+                  : sortDirection === 'desc'
+                  ? 'Skill Level (High to Low)'
+                  : 'Skill Level (Low to High)'}
+              </strong>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Players List Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {filteredPlayers.length === 0 ? (
+        {displayedPlayers.length === 0 ? (
           <div className="col-span-full p-10 sm:p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] space-y-4 shadow-xs">
             <div className="w-14 h-14 rounded-2xl bg-[#E5F8EC] text-[#103F32] flex items-center justify-center mx-auto shadow-2xs">
               <Users className="w-7 h-7" />
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-bold text-[#172033] font-display">
-                {players.length === 0 ? 'Your Roster is Empty' : 'No players match your search'}
+                {players.length === 0 ? 'Your Roster is Empty' : 'No players match your search or filter'}
               </h3>
               <p className="text-xs text-[#64748B] max-w-sm mx-auto">
                 {players.length === 0
                   ? 'Add your club players manually with their skill levels (1–5) to start scheduling fair, balanced doubles matches.'
-                  : 'Try adjusting your search query or skill level filter.'}
+                  : 'Try adjusting your search query or skill level filter to see more players.'}
               </p>
             </div>
 
@@ -326,7 +470,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
             )}
           </div>
         ) : (
-          filteredPlayers.map((player) => {
+          displayedPlayers.map((player) => {
             const isPlaying = player.status === 'playing';
             const isResting = player.status === 'resting';
 
