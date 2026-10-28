@@ -390,12 +390,28 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
         </div>
       </div>
 
-      {/* TAB 1: ROUND SCHEDULE */}
-      {activeTab === 'bracket' && (
-        <div className="space-y-5">
-          {/* Round Selector Bar */}
-          <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs overflow-x-auto no-scrollbar touch-pan-x">
-            <div className="flex items-center gap-1.5">
+      {availablePlayers.length < 4 ? (
+        <div className="p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] space-y-4 shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-[#E5F8EC] text-[#103F32] flex items-center justify-center mx-auto shadow-2xs">
+            <Trophy className="w-7 h-7" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-[#172033] font-display">
+              Tournaments Require at Least 4 Players
+            </h3>
+            <p className="text-xs text-[#64748B] max-w-sm mx-auto">
+              You currently have {availablePlayers.length} player{availablePlayers.length === 1 ? '' : 's'} in your roster. Add at least 4 players manually in the Players tab to generate round schedules, court matrices, and King of the Court ladders.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* TAB 1: ROUND SCHEDULE */}
+          {activeTab === 'bracket' && (
+            <div className="space-y-5">
+              {/* Round Selector Bar */}
+              <div className="flex items-center justify-between p-2 rounded-2xl bg-white border border-[#E0E7E4] shadow-2xs overflow-x-auto no-scrollbar touch-pan-x">
+                <div className="flex items-center gap-1.5">
               {rounds.map((r, idx) => {
                 const roundMatchesCompleted = r.matches.every((m) => m.completed);
                 const isSelected = selectedRoundIndex === idx;
@@ -846,6 +862,8 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
           </div>
         </div>
       )}
+    </>
+  )}
 
       {/* Modal: Custom Score Stepper */}
       {customScoreMatch && (

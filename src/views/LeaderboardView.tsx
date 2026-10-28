@@ -95,7 +95,18 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 
       {/* Leaderboard Cards */}
       <div className="space-y-3">
-        {rankedPlayers.map((player, index) => {
+        {rankedPlayers.length === 0 ? (
+          <div className="p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] space-y-3 shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-[#E5F8EC] text-[#103F32] flex items-center justify-center mx-auto">
+              <Trophy className="w-6 h-6" />
+            </div>
+            <div className="text-sm font-bold text-[#172033]">No players in roster yet</div>
+            <p className="text-xs text-[#64748B] max-w-xs mx-auto">
+              Add your players manually in the Players tab to track match records, point differential, and leaderboard ranks.
+            </p>
+          </div>
+        ) : (
+          rankedPlayers.map((player, index) => {
           const games = scope === 'session' ? player.sessionGamesPlayed : player.totalGamesPlayed;
           const wins = scope === 'session' ? player.sessionWins : player.wins;
           const losses = scope === 'session' ? player.sessionLosses : player.losses;
@@ -179,7 +190,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
 
       {/* Player Detail View Modal with Recharts Performance Trends */}

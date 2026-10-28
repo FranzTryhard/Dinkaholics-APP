@@ -8,11 +8,12 @@ import {
   DEFAULT_PLAYER_AVATAR,
 } from '../types';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION, INITIAL_DEMO_MATCHES } from './mockData';
+import { DEFAULT_ROTATION_CONFIG } from './config';
 
-const PLAYERS_KEY = 'picklematch_players_v1';
-const ACTIVE_SESSION_KEY = 'picklematch_active_session_v1';
-const MATCHES_KEY = 'picklematch_matches_v1';
-const SESSIONS_HISTORY_KEY = 'picklematch_sessions_history_v1';
+const PLAYERS_KEY = 'picklematch_players_v2';
+const ACTIVE_SESSION_KEY = 'picklematch_active_session_v2';
+const MATCHES_KEY = 'picklematch_matches_v2';
+const SESSIONS_HISTORY_KEY = 'picklematch_sessions_history_v2';
 
 const memoryStore = new Map<string, string>();
 
@@ -41,14 +42,14 @@ function safeRemove(key: string): void {
 
 export class StorageService {
   /**
-   * Load all saved players. If none exist, initializes with default starter players.
+   * Load all saved players. Returns empty list by default so user manually adds their roster.
    */
   static getPlayers(): Player[] {
     try {
       const data = safeGet(PLAYERS_KEY);
       if (data) {
         const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           const formatted = parsed.map((p: Player) => ({
             ...p,
             avatar: p.avatar && p.avatar.trim() ? p.avatar : DEFAULT_PLAYER_AVATAR,
@@ -59,9 +60,8 @@ export class StorageService {
     } catch (e) {
       console.error('Failed to read players from storage', e);
     }
-    // Return starter players by default so dashboard and queue are fully populated
-    this.savePlayers(INITIAL_DEMO_PLAYERS);
-    return INITIAL_DEMO_PLAYERS;
+    // Return empty list so users enter their players manually
+    return [];
   }
 
   static savePlayers(players: Player[]): void {
@@ -73,7 +73,7 @@ export class StorageService {
   }
 
   /**
-   * Load active session. If none exists, initializes with default open play session.
+   * Load active session. If none exists, creates a clean starter session with 2 courts and 0 participants.
    */
   static getActiveSession(): Session | null {
     try {
@@ -85,9 +85,24 @@ export class StorageService {
     } catch (e) {
       console.error('Failed to read active session', e);
     }
-    // Return active starter session by default so dashboard is active
-    this.saveActiveSession(INITIAL_DEMO_SESSION);
-    return INITIAL_DEMO_SESSION;
+    const defaultSession: Session = {
+      id: `session_${Date.now()}`,
+      name: 'Club Open Play',
+      courtCount: 2,
+      courtNames: {
+        1: 'Court 1',
+        2: 'Court 2',
+      },
+      rotationMode: 'balanced',
+      rotationConfig: DEFAULT_ROTATION_CONFIG,
+      status: 'active',
+      startTime: Date.now(),
+      endTime: null,
+      participantIds: [],
+      activeCourtMatches: {},
+    };
+    this.saveActiveSession(defaultSession);
+    return defaultSession;
   }
 
   static saveActiveSession(session: Session | null): void {

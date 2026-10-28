@@ -21,6 +21,8 @@ interface PlayersViewProps {
   session?: Session | null;
   isSessionActive: boolean;
   onAddPlayer: (player: Omit<Player, 'id'>) => void;
+  onBatchAddPlayers?: (players: Array<Omit<Player, 'id'>>) => void;
+  onLoadSamplePlayers?: () => void;
   onUpdatePlayerRating: (playerId: string, newRating: SkillLevel) => void;
   onUpdatePlayerStatus: (playerId: string, newStatus: PlayerStatus) => void;
   onDeletePlayer: (playerId: string) => void;
@@ -34,6 +36,8 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
   session = null,
   isSessionActive,
   onAddPlayer,
+  onBatchAddPlayers,
+  onLoadSamplePlayers,
   onUpdatePlayerRating,
   onUpdatePlayerStatus,
   onDeletePlayer,
@@ -43,6 +47,7 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number | 'all'>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addMode, setAddMode] = useState<'single' | 'batch'>('single');
   const [ratingConfirm, setRatingConfirm] = useState<{ player: Player; newRating: SkillLevel } | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
@@ -53,10 +58,14 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
     }, {});
   }, [players]);
 
-  // New player form state
+  // Single player form state
   const [newName, setNewName] = useState('');
   const [newRating, setNewRating] = useState<SkillLevel>(3);
   const [newAvatar, setNewAvatar] = useState('');
+
+  // Batch add form state
+  const [batchText, setBatchText] = useState('');
+  const [batchDefaultRating, setBatchDefaultRating] = useState<SkillLevel>(3);
 
   const filteredPlayers = players.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -91,6 +100,45 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
     setNewName('');
     setNewAvatar('');
     setNewRating(3);
+    setIsAddModalOpen(false);
+  };
+
+  const handleCreateBatchPlayers = (e: React.FormEvent) => {
+    e.preventDefault();
+    const rawNames = batchText
+      .split(/[\n,]+/)
+      .map((n) => n.trim())
+      .filter((n) => n.length > 0);
+
+    if (rawNames.length === 0) return;
+
+    const newPlayers: Array<Omit<Player, 'id'>> = rawNames.map((name, index) => ({
+      name,
+      skillRating: batchDefaultRating,
+      totalGamesPlayed: 0,
+      wins: 0,
+      losses: 0,
+      streak: 0,
+      status: 'available',
+      sessionGamesPlayed: 0,
+      sessionWins: 0,
+      sessionLosses: 0,
+      consecutiveGames: 0,
+      lastMatchTime: null,
+      waitingSince: Date.now() - index * 1000,
+      totalWaitingTimeMs: 0,
+      teammateHistory: {},
+      opponentHistory: {},
+    }));
+
+    if (onBatchAddPlayers) {
+      onBatchAddPlayers(newPlayers);
+    } else {
+      newPlayers.forEach((p) => onAddPlayer(p));
+    }
+
+    setBatchText('');
+    setBatchDefaultRating(3);
     setIsAddModalOpen(false);
   };
 
@@ -131,11 +179,26 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
 
           <button
             type="button"
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setAddMode('batch');
+              setIsAddModalOpen(true);
+            }}
+            className="touch-target inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-[#F6F8F7] text-[#103F32] font-bold text-xs shadow-2xs transition active:scale-95 border border-[#E0E7E4]"
+          >
+            <Users className="w-4 h-4 text-[#103F32]" />
+            <span>Batch Add</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setAddMode('single');
+              setIsAddModalOpen(true);
+            }}
             className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
           >
             <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
-            <span>Add New Player</span>
+            <span>Add Player</span>
           </button>
         </div>
       </div>
@@ -199,27 +262,55 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
       {/* Players List Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filteredPlayers.length === 0 ? (
-          <div className="col-span-full p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] space-y-3 shadow-xs">
-            <div className="w-12 h-12 rounded-2xl bg-[#E5F8EC] text-[#103F32] flex items-center justify-center mx-auto">
-              <Users className="w-6 h-6" />
+          <div className="col-span-full p-10 sm:p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] space-y-4 shadow-xs">
+            <div className="w-14 h-14 rounded-2xl bg-[#E5F8EC] text-[#103F32] flex items-center justify-center mx-auto shadow-2xs">
+              <Users className="w-7 h-7" />
             </div>
-            <div className="text-sm font-bold text-[#172033]">
-              {players.length === 0 ? 'No players in your roster' : 'No players match your search'}
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-[#172033] font-display">
+                {players.length === 0 ? 'Your Roster is Empty' : 'No players match your search'}
+              </h3>
+              <p className="text-xs text-[#64748B] max-w-sm mx-auto">
+                {players.length === 0
+                  ? 'Add your club players manually with their skill levels (1–5) to start scheduling fair, balanced doubles matches.'
+                  : 'Try adjusting your search query or skill level filter.'}
+              </p>
             </div>
-            <p className="text-xs text-[#64748B] max-w-xs mx-auto">
-              {players.length === 0
-                ? 'Add your club members with skill levels (1–5) to begin organizing fair doubles matches.'
-                : 'Try adjusting your search query or skill level filter.'}
-            </p>
+
             {players.length === 0 ? (
-              <button
-                type="button"
-                onClick={() => setIsAddModalOpen(true)}
-                className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10 mx-auto"
-              >
-                <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
-                <span>Add First Player</span>
-              </button>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddMode('single');
+                    setIsAddModalOpen(true);
+                  }}
+                  className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
+                >
+                  <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
+                  <span>Add First Player</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddMode('batch');
+                    setIsAddModalOpen(true);
+                  }}
+                  className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-[#F6F8F7] text-[#103F32] font-bold text-xs shadow-xs transition active:scale-95 border border-[#E0E7E4]"
+                >
+                  <Users className="w-4 h-4 text-[#103F32]" />
+                  <span>Batch Add Roster</span>
+                </button>
+                {onLoadSamplePlayers && (
+                  <button
+                    type="button"
+                    onClick={onLoadSamplePlayers}
+                    className="touch-target px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#64748B] hover:text-[#172033] hover:underline"
+                  >
+                    Load 8 Sample Players
+                  </button>
+                )}
+              </div>
             ) : (
               <button
                 type="button"
@@ -368,7 +459,31 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-150">
           <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl space-y-4 border border-[#E0E7E4]">
             <div className="flex items-center justify-between pb-2 border-b border-[#E0E7E4]">
-              <h3 className="font-bold text-[#172033] text-base font-display">Add New Player</h3>
+              <div className="flex items-center gap-1.5 p-1 bg-[#F6F8F7] border border-[#E0E7E4] rounded-xl text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setAddMode('single')}
+                  className={`px-3 py-1 rounded-lg transition ${
+                    addMode === 'single'
+                      ? 'bg-[#103F32] text-white shadow-2xs'
+                      : 'text-[#64748B] hover:text-[#172033]'
+                  }`}
+                >
+                  Single Player
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAddMode('batch')}
+                  className={`px-3 py-1 rounded-lg transition ${
+                    addMode === 'batch'
+                      ? 'bg-[#103F32] text-white shadow-2xs'
+                      : 'text-[#64748B] hover:text-[#172033]'
+                  }`}
+                >
+                  Batch Paste
+                </button>
+              </div>
+
               <button
                 onClick={() => setIsAddModalOpen(false)}
                 className="touch-target p-1.5 rounded-lg text-[#64748B] hover:text-[#172033]"
@@ -377,71 +492,133 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
               </button>
             </div>
 
-            <form onSubmit={handleCreatePlayer} className="space-y-4">
-              <div>
-                <label className="text-xs font-bold text-[#172033] block mb-1">Player Name *</label>
-                <input
-                  type="text"
-                  autoFocus
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="e.g. Alex Morgan"
-                  required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#F6F8F7] text-sm text-[#172033] focus:outline-none focus:bg-white focus:border-[#103F32] border border-[#E0E7E4] transition"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-[#172033] block mb-1">Skill Level (1–5)</label>
-                <div className="grid grid-cols-5 gap-1.5">
-                  {([1, 2, 3, 4, 5] as SkillLevel[]).map((lvl) => (
-                    <button
-                      key={lvl}
-                      type="button"
-                      onClick={() => setNewRating(lvl)}
-                      className={`touch-target py-2 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center ${
-                        newRating === lvl
-                          ? 'bg-[#103F32] text-white shadow-xs ring-1 ring-[#103F32]'
-                          : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
-                      }`}
-                    >
-                      <span>L{lvl}</span>
-                    </button>
-                  ))}
+            {addMode === 'single' ? (
+              <form onSubmit={handleCreatePlayer} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-[#172033] block mb-1">Player Name *</label>
+                  <input
+                    type="text"
+                    autoFocus
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="e.g. Alex Morgan"
+                    required
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#F6F8F7] text-sm text-[#172033] focus:outline-none focus:bg-white focus:border-[#103F32] border border-[#E0E7E4] transition"
+                  />
                 </div>
-                <div className="text-[11px] text-[#64748B] mt-2 p-2.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] leading-snug">
-                  Level {newRating}: <strong className="text-[#172033]">{SKILL_LEVEL_LABELS[newRating]}</strong>
+
+                <div>
+                  <label className="text-xs font-bold text-[#172033] block mb-1">Skill Level (1–5)</label>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {([1, 2, 3, 4, 5] as SkillLevel[]).map((lvl) => (
+                      <button
+                        key={lvl}
+                        type="button"
+                        onClick={() => setNewRating(lvl)}
+                        className={`touch-target py-2 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center ${
+                          newRating === lvl
+                            ? 'bg-[#103F32] text-white shadow-xs ring-1 ring-[#103F32]'
+                            : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
+                        }`}
+                      >
+                        <span>L{lvl}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-[11px] text-[#64748B] mt-2 p-2.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] leading-snug">
+                    Level {newRating}: <strong className="text-[#172033]">{SKILL_LEVEL_LABELS[newRating]}</strong>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="text-xs font-bold text-[#172033] block mb-1">Avatar URL (Optional)</label>
-                <input
-                  type="url"
-                  value={newAvatar}
-                  onChange={(e) => setNewAvatar(e.target.value)}
-                  placeholder="https://... (or leave empty for initials)"
-                  className="w-full px-3.5 py-2 rounded-xl bg-[#F6F8F7] text-xs text-[#172033] focus:outline-none focus:bg-white focus:border-[#103F32] border border-[#E0E7E4] transition"
-                />
-              </div>
+                <div>
+                  <label className="text-xs font-bold text-[#172033] block mb-1">Avatar URL (Optional)</label>
+                  <input
+                    type="url"
+                    value={newAvatar}
+                    onChange={(e) => setNewAvatar(e.target.value)}
+                    placeholder="https://... (or leave empty for initials)"
+                    className="w-full px-3.5 py-2 rounded-xl bg-[#F6F8F7] text-xs text-[#172033] focus:outline-none focus:bg-white focus:border-[#103F32] border border-[#E0E7E4] transition"
+                  />
+                </div>
 
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="touch-target flex-1 py-2.5 rounded-xl border border-[#E0E7E4] text-[#64748B] font-bold text-xs hover:bg-[#F6F8F7]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="touch-target flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
-                >
-                  <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
-                  <span>Create Player</span>
-                </button>
-              </div>
-            </form>
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddModalOpen(false)}
+                    className="touch-target flex-1 py-2.5 rounded-xl border border-[#E0E7E4] text-[#64748B] font-bold text-xs hover:bg-[#F6F8F7]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="touch-target flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
+                  >
+                    <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
+                    <span>Create Player</span>
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleCreateBatchPlayers} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-[#172033] block mb-1">
+                    Player Names (separated by commas or newlines) *
+                  </label>
+                  <textarea
+                    autoFocus
+                    rows={4}
+                    value={batchText}
+                    onChange={(e) => setBatchText(e.target.value)}
+                    placeholder="John Doe&#10;Sarah Smith&#10;Alex Wong&#10;Maria Garcia"
+                    required
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#F6F8F7] text-xs text-[#172033] focus:outline-none focus:bg-white focus:border-[#103F32] border border-[#E0E7E4] transition leading-relaxed font-sans"
+                  />
+                  <p className="text-[11px] text-[#64748B] mt-1">
+                    Tip: Paste a roster from spreadsheets or group chats.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-[#172033] block mb-1">Default Skill Level</label>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {([1, 2, 3, 4, 5] as SkillLevel[]).map((lvl) => (
+                      <button
+                        key={lvl}
+                        type="button"
+                        onClick={() => setBatchDefaultRating(lvl)}
+                        className={`touch-target py-2 rounded-xl text-xs font-bold transition flex flex-col items-center justify-center ${
+                          batchDefaultRating === lvl
+                            ? 'bg-[#103F32] text-white shadow-xs ring-1 ring-[#103F32]'
+                            : 'bg-[#F6F8F7] text-[#64748B] border border-[#E0E7E4] hover:bg-[#E0E7E4]/50'
+                        }`}
+                      >
+                        <span>L{lvl}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="text-[11px] text-[#64748B] mt-2 p-2 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4]">
+                    Default: Level {batchDefaultRating} ({SKILL_LEVEL_LABELS[batchDefaultRating]}). Ratings can be fine-tuned anytime.
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddModalOpen(false)}
+                    className="touch-target flex-1 py-2.5 rounded-xl border border-[#E0E7E4] text-[#64748B] font-bold text-xs hover:bg-[#F6F8F7]"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="touch-target flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
+                  >
+                    <Users className="w-4 h-4 text-[#35D879]" />
+                    <span>Add All Players</span>
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

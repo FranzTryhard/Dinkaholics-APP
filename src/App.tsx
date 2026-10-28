@@ -34,6 +34,7 @@ import { PickleballIcon } from './components/PickleballIcon';
 import { DinkaholicsLogo } from './components/DinkaholicsLogo';
 import { Layers, Play, Users, RotateCcw } from 'lucide-react';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION } from './engine/mockData';
+import { DEFAULT_ROTATION_CONFIG } from './engine/config';
 import { AppSplashLoader } from './components/AppSplashLoader';
 import { ClubhouseKioskView } from './components/ClubhouseKioskView';
 import { HeadToHeadSynergyModal } from './components/HeadToHeadSynergyModal';
@@ -63,20 +64,33 @@ export default function App() {
   // Recommendations state: courtNumber -> MatchCandidate
   const [recommendations, setRecommendations] = useState<Record<number, MatchCandidate | null>>({});
 
-  // Fallback active session and players to guarantee full dashboard visual presence
+  // Effective active session without pre-seeded participants
   const effectiveSession: Session = useMemo(() => {
     if (session && session.status === 'active') {
       return session;
     }
-    return INITIAL_DEMO_SESSION;
+    return (
+      session || {
+        id: 'session_active_1',
+        name: 'Dinkaholics Club Open Play',
+        courtCount: 2,
+        courtNames: {
+          1: 'Court 1',
+          2: 'Court 2',
+        },
+        rotationMode: 'balanced',
+        rotationConfig: DEFAULT_ROTATION_CONFIG,
+        status: 'active',
+        startTime: Date.now(),
+        endTime: null,
+        participantIds: [],
+        activeCourtMatches: {},
+      }
+    );
   }, [session]);
 
-  const effectivePlayers: Player[] = useMemo(() => {
-    if (players && players.length > 0) {
-      return players;
-    }
-    return INITIAL_DEMO_PLAYERS;
-  }, [players]);
+  // Player roster starts completely empty; players are added manually by the user
+  const effectivePlayers: Player[] = players;
 
   // Fast map for lookup
   const playersById = useMemo(() => {
@@ -135,10 +149,6 @@ export default function App() {
     if (!session || session.status !== 'active') {
       setSession(activeSession);
       StorageService.saveActiveSession(activeSession);
-    }
-    if (players.length === 0) {
-      setPlayers(effectivePlayers);
-      StorageService.savePlayers(effectivePlayers);
     }
 
     const matchNumber = matches.length + 1;
@@ -238,7 +248,7 @@ export default function App() {
   // Handler: Toggle Player Status (available, resting, etc.)
   const handleTogglePlayerStatus = (playerId: string, nextStatus: PlayerStatus) => {
     const now = Date.now();
-    const sourcePlayers = players.length > 0 ? players : effectivePlayers;
+    const sourcePlayers = players;
     const updatedPlayers = sourcePlayers.map((p) => {
       if (p.id === playerId) {
         return {
@@ -267,7 +277,7 @@ export default function App() {
     StorageService.savePlayers(updatedPlayers);
   };
 
-  // Handler: Add New Player
+  // Handler: Add New Player Manually
   const handleAddPlayer = (newPlayerData: Omit<Player, 'id'>) => {
     const newPlayer: Player = {
       ...newPlayerData,
@@ -277,6 +287,25 @@ export default function App() {
     const updatedPlayers = [...players, newPlayer];
     setPlayers(updatedPlayers);
     StorageService.savePlayers(updatedPlayers);
+  };
+
+  // Handler: Quick Batch Add Multiple Players
+  const handleBatchAddPlayers = (newPlayersData: Array<Omit<Player, 'id'>>) => {
+    const created: Player[] = newPlayersData.map((data, index) => ({
+      ...data,
+      id: `p_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
+    }));
+
+    const updatedPlayers = [...players, ...created];
+    setPlayers(updatedPlayers);
+    StorageService.savePlayers(updatedPlayers);
+  };
+
+  // Handler: Optional Quick Load of Sample Roster
+  const handleLoadSamplePlayers = () => {
+    const { players: demoPlayers, session: demoSession } = StorageService.resetToDemo();
+    setPlayers(demoPlayers);
+    setSession(demoSession);
   };
 
   // Handler: Delete Player
@@ -421,6 +450,7 @@ export default function App() {
             onEndSessionClick={() => setIsEndSessionModalOpen(true)}
             onNavigateTab={(tab) => setCurrentTab(tab)}
             onOpenKiosk={() => setIsKioskOpen(true)}
+            onLoadSamplePlayers={handleLoadSamplePlayers}
           />
         )}
 
@@ -454,6 +484,8 @@ export default function App() {
             session={session}
             isSessionActive={session?.status === 'active'}
             onAddPlayer={handleAddPlayer}
+            onBatchAddPlayers={handleBatchAddPlayers}
+            onLoadSamplePlayers={handleLoadSamplePlayers}
             onUpdatePlayerRating={handleUpdatePlayerRating}
             onUpdatePlayerStatus={handleTogglePlayerStatus}
             onDeletePlayer={handleDeletePlayer}

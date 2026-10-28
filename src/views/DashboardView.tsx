@@ -24,6 +24,7 @@ import {
   Sparkles,
   Crown,
   Tv,
+  UserPlus,
 } from 'lucide-react';
 import { PickleballIcon } from '../components/PickleballIcon';
 
@@ -41,6 +42,7 @@ interface DashboardViewProps {
   onEndSessionClick: () => void;
   onNavigateTab: (tab: any) => void;
   onOpenKiosk?: () => void;
+  onLoadSamplePlayers?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -57,92 +59,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onEndSessionClick,
   onNavigateTab,
   onOpenKiosk,
+  onLoadSamplePlayers,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const fallbackPreviewPlayers = React.useMemo<Player[]>(
-    () => [
-      {
-        id: 'p_aa',
-        name: 'aa',
-        skillRating: 3,
-        totalGamesPlayed: 0,
-        wins: 0,
-        losses: 0,
-        streak: 0,
-        status: 'available',
-        sessionGamesPlayed: 0,
-        sessionWins: 0,
-        sessionLosses: 0,
-        consecutiveGames: 0,
-        lastMatchTime: null,
-        waitingSince: Date.now() - 30000,
-        totalWaitingTimeMs: 30000,
-        teammateHistory: {},
-        opponentHistory: {},
-      },
-      {
-        id: 'p_bb',
-        name: 'bb',
-        skillRating: 3,
-        totalGamesPlayed: 0,
-        wins: 0,
-        losses: 0,
-        streak: 0,
-        status: 'available',
-        sessionGamesPlayed: 0,
-        sessionWins: 0,
-        sessionLosses: 0,
-        consecutiveGames: 0,
-        lastMatchTime: null,
-        waitingSince: Date.now() - 25000,
-        totalWaitingTimeMs: 25000,
-        teammateHistory: {},
-        opponentHistory: {},
-      },
-      {
-        id: 'p_cc',
-        name: 'cc',
-        skillRating: 3,
-        totalGamesPlayed: 0,
-        wins: 0,
-        losses: 0,
-        streak: 0,
-        status: 'available',
-        sessionGamesPlayed: 0,
-        sessionWins: 0,
-        sessionLosses: 0,
-        consecutiveGames: 0,
-        lastMatchTime: null,
-        waitingSince: Date.now() - 20000,
-        totalWaitingTimeMs: 20000,
-        teammateHistory: {},
-        opponentHistory: {},
-      },
-      {
-        id: 'p_dd',
-        name: 'dd',
-        skillRating: 3,
-        totalGamesPlayed: 0,
-        wins: 0,
-        losses: 0,
-        streak: 0,
-        status: 'available',
-        sessionGamesPlayed: 0,
-        sessionWins: 0,
-        sessionLosses: 0,
-        consecutiveGames: 0,
-        lastMatchTime: null,
-        waitingSince: Date.now() - 15000,
-        totalWaitingTimeMs: 15000,
-        teammateHistory: {},
-        opponentHistory: {},
-      },
-    ],
-    []
-  );
-
-  const displayPlayers = players && players.length > 0 ? players : fallbackPreviewPlayers;
+  // Players are managed manually by the user
+  const displayPlayers = players;
 
   const playersById = React.useMemo(() => {
     return displayPlayers.reduce<Record<string, Player>>((acc, p) => {
@@ -163,18 +85,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   const courts = Array.from({ length: session.courtCount }, (_, i) => i + 1);
 
-  // Top 3 ranked players for leaderboard (guarantee at least 3 display rows)
+  // Top 3 ranked players for leaderboard from user's roster
   const sortedPlayers = [...displayPlayers].sort(
     (a, b) =>
       b.sessionWins * 25 + b.sessionGamesPlayed * 10 -
       (a.sessionWins * 25 + a.sessionGamesPlayed * 10)
   );
-  const topPlayers = [
-    ...sortedPlayers,
-    ...fallbackPreviewPlayers.filter(
-      (fb) => !sortedPlayers.some((p) => p.name.toLowerCase() === fb.name.toLowerCase())
-    ),
-  ].slice(0, 3);
+  const topPlayers = sortedPlayers.slice(0, 3);
 
   const getPlayer = (id: string): Player => {
     return (
@@ -228,6 +145,38 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           />
         </div>
       </div>
+
+      {/* Empty Roster Guidance Prompt */}
+      {players.length === 0 && (
+        <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-[#103F32]/10 via-[#103F32]/5 to-transparent border border-[#103F32]/20 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#103F32] animate-pulse" />
+              <h2 className="font-bold text-[#172033] text-sm font-display">Player Roster is Empty</h2>
+            </div>
+            <p className="text-xs text-[#64748B] max-w-xl">
+              Add your club members manually (with skill ratings 1–5) to start generating fair court rotations and tracking live scores.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <button
+              onClick={() => onNavigateTab('players')}
+              className="touch-target inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
+            >
+              <UserPlus className="w-3.5 h-3.5 text-[#35D879]" />
+              <span>Add Players Manually</span>
+            </button>
+            {onLoadSamplePlayers && (
+              <button
+                onClick={onLoadSamplePlayers}
+                className="touch-target inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-white hover:bg-[#F6F8F7] text-[#64748B] hover:text-[#172033] font-semibold text-xs border border-[#E0E7E4] shadow-2xs transition"
+              >
+                <span>Load Sample Roster (8)</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Main 2-Column Responsive Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -625,39 +574,45 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             <div className="space-y-2">
-              {topPlayers.map((player, idx) => {
-                const pts = player.sessionWins * 25 + player.sessionGamesPlayed * 10 + 100;
+              {topPlayers.length === 0 ? (
+                <div className="p-4 text-center text-xs text-[#64748B]">
+                  No player standings recorded yet.
+                </div>
+              ) : (
+                topPlayers.map((player, idx) => {
+                  const pts = player.sessionWins * 25 + player.sessionGamesPlayed * 10 + 100;
 
-                return (
-                  <div
-                    key={player.id}
-                    className="flex items-center justify-between p-2.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] hover:bg-[#E5F8EC]/40 transition"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-5 text-center font-black text-xs text-[#64748B] font-mono tabular-nums">
-                        #{idx + 1}
-                      </span>
+                  return (
+                    <div
+                      key={player.id}
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] hover:bg-[#E5F8EC]/40 transition"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="w-5 text-center font-black text-xs text-[#64748B] font-mono tabular-nums">
+                          #{idx + 1}
+                        </span>
 
-                      <PlayerAvatar
-                        avatar={player.avatar}
-                        name={player.name}
-                        className="w-8 h-8 rounded-full border border-[#E0E7E4]"
-                      />
+                        <PlayerAvatar
+                          avatar={player.avatar}
+                          name={player.name}
+                          className="w-8 h-8 rounded-full border border-[#E0E7E4]"
+                        />
 
-                      <div>
-                        <div className="text-xs font-bold text-[#172033]">{player.name}</div>
-                        <div className="text-[11px] text-[#64748B]">
-                          {player.sessionGamesPlayed} matches · Level {player.skillRating}
+                        <div>
+                          <div className="text-xs font-bold text-[#172033]">{player.name}</div>
+                          <div className="text-[11px] text-[#64748B]">
+                            {player.sessionGamesPlayed} matches · Level {player.skillRating}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="text-xs font-bold font-mono tabular-nums text-[#103F32]">
-                      {pts} pts
+                      <div className="text-xs font-bold font-mono tabular-nums text-[#103F32]">
+                        {pts} pts
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
 
