@@ -7,7 +7,6 @@ import {
   SlidersHorizontal,
   Clock,
   ChevronRight,
-  Download,
 } from 'lucide-react';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 
@@ -67,36 +66,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     return true;
   });
 
-  const handleExportCSV = () => {
-    if (completedMatches.length === 0) return;
-    const headers = ['Match #', 'Court', 'Team 1 Players', 'Team 2 Players', 'Team 1 Score', 'Team 2 Score', 'Winner', 'Timestamp'];
-    const rows = completedMatches.map((m) => {
-      const t1 = m.teamA.map((id) => getPlayer(id).name).join(' & ');
-      const t2 = m.teamB.map((id) => getPlayer(id).name).join(' & ');
-      const s1 = m.scoreA ?? 0;
-      const s2 = m.scoreB ?? 0;
-      const winner = m.winnerTeam === 'teamA' ? 'Team 1' : m.winnerTeam === 'teamB' ? 'Team 2' : 'Tie';
-      const time = new Date(m.confirmedAt || m.startTime).toLocaleString();
-      return [
-        m.matchNumber,
-        `"${m.courtName || `Court ${m.courtNumber}`}"`,
-        `"${t1}"`,
-        `"${t2}"`,
-        s1,
-        s2,
-        `"${winner}"`,
-        `"${time}"`,
-      ].join(',');
-    });
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `dinkaholics-session-${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 space-y-6">
@@ -136,18 +105,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               Live ({activeMatches.length})
             </button>
           </div>
-
-          {/* Export CSV Button */}
-          {completedMatches.length > 0 && (
-            <button
-              onClick={handleExportCSV}
-              className="touch-target px-3 py-2 rounded-xl border border-[#E0E7E4] bg-white text-[#172033] hover:bg-[#F6F8F7] hover:text-[#103F32] text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition"
-              title="Export all match results to CSV spreadsheet"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export CSV</span>
-            </button>
-          )}
         </div>
       </div>
 

@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Player, Match, Session } from '../types';
-import { getEffectiveWaitMs, formatWaitTime } from '../engine/matchmaker';
 import {
-  Clock,
   Flame,
   Activity,
   Users,
@@ -26,29 +24,7 @@ export const SessionInsights: React.FC<SessionInsightsProps> = ({
   session,
   onNavigateToPlayers,
 }) => {
-  const [now, setNow] = useState(Date.now());
-
-  // Periodically refresh relative wait times every 10 seconds
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 10000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Calculate wait times
   const activeQueue = players.filter((p) => p.status === 'available');
-  
-  // Total wait time experienced by all players currently in the session
-  const waitTimesMs = players.map((p) => {
-    const currentWait = p.status === 'available' && p.waitingSince ? Math.max(0, now - p.waitingSince) : 0;
-    return (p.totalWaitingTimeMs || 0) + currentWait;
-  });
-
-  const totalWaitMs = waitTimesMs.reduce((sum, w) => sum + w, 0);
-  const avgWaitMs = players.length > 0 ? totalWaitMs / players.length : 0;
-  
-  // Longest current wait in active queue
-  const currentQueueWaits = activeQueue.map((p) => getEffectiveWaitMs(p, now));
-  const maxCurrentWaitMs = currentQueueWaits.length > 0 ? Math.max(...currentQueueWaits) : 0;
 
   // Active players sorted by games played in this session
   const sortedByActivity = [...players].sort((a, b) => {
@@ -86,7 +62,7 @@ export const SessionInsights: React.FC<SessionInsightsProps> = ({
               </span>
             </h2>
             <p className="text-[11px] text-slate-400">
-              Fairness tracking, wait metrics & court workload
+              Fairness tracking, player rotation & court activity
             </p>
           </div>
         </div>
@@ -104,42 +80,44 @@ export const SessionInsights: React.FC<SessionInsightsProps> = ({
 
       {/* 2-Column Metric Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Left Column: Average Wait Time & Queue Pacing */}
+        {/* Left Column: Active Queue Pacing */}
         <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-3 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between text-xs text-slate-500">
               <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[#0F382C]" />
-                Average Wait Time
+                <Users className="w-3.5 h-3.5 text-[#0F382C]" />
+                Active Queue Pacing
               </span>
-              <span className="text-[10px] font-mono tabular-nums text-slate-400">Session Avg</span>
+              <span className="text-[10px] font-mono tabular-nums text-slate-400">Rotation Order</span>
             </div>
 
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-3xl sm:text-4xl font-black font-mono tabular-nums text-[#0F382C] tracking-tight">
-                {formatWaitTime(avgWaitMs)}
+                {activeQueue.length}
               </span>
-              <span className="text-xs font-medium text-slate-500">per player</span>
+              <span className="text-xs font-medium text-slate-500">
+                {activeQueue.length === 1 ? 'player waiting' : 'players waiting'}
+              </span>
             </div>
           </div>
 
           <div className="pt-2 border-t border-slate-200/60 text-[11px] text-slate-500 space-y-1.5">
             <div className="flex items-center justify-between">
-              <span>Max in queue now:</span>
+              <span>Total session roster:</span>
               <span className="font-mono font-bold text-slate-800">
-                {formatWaitTime(maxCurrentWaitMs)}
+                {players.length} {players.length === 1 ? 'player' : 'players'}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span>Waiting queue count:</span>
+              <span>On court right now:</span>
               <span className="font-mono font-bold text-[#0F382C]">
-                {activeQueue.length} {activeQueue.length === 1 ? 'player' : 'players'}
+                {activeCourtsCount * 4} players
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span>Queue pacing:</span>
               <span className="font-semibold text-emerald-700">
-                {avgWaitMs < 600000 ? 'Optimal Rotation' : 'Busy Session'}
+                {activeQueue.length <= 4 ? 'Optimal Rotation' : 'Active Open Play'}
               </span>
             </div>
           </div>

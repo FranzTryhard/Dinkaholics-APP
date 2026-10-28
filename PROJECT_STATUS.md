@@ -19,7 +19,7 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
   - `king_of_court`: Ladder tier rotation with Court 1 as the King's Throne.
 - **Round-Robin Bracket Generator:** Generates multi-round schedules with balanced byes, partner pairing diversity, and live tournament standings (points for/against, differential, win %).
 - **Interactive Visual Court Scorekeeper:** Direct on-court digital scoreboard adhering to standard doubles pickleball rules (server 1/2, side-outs, rally vs side-out mode, Web Audio synthesizer effects, and full undo stack).
-- **Player Analytics & History:** Win streaks, lifetime statistics, Recharts performance trend graphs (win rate, momentum, point diff), and CSV match export.
+- **Player Analytics & History:** Win streaks, lifetime statistics, and Recharts performance trend graphs (win rate, momentum, point diff).
 
 ---
 
@@ -31,7 +31,6 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] Round-Robin tournament generator and live standings.
 - [x] Interactive visual scorekeeper with server tracking, side-out rules, and audio synthesizer.
 - [x] Recharts trend curves (win rate, momentum, point differential).
-- [x] CSV export of completed session matches (formatted with `dinkaholics-session-` prefix).
 - [x] PWA offline support and Web Audio API offline sound.
 - [x] Idempotent match completion preventing duplicate win/loss counting.
 - [x] Automated test suites in `src/engine/__tests__/`.
@@ -61,6 +60,8 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Batch 5 Brand Harmonization & Accessibility]** Standardized CTA buttons with `.cssbuttons-io-button` using high-contrast dark forest green text (`#0A2B22`) on brand accent lime (`#35D879`) exceeding WCAG AAA (6.8:1).
 - [x] **[Batch 5 Brand Harmonization & Accessibility]** Aligned Tournament Round Robin overview cards, match scorecards, standings table, partner matrix, and waiting queue with zero-pill discipline and tabular figures.
 - [x] **[Batch 5 Brand Harmonization & Accessibility]** Verified iOS Safari touch targets ($\ge 44\text{px}$), safe-area insets, keyboard focus rings, and dark court-side scoreboard mode.
+- [x] **[Clean Up]** Removed obsolete CSV match export button and utilities per user request.
+- [x] **[Clean Up — Queue UI]** Removed wait time badges (`< 1m wait time`) from Waiting Queue player rows and streamlined Session Insights to focus cleanly on active queue player counts and rotation pacing.
 
 ---
 

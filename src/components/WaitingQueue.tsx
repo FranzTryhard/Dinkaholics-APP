@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Player, SKILL_LEVEL_COLORS, PlayerStatus } from '../types';
-import { formatWaitTime, getEffectiveWaitMs } from '../engine/matchmaker';
-import { Clock, Coffee, Check, Flame, ChevronRight, UserPlus } from 'lucide-react';
+import { getEffectiveWaitMs } from '../engine/matchmaker';
+import { Users, Coffee, Check, Flame, ChevronRight, UserPlus } from 'lucide-react';
 
 interface WaitingQueueProps {
   players: Player[];
@@ -16,17 +16,9 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
   className = '',
   onNavigateToPlayers,
 }) => {
-  const [now, setNow] = useState(Date.now());
-
-  // Tick timer every 10 seconds for wait times
-  useEffect(() => {
-    const interval = setInterval(() => setNow(Date.now()), 10000);
-    return () => clearInterval(interval);
-  }, []);
-
   const waitingPlayers = players
     .filter((p) => p.status === 'available')
-    .sort((a, b) => getEffectiveWaitMs(b, now) - getEffectiveWaitMs(a, now));
+    .sort((a, b) => getEffectiveWaitMs(b) - getEffectiveWaitMs(a));
 
   const restingPlayers = players.filter((p) => p.status === 'resting');
 
@@ -35,7 +27,7 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
       {/* Header */}
       <div className="px-4 py-3 bg-[#F6F8F7] border-b border-[#E0E7E4] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#103F32]" />
+          <Users className="w-4 h-4 text-[#103F32]" />
           <h3 className="font-bold text-[#172033] text-sm">
             Waiting Queue ({waitingPlayers.length})
           </h3>
@@ -49,7 +41,7 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         ) : (
-          <span className="text-[11px] text-[#64748B]">Fairness-prioritized</span>
+          <span className="text-[11px] text-[#64748B]">Next in rotation</span>
         )}
       </div>
 
@@ -85,8 +77,6 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
           </div>
         ) : (
           waitingPlayers.map((p, idx) => {
-            const waitMs = getEffectiveWaitMs(p, now);
-            const waitStr = formatWaitTime(waitMs);
             const colors = SKILL_LEVEL_COLORS[p.skillRating];
 
             return (
@@ -113,7 +103,7 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-xs font-bold text-[#172033] truncate max-w-[120px]" title={p.name}>
+                      <span className="text-xs font-bold text-[#172033] truncate max-w-[140px]" title={p.name}>
                         {p.name}
                       </span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${colors.bg} ${colors.text} shrink-0`}>
@@ -135,13 +125,6 @@ export const WaitingQueue: React.FC<WaitingQueueProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className="text-right">
-                    <span className="text-xs font-mono font-bold text-[#103F32] bg-[#E5F8EC] border border-[#C4EED3] px-2 py-0.5 rounded-md tabular-nums">
-                      {waitStr}
-                    </span>
-                    <div className="text-[10px] text-[#64748B] mt-0.5">wait time</div>
-                  </div>
-
                   <button
                     onClick={() => onToggleStatus(p.id, 'resting')}
                     className="touch-target p-2 rounded-xl border border-[#E0E7E4] bg-white text-[#64748B] hover:text-amber-700 hover:border-amber-300 hover:bg-amber-50/50 transition active:scale-95"
