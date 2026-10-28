@@ -7,6 +7,7 @@ import {
   SlidersHorizontal,
   Clock,
   ChevronRight,
+  X,
 } from 'lucide-react';
 import { PlayerAvatar } from '../components/PlayerAvatar';
 
@@ -116,14 +117,41 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Filter matches by player name..."
-          className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-white border border-[#E0E7E4] text-xs text-[#172033] placeholder:text-[#64748B] focus:outline-none focus:border-[#103F32] focus:ring-1 focus:ring-[#103F32] transition shadow-2xs"
+          className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white border border-[#E0E7E4] text-xs text-[#172033] placeholder:text-[#64748B] focus:outline-none focus:border-[#103F32] focus:ring-1 focus:ring-[#103F32] transition shadow-2xs"
         />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="touch-target p-1 absolute right-2 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#172033]"
+            title="Clear search"
+            aria-label="Clear search"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Match Cards Grid */}
       {filteredMatches.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] text-xs text-[#64748B]">
-          No matches found.
+        <div className="p-12 text-center rounded-2xl bg-white border border-[#E0E7E4] text-xs text-[#64748B] space-y-3 shadow-2xs">
+          <p>
+            {searchQuery
+              ? `No matches found matching "${searchQuery}".`
+              : activeTab === 'history'
+              ? 'No completed matches recorded yet. Matches played on courts will appear here.'
+              : 'No live matches currently in progress.'}
+          </p>
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="touch-target px-3.5 py-1.5 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] font-bold text-xs hover:bg-[#C4EED3] transition inline-flex items-center gap-1.5"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Clear search filter</span>
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -140,8 +140,19 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search players by name..."
-            className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] text-xs text-[#172033] placeholder:text-[#64748B] focus:outline-none focus:bg-white focus:border-[#103F32] focus:ring-1 focus:ring-[#103F32] transition"
+            className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-[#F6F8F7] border border-[#E0E7E4] text-xs text-[#172033] placeholder:text-[#64748B] focus:outline-none focus:bg-white focus:border-[#103F32] focus:ring-1 focus:ring-[#103F32] transition"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="touch-target p-1 absolute right-2 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#172033]"
+              title="Clear search"
+              aria-label="Clear search"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
 
         {/* Rating filter segmented tabs */}
@@ -191,13 +202,25 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                 ? 'Add your club members with skill levels (1–5) to begin organizing fair doubles matches.'
                 : 'Try adjusting your search query or skill level filter.'}
             </p>
-            {players.length === 0 && (
+            {players.length === 0 ? (
               <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="cssbuttons-io-button mx-auto"
               >
                 <UserPlus className="w-4 h-4 mr-1.5" />
                 <span>Add First Player</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setRatingFilter('all');
+                }}
+                className="touch-target px-3.5 py-1.5 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] font-bold text-xs hover:bg-[#C4EED3] transition inline-flex items-center gap-1.5 mx-auto"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Clear search & filter</span>
               </button>
             )}
           </div>

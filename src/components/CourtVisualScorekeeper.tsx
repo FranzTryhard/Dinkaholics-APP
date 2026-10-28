@@ -10,7 +10,6 @@ import {
   VolumeX,
   Maximize2,
   Minimize2,
-  RotateCw,
   RefreshCw,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -192,7 +191,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             servingTeam === 'teamA'
               ? teamAPlayers[nextServerPlayerIndex]
               : teamBPlayers[nextServerPlayerIndex];
-          setToastMessage(`Second Server! ${partner.name} now serving (Server #2)`);
+          setToastMessage(`Second Server! ${partner.name} now serving (#2)`);
         } else {
           // Server 2 faulted -> SIDE OUT! Serve switches to the OTHER team!
           nextServerNumber = 1;
@@ -270,6 +269,43 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     setIsSubmitting(true);
   };
 
+  const handleSideOut = () => {
+    setHistory((prev) => [
+      ...prev,
+      {
+        a: scoreA,
+        b: scoreB,
+        sNum: serverNumber,
+        sTeam: servingTeam,
+        sPlayerIdx: serverPlayerIndex,
+        posA: [...teamAPositions] as [number, number],
+        posB: [...teamBPositions] as [number, number],
+      },
+    ]);
+    let nextNum: 1 | 2 = 1;
+    let nextTeam: 'teamA' | 'teamB' = servingTeam;
+    let nextIdx: 0 | 1 = serverPlayerIndex;
+
+    if (serverNumber === 1 && scoringMode === 'side_out') {
+      nextNum = 2;
+      nextIdx = serverPlayerIndex === 0 ? 1 : 0;
+      const partner = servingTeam === 'teamA' ? teamAPlayers[nextIdx] : teamBPlayers[nextIdx];
+      setToastMessage(`Second Server! ${partner.name} now serving (#2)`);
+    } else {
+      nextNum = 1;
+      nextTeam = servingTeam === 'teamA' ? 'teamB' : 'teamA';
+      nextIdx = 0;
+      const nextServer = nextTeam === 'teamA' ? teamAPlayers[0] : teamBPlayers[0];
+      setToastMessage(`Side out! ${nextServer.name} now serving for ${nextTeam === 'teamA' ? 'Team 1' : 'Team 2'}`);
+    }
+    setServerNumber(nextNum);
+    setServingTeam(nextTeam);
+    setServerPlayerIndex(nextIdx);
+    courtAudio.playSideOut();
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
+  // Submitting transition screen
   if (isSubmitting) {
     const isWinnerA = scoreA >= scoreB;
     const winnerPlayers = isWinnerA ? teamAPlayers : teamBPlayers;
@@ -291,10 +327,10 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     );
   }
 
+  // Match Ended Celebration Screen
   if (isMatchEnded) {
     const isWinnerA = scoreA >= scoreB;
     const winnerPlayers = isWinnerA ? teamAPlayers : teamBPlayers;
-
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] animate-in fade-in duration-200">
@@ -339,95 +375,26 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
 
           {/* Actions */}
           <div className="w-full space-y-2">
-            {isSubmitting ? (
-              <div className="py-2 px-4 rounded-2xl bg-black/20 border border-emerald-500/20 flex flex-col items-center">
-                <PickleballBounceLoader
-                  size="sm"
-                  theme="dark"
-                  message="Recording Result..."
-                  submessage="Calculating ratings & updating court rotation"
-                />
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={handleConfirmFinish}
-                  disabled={isSubmitting}
-                  className="touch-target w-full py-3 rounded-xl bg-[#84CC16] text-[#0A271E] font-black text-xs shadow-md hover:bg-lime-400 transition active:scale-95 font-display"
-                >
-                  Confirm Result & Next Rotation
-                </button>
-                <button
-                  onClick={handleUndo}
-                  className="touch-target w-full py-2.5 rounded-xl border border-white/20 text-emerald-100 font-semibold text-xs hover:bg-white/10 transition"
-                >
-                  Back to Scorekeeper
-                </button>
-              </>
-            )}
+            <button
+              onClick={handleConfirmFinish}
+              disabled={isSubmitting}
+              className="touch-target w-full py-3 rounded-xl bg-[#84CC16] hover:bg-lime-400 text-[#0A271E] font-black text-xs shadow-md transition active:scale-95 font-display"
+            >
+              Confirm Result & Next Rotation
+            </button>
+            <button
+              onClick={handleUndo}
+              className="touch-target w-full py-2.5 rounded-xl border border-white/20 text-emerald-100 font-semibold text-xs hover:bg-white/10 transition"
+            >
+              Back to Scorekeeper
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  const handleSideOut = () => {
-    setHistory((prev) => [
-      ...prev,
-      {
-        a: scoreA,
-        b: scoreB,
-        sNum: serverNumber,
-        sTeam: servingTeam,
-        sPlayerIdx: serverPlayerIndex,
-        posA: [...teamAPositions] as [number, number],
-        posB: [...teamBPositions] as [number, number],
-      },
-    ]);
-    let nextNum: 1 | 2 = 1;
-    let nextTeam: 'teamA' | 'teamB' = servingTeam;
-    let nextIdx: 0 | 1 = serverPlayerIndex;
-
-    if (serverNumber === 1 && scoringMode === 'side_out') {
-      nextNum = 2;
-      nextIdx = serverPlayerIndex === 0 ? 1 : 0;
-      const partner = servingTeam === 'teamA' ? teamAPlayers[nextIdx] : teamBPlayers[nextIdx];
-      setToastMessage(`Second Server! ${partner.name} now serving`);
-    } else {
-      nextNum = 1;
-      nextTeam = servingTeam === 'teamA' ? 'teamB' : 'teamA';
-      nextIdx = 0;
-      const nextServer = nextTeam === 'teamA' ? teamAPlayers[0] : teamBPlayers[0];
-      setToastMessage(`Side out! ${nextServer.name} now serving for ${nextTeam === 'teamA' ? 'Team 1' : 'Team 2'}`);
-    }
-    setServerNumber(nextNum);
-    setServingTeam(nextTeam);
-    setServerPlayerIndex(nextIdx);
-    courtAudio.playSideOut();
-    setTimeout(() => setToastMessage(null), 2500);
-  };
-
-  const handleSelectServer = (team: 'teamA' | 'teamB', playerIdx: 0 | 1) => {
-    setHistory((prev) => [
-      ...prev,
-      {
-        a: scoreA,
-        b: scoreB,
-        sNum: serverNumber,
-        sTeam: servingTeam,
-        sPlayerIdx: serverPlayerIndex,
-        posA: [...teamAPositions] as [number, number],
-        posB: [...teamBPositions] as [number, number],
-      },
-    ]);
-    setServingTeam(team);
-    setServerPlayerIndex(playerIdx);
-    const chosenPlayer = team === 'teamA' ? teamAPlayers[playerIdx] : teamBPlayers[playerIdx];
-    setToastMessage(`Server set to ${chosenPlayer.name}!`);
-    courtAudio.playPaddleHit();
-    setTimeout(() => setToastMessage(null), 2000);
-  };
-
+  // BIG DIGIT MODE (Tripod / Direct Outdoor Sunlight Mode)
   if (isBigDigitMode) {
     const leftTeam = isSwappedSides ? 'teamB' : 'teamA';
     const rightTeam = isSwappedSides ? 'teamA' : 'teamB';
@@ -441,33 +408,35 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     return (
       <div className="fixed inset-0 z-50 bg-[#061811] text-white flex flex-col justify-between overflow-hidden select-none animate-in fade-in duration-150 pt-[env(safe-area-inset-top)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         {/* Top HUD: Court-Side Tripod Controls */}
-        <div className="px-4 py-3 bg-[#0a2319] border-b border-emerald-900/60 flex items-center justify-between gap-2 shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="px-3 sm:px-4 py-2.5 bg-[#0a2319] border-b border-emerald-900/60 flex items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => setIsBigDigitMode(false)}
               className="touch-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition"
               title="Return to standard scorekeeper"
+              aria-label="Return to standard scorekeeper"
             >
-              <Minimize2 className="w-4 h-4 text-[#D4E938]" />
+              <Minimize2 className="w-4 h-4 text-[#84CC16]" />
               <span className="hidden sm:inline">Standard View</span>
             </button>
             <button
               onClick={toggleSound}
               className={`touch-target p-2 rounded-xl transition ${
                 soundEnabled
-                  ? 'text-[#D4E938] bg-white/10 hover:bg-white/20'
+                  ? 'text-[#84CC16] bg-white/10 hover:bg-white/20'
                   : 'text-white/40 hover:bg-white/10'
               }`}
               title={soundEnabled ? 'Mute court audio' : 'Unmute court audio'}
+              aria-label={soundEnabled ? 'Mute court audio' : 'Unmute court audio'}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
           </div>
 
-          {/* Center: Pickleball Official Score Announcement Banner */}
+          {/* Center: Pickleball Score Announcement Banner */}
           <div className="flex flex-col items-center">
             <div className="flex items-center gap-1.5 text-xs sm:text-sm font-black font-mono tracking-wider text-slate-100 bg-[#030e0a] px-3.5 py-1 rounded-full border border-emerald-800/80">
-              <span className="text-[#D4E938] font-bold">{serverScore}</span>
+              <span className="text-[#84CC16] font-bold">{serverScore}</span>
               <span className="text-emerald-500">-</span>
               <span className="text-white font-bold">{receiverScore}</span>
               <span className="text-emerald-500">-</span>
@@ -488,15 +457,16 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               onClick={() => setIsSwappedSides(!isSwappedSides)}
               className="touch-target inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-200 text-xs font-semibold transition"
               title="Switch sides (change ends)"
+              aria-label="Switch sides (change ends)"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span className="hidden md:inline">Switch Ends</span>
             </button>
             <button
               onClick={handleConfirmFinish}
-              className="cssbuttons-io-button-logo btn-sm"
+              className="touch-target px-3 py-1.5 rounded-xl bg-[#84CC16] hover:bg-lime-400 text-[#07241A] font-black text-xs transition active:scale-95 shadow-sm"
             >
-              <span>Finish Match</span>
+              Finish
             </button>
           </div>
         </div>
@@ -508,7 +478,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             onClick={() => handleScorePoint(leftTeam)}
             className={`rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition active:scale-[0.99] border-2 relative overflow-hidden ${
               isLeftServing
-                ? 'bg-gradient-to-b from-[#103F32] to-[#0A271E] border-[#35D879]/80 shadow-[0_0_30px_rgba(53,216,121,0.2)]'
+                ? 'bg-gradient-to-b from-[#103F32] to-[#0A271E] border-[#84CC16]/80 shadow-[0_0_30px_rgba(132,204,22,0.15)]'
                 : 'bg-[#0A2017] border-emerald-900/50 hover:border-emerald-800'
             }`}
           >
@@ -524,7 +494,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               </div>
 
               {isLeftServing && (
-                <div className="inline-flex items-center gap-1.5 bg-[#35D879] text-[#0A2B22] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
+                <div className="inline-flex items-center gap-1.5 bg-[#84CC16] text-[#0A2B22] px-2.5 py-1 rounded-full text-xs font-black shadow-md">
                   <PickleballIcon className="w-4 h-4 text-[#0A2B22]" />
                   <span>SERVING · {activeServerPlayer.name} (#{serverNumber})</span>
                 </div>
@@ -534,7 +504,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             {/* Huge Score Number */}
             <div className="flex items-center justify-center my-auto py-4">
               <span className={`text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] font-black font-mono tabular-nums leading-none tracking-tighter ${
-                isLeftServing ? 'text-[#35D879]' : 'text-white'
+                isLeftServing ? 'text-[#84CC16]' : 'text-white'
               }`}>
                 {leftScore}
               </span>
@@ -554,7 +524,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             onClick={() => handleScorePoint(rightTeam)}
             className={`rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition active:scale-[0.99] border-2 relative overflow-hidden ${
               isRightServing
-                ? 'bg-gradient-to-b from-[#103F32] to-[#0A271E] border-[#35D879]/80 shadow-[0_0_30px_rgba(53,216,121,0.2)]'
+                ? 'bg-gradient-to-b from-[#103F32] to-[#0A271E] border-[#84CC16]/80 shadow-[0_0_30px_rgba(132,204,22,0.15)]'
                 : 'bg-[#0A2017] border-emerald-900/50 hover:border-emerald-800'
             }`}
           >
@@ -570,7 +540,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
               </div>
 
               {isRightServing && (
-                <div className="inline-flex items-center gap-1.5 bg-[#35D879] text-[#0A2B22] px-2.5 py-1 rounded-full text-xs font-black shadow-md animate-pulse">
+                <div className="inline-flex items-center gap-1.5 bg-[#84CC16] text-[#0A2B22] px-2.5 py-1 rounded-full text-xs font-black shadow-md">
                   <PickleballIcon className="w-4 h-4 text-[#0A2B22]" />
                   <span>SERVING · {activeServerPlayer.name} (#{serverNumber})</span>
                 </div>
@@ -580,7 +550,7 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
             {/* Huge Score Number */}
             <div className="flex items-center justify-center my-auto py-4">
               <span className={`text-8xl sm:text-9xl md:text-[10rem] lg:text-[12rem] font-black font-mono tabular-nums leading-none tracking-tighter ${
-                isRightServing ? 'text-[#35D879]' : 'text-white'
+                isRightServing ? 'text-[#84CC16]' : 'text-white'
               }`}>
                 {rightScore}
               </span>
@@ -596,13 +566,13 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
           </div>
         </div>
 
-        {/* Floating Quick Action Bar for Referees / Bench Operators */}
+        {/* Floating Quick Action Bar */}
         <div className="px-4 py-3 bg-[#0a2319] border-t border-emerald-900/60 flex items-center justify-center gap-3">
           <button
             onClick={handleSideOut}
             className="touch-target px-4 py-2.5 rounded-xl bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700/60 text-emerald-200 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition"
           >
-            <span>Side Out / Change Server</span>
+            <span>Fault / Rotate Server</span>
           </button>
 
           {history.length > 0 && (
@@ -619,358 +589,459 @@ export const CourtVisualScorekeeper: React.FC<CourtVisualScorekeeperProps> = ({
     );
   }
 
+  // STANDARD POLISHED VIEW (Mobile-First Court-Side Scorekeeper)
+  const playerLeftA = teamAPlayers[teamAPositions[0]] || teamAPlayers[0];
+  const playerRightA = teamAPlayers[teamAPositions[1]] || teamAPlayers[1];
+  const playerLeftB = teamBPlayers[teamBPositions[0]] || teamBPlayers[0];
+  const playerRightB = teamBPlayers[teamBPositions[1]] || teamBPlayers[1];
+
+  const isLeftAServing = servingTeam === 'teamA' && activeServerPlayer.id === playerLeftA.id;
+  const isRightAServing = servingTeam === 'teamA' && activeServerPlayer.id === playerRightA.id;
+  const isLeftBServing = servingTeam === 'teamB' && activeServerPlayer.id === playerLeftB.id;
+  const isRightBServing = servingTeam === 'teamB' && activeServerPlayer.id === playerRightB.id;
+
   return (
-    <div className="fixed inset-0 z-50 bg-[#F6F8F7] flex flex-col justify-between overflow-y-auto animate-in fade-in duration-200 pt-[env(safe-area-inset-top)] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-      {/* Top Bar */}
-      <div className="p-3 sm:p-4 flex items-center justify-between border-b border-[#E0E7E4] bg-white">
-        <div className="flex items-center gap-2">
+    <div className="fixed inset-0 z-50 bg-[#F8F9F8] flex flex-col justify-between overflow-hidden select-none pt-[env(safe-area-inset-top)] pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      {/* 1. Header and match information */}
+      <header className="px-3 sm:px-5 py-2.5 bg-white border-b border-[#E2E8F0] flex items-center justify-between shrink-0 shadow-2xs">
+        {/* Left: Back button, Sound toggle, Fullscreen/Tripod mode */}
+        <div className="flex items-center gap-1 sm:gap-1.5">
           <button
             onClick={onClose}
-            className="touch-target p-2 rounded-xl text-[#172033] hover:bg-slate-100 transition"
+            className="touch-target p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95"
             title="Exit scorekeeper"
+            aria-label="Exit scorekeeper"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <button
             onClick={toggleSound}
-            className={`touch-target p-2 rounded-xl transition ${
+            className={`touch-target p-2 rounded-xl transition active:scale-95 ${
               soundEnabled
-                ? 'text-[#103F32] bg-[#E5F8EC] hover:bg-[#C4EED3]'
-                : 'text-[#64748B] hover:bg-slate-100'
+                ? 'text-[#0F382C] bg-[#E5F8EC] hover:bg-[#C4EED3]'
+                : 'text-slate-400 hover:bg-slate-100'
             }`}
             title={soundEnabled ? 'Mute court audio' : 'Unmute court audio'}
             aria-label={soundEnabled ? 'Mute court audio' : 'Unmute court audio'}
           >
-            {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </button>
           <button
             onClick={() => setIsBigDigitMode(true)}
-            className="touch-target inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E5F8EC] hover:bg-[#C4EED3] border border-[#C4EED3] text-[#103F32] font-bold text-xs transition shadow-2xs"
+            className="touch-target inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 hover:text-slate-900 text-xs font-semibold transition active:scale-95 shadow-2xs"
             title="Switch to Court-Side Tripod Fullscreen Mode"
+            aria-label="Switch to Court-Side Mode"
           >
-            <Maximize2 className="w-4 h-4 text-[#103F32]" />
+            <Maximize2 className="w-3.5 h-3.5 text-[#0F382C]" />
             <span className="hidden sm:inline">Court-Side Mode</span>
           </button>
         </div>
 
-        <div className="text-center">
-          <h2 className="font-bold text-[#172033] text-sm tracking-tight font-display">
-            {match.courtName || `Court ${match.courtNumber}`} · Live
-          </h2>
-          <div className="inline-flex items-center gap-1 text-[11px] font-mono tabular-nums font-medium text-[#64748B] bg-[#F6F8F7] border border-[#E0E7E4] px-2 py-0.5 rounded-full mt-0.5">
-            <Clock className="w-3 h-3 text-[#64748B]" />
-            {formatTimer(elapsed)}
+        {/* Center: Live Court Name and Timer */}
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <h2 className="font-bold text-slate-900 text-sm tracking-tight font-display">
+              {match.courtName || `Court ${match.courtNumber}`}
+            </h2>
+          </div>
+          <div className="text-[11px] font-mono tabular-nums text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+            <Clock className="w-3 h-3 text-slate-400" />
+            <span>{formatTimer(elapsed)}</span>
           </div>
         </div>
 
+        {/* Right: Finish Game Action */}
         <button
           onClick={handleConfirmFinish}
-          className="touch-target px-3.5 py-1.5 rounded-xl bg-[#103F32] text-white font-bold text-xs hover:bg-[#0A2B22] transition shadow-xs active:scale-95"
+          className="touch-target px-3.5 py-1.5 rounded-xl bg-[#0F382C] hover:bg-[#154637] text-white font-bold text-xs shadow-2xs transition active:scale-95"
+          aria-label="Finish Game"
         >
           Finish Game
         </button>
-      </div>
+      </header>
 
-      {/* Main Score Area */}
-      <div className="p-4 flex-1 flex flex-col items-center justify-center max-w-md mx-auto w-full">
-        <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
-          Pickleball Call: Server - Receiver - Server #
-        </div>
-
-        {/* Big Official Pickleball Score: Server Score - Receiver Score - Server Number */}
-        <div className="flex items-center gap-3 sm:gap-4 my-2">
-          <div className="text-center">
-            <span className="text-5xl font-black font-mono tabular-nums text-[#0F382C]">
-              {serverScore}
-            </span>
-            <div className="text-[10px] text-slate-400 font-semibold uppercase mt-1">Server</div>
-          </div>
-          <span className="text-4xl font-mono text-slate-300">-</span>
-          <div className="text-center">
-            <span className="text-5xl font-black font-mono tabular-nums text-slate-800">
-              {receiverScore}
-            </span>
-            <div className="text-[10px] text-slate-400 font-semibold uppercase mt-1">Receiver</div>
-          </div>
-          <span className="text-4xl font-mono text-slate-300">-</span>
-          <div className="text-center">
-            <span className="text-5xl font-black font-mono tabular-nums text-[#D4E938] bg-[#0F382C] px-3 py-0.5 rounded-xl">
-              {serverNumber}
-            </span>
-            <div className="text-[10px] text-slate-400 font-semibold uppercase mt-1">Server #</div>
-          </div>
-        </div>
-
-        {/* Undo button - tactile elevated hit target */}
-        {history.length > 0 && (
-          <button
-            onClick={handleUndo}
-            className="touch-target inline-flex items-center gap-1.5 px-3.5 py-2 my-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs shadow-2xs active:scale-95 transition"
-            title="Undo last point"
-          >
-            <Undo2 className="w-4 h-4 text-slate-500" />
-            <span>Undo last point</span>
-          </button>
-        )}
-
-        {/* Scoring Mode Toggle & Supporting Description */}
-        <div className="w-full mt-2.5 mb-1 px-1 space-y-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200 shrink-0">
-              <button
-                type="button"
-                onClick={() => setScoringMode('side_out')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
-                  scoringMode === 'side_out'
-                    ? 'bg-[#0F382C] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Side-Out
-              </button>
-              <button
-                type="button"
-                onClick={() => setScoringMode('rally')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${
-                  scoringMode === 'rally'
-                    ? 'bg-[#0F382C] text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Rally
-              </button>
-            </div>
-            <span className="text-[11px] text-[#103F32] font-semibold bg-[#E5F8EC] border border-[#C4EED3] px-2 py-0.5 rounded-md whitespace-nowrap">
-              {scoringMode === 'side_out' ? 'Fault = Next Server' : 'Point on Rally'}
-            </span>
-          </div>
-
-          <p className="text-[11px] text-slate-500 leading-normal">
-            {scoringMode === 'side_out'
-              ? 'Traditional 1–2-Sideout: Serve must be held to score points.'
-              : 'Rally Point: A point is awarded to the rally winner on every turn.'}
-          </p>
-        </div>
-
-        <div className="text-xs font-medium text-slate-600 mt-0.5 text-center">
-          Tap court area or buttons below to score:
-        </div>
-
-        {/* Toast alert */}
+      {/* 2. Main Middle Scoring Canvas (Fits Mobile Viewport without Scrolling) */}
+      <main className="flex-1 w-full max-w-md mx-auto px-3 py-2 flex flex-col justify-between min-h-0 relative">
+        {/* Floating Toast Message */}
         {toastMessage && (
-          <div className="my-2 px-3 py-1.5 rounded-full bg-[#0F382C] text-[#D4E938] text-xs font-bold animate-bounce shadow-md">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-30 px-3.5 py-1.5 rounded-full bg-[#0F382C] text-[#84CC16] text-xs font-bold shadow-lg border border-[#84CC16]/40 animate-in fade-in slide-in-from-top-2 duration-150 whitespace-nowrap">
             {toastMessage}
           </div>
         )}
 
-        {/* Interactive Pickleball Court Top-Down View */}
-        {(() => {
-          const playerLeftA = teamAPlayers[teamAPositions[0]] || teamAPlayers[0];
-          const playerRightA = teamAPlayers[teamAPositions[1]] || teamAPlayers[1];
-          const playerLeftB = teamBPlayers[teamBPositions[0]] || teamBPlayers[0];
-          const playerRightB = teamBPlayers[teamBPositions[1]] || teamBPlayers[1];
+        {/* Top: Scoreboard Card (The Primary Visual Anchor) */}
+        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-3 shadow-2xs flex flex-col items-center shrink-0">
+          <div className="text-[10px] uppercase font-bold tracking-widest text-slate-400 font-mono">
+            Official Call: Server · Receiver · Server #
+          </div>
 
-          const isLeftAServing = servingTeam === 'teamA' && activeServerPlayer.id === playerLeftA.id;
-          const isRightAServing = servingTeam === 'teamA' && activeServerPlayer.id === playerRightA.id;
-          const isLeftBServing = servingTeam === 'teamB' && activeServerPlayer.id === playerLeftB.id;
-          const isRightBServing = servingTeam === 'teamB' && activeServerPlayer.id === playerRightB.id;
-
-          return (
-            <div className="mt-2 w-full aspect-[4/5] max-h-80 rounded-2xl border-4 border-white shadow-lg overflow-hidden flex flex-col bg-[#144637] relative">
-              {/* Top Half: Team 1 */}
-              <div
-                className={`flex-1 relative flex border-b-2 border-white/50 transition ${
-                  servingTeam === 'teamA' ? 'bg-[#185341]' : 'bg-[#0F382C]'
-                }`}
-              >
-                {/* Team 1 Left Court Box */}
-                <div
-                  onClick={() => handleScorePoint('teamA')}
-                  className={`flex-1 border-r border-white/30 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
-                    isLeftAServing ? 'ring-4 ring-inset ring-[#84CC16] bg-[#1a5b47] shadow-inner' : ''
-                  }`}
-                  title={`Team 1: ${playerLeftA.name}`}
-                >
-                  <div className="flex flex-col items-center">
-                    <PlayerAvatar
-                      avatar={playerLeftA.avatar}
-                      name={playerLeftA.name}
-                      className={`w-9 h-9 rounded-full shadow ${
-                        isLeftAServing
-                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                          : 'border border-white/20'
-                      }`}
-                    />
-                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
-                      {playerLeftA.name}
-                    </span>
-                  </div>
-
-                  {isLeftAServing && (
-                    <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-[#84CC16] text-[#0A271E] font-black text-[10px] px-2.5 py-1 rounded-full shadow-lg border border-[#0A271E]/40 animate-pulse">
-                      <PickleballIcon className="w-3.5 h-3.5 text-[#0A271E]" />
-                      <span>Serving #{serverNumber}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Team 1 Right Court Box */}
-                <div
-                  onClick={() => handleScorePoint('teamA')}
-                  className={`flex-1 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
-                    isRightAServing ? 'ring-4 ring-inset ring-[#84CC16] bg-[#1a5b47] shadow-inner' : ''
-                  }`}
-                  title={`Team 1: ${playerRightA.name}`}
-                >
-                  <div className="flex flex-col items-center">
-                    <PlayerAvatar
-                      avatar={playerRightA.avatar}
-                      name={playerRightA.name}
-                      className={`w-9 h-9 rounded-full shadow ${
-                        isRightAServing
-                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                          : 'border border-white/20'
-                      }`}
-                    />
-                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
-                      {playerRightA.name}
-                    </span>
-                  </div>
-
-                  {isRightAServing && (
-                    <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-[#84CC16] text-[#0A271E] font-black text-[10px] px-2.5 py-1 rounded-full shadow-lg border border-[#0A271E]/40 animate-pulse">
-                      <PickleballIcon className="w-3.5 h-3.5 text-[#0A271E]" />
-                      <span>Serving #{serverNumber}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Kitchen / Non-Volley Zone */}
-              <div className="h-9 bg-[#0a271e] border-y-2 border-white/70 flex items-center justify-center text-[10px] font-bold text-white/80 uppercase tracking-widest shadow-inner shrink-0">
-                Non-Volley Zone (NVZ)
-              </div>
-
-              {/* Bottom Half: Team 2 */}
-              <div
-                className={`flex-1 relative flex transition ${
-                  servingTeam === 'teamB' ? 'bg-[#185341]' : 'bg-[#0F382C]'
-                }`}
-              >
-                {/* Team 2 Left Court Box */}
-                <div
-                  onClick={() => handleScorePoint('teamB')}
-                  className={`flex-1 border-r border-white/30 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
-                    isLeftBServing ? 'ring-4 ring-inset ring-[#84CC16] bg-[#1a5b47] shadow-inner' : ''
-                  }`}
-                  title={`Team 2: ${playerLeftB.name}`}
-                >
-                  <div className="flex flex-col items-center">
-                    <PlayerAvatar
-                      avatar={playerLeftB.avatar}
-                      name={playerLeftB.name}
-                      className={`w-9 h-9 rounded-full shadow ${
-                        isLeftBServing
-                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                          : 'border border-white/20'
-                      }`}
-                    />
-                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
-                      {playerLeftB.name}
-                    </span>
-                  </div>
-
-                  {isLeftBServing && (
-                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-[#84CC16] text-[#0A271E] font-black text-[10px] px-2.5 py-1 rounded-full shadow-lg border border-[#0A271E]/40 animate-pulse">
-                      <PickleballIcon className="w-3.5 h-3.5 text-[#0A271E]" />
-                      <span>Serving #{serverNumber}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Team 2 Right Court Box */}
-                <div
-                  onClick={() => handleScorePoint('teamB')}
-                  className={`flex-1 flex items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 transition ${
-                    isRightBServing ? 'ring-4 ring-inset ring-[#84CC16] bg-[#1a5b47] shadow-inner' : ''
-                  }`}
-                  title={`Team 2: ${playerRightB.name}`}
-                >
-                  <div className="flex flex-col items-center">
-                    <PlayerAvatar
-                      avatar={playerRightB.avatar}
-                      name={playerRightB.name}
-                      className={`w-9 h-9 rounded-full shadow ${
-                        isRightBServing
-                          ? 'border-2 border-[#84CC16] ring-2 ring-lime-400/50'
-                          : 'border border-white/20'
-                      }`}
-                    />
-                    <span className="text-[10px] text-white/95 font-medium mt-1 truncate max-w-[85px] text-center">
-                      {playerRightB.name}
-                    </span>
-                  </div>
-
-                  {isRightBServing && (
-                    <div className="absolute bottom-2 right-2 flex items-center gap-1.5 bg-[#84CC16] text-[#0A271E] font-black text-[10px] px-2.5 py-1 rounded-full shadow-lg border border-[#0A271E]/40 animate-pulse">
-                      <PickleballIcon className="w-3.5 h-3.5 text-[#0A271E]" />
-                      <span>Serving #{serverNumber}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+          <div className="flex items-center justify-center gap-3 sm:gap-6 my-1">
+            {/* Server Score */}
+            <div className="flex flex-col items-center min-w-[65px]">
+              <span className="text-4xl sm:text-5xl font-black font-mono tabular-nums text-[#0F382C] leading-none">
+                {serverScore}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">
+                Server
+              </span>
             </div>
-          );
-        })()}
-      </div>
 
-      {/* Footer controls */}
-      <div className="p-3 sm:p-4 bg-white border-t border-slate-200">
-        <div className="max-w-md mx-auto flex items-center gap-2 sm:gap-3">
+            {/* Separator */}
+            <span className="text-3xl font-mono font-bold text-slate-300 leading-none">·</span>
+
+            {/* Receiver Score */}
+            <div className="flex flex-col items-center min-w-[65px]">
+              <span className="text-4xl sm:text-5xl font-black font-mono tabular-nums text-slate-800 leading-none">
+                {receiverScore}
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">
+                Receiver
+              </span>
+            </div>
+
+            {/* Separator */}
+            <span className="text-3xl font-mono font-bold text-slate-300 leading-none">·</span>
+
+            {/* Server Number (Restrained Lime Accent Treatment) */}
+            <div className="flex flex-col items-center min-w-[65px]">
+              <div className="inline-flex items-center justify-center px-3 py-1 rounded-xl bg-[#0F382C] text-[#84CC16] border border-[#84CC16]/40 shadow-2xs">
+                <span className="text-3xl sm:text-4xl font-black font-mono tabular-nums leading-none">
+                  #{serverNumber}
+                </span>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">
+                Server #
+              </span>
+            </div>
+          </div>
+
+          {/* Active Server Info Strip */}
+          <div className="w-full pt-2 mt-1 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="flex items-center gap-1.5 truncate">
+              <PickleballIcon className="w-3.5 h-3.5 text-[#84CC16] shrink-0" />
+              <span className="font-semibold text-slate-800 truncate">
+                Serving: <strong className="text-[#0F382C]">{servingTeam === 'teamA' ? 'Team 1' : 'Team 2'}</strong> ({activeServerPlayer.name})
+              </span>
+            </div>
+            <span className="text-slate-400 text-[10px] font-mono shrink-0 ml-2">
+              Play to 11 (by 2)
+            </span>
+          </div>
+        </div>
+
+        {/* Middle: Compact Controls & Instructions Row */}
+        <div className="my-1 flex items-center justify-between gap-1.5 sm:gap-2 shrink-0">
+          {/* Side-Out vs Rally Segmented Control */}
+          <div className="inline-flex p-0.5 rounded-xl bg-slate-200/80 border border-slate-200 text-xs shrink-0">
+            <button
+              type="button"
+              onClick={() => setScoringMode('side_out')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                scoringMode === 'side_out'
+                  ? 'bg-[#0F382C] text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Side-Out
+            </button>
+            <button
+              type="button"
+              onClick={() => setScoringMode('rally')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
+                scoringMode === 'rally'
+                  ? 'bg-[#0F382C] text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Rally
+            </button>
+          </div>
+
+          {/* Subtle Contextual Fault / Next Server Indicator */}
+          <span className="text-[10px] font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200/80 px-2 py-1 rounded-lg truncate text-center">
+            {scoringMode === 'side_out'
+              ? (serverNumber === 1 ? 'Fault = Next Server (#2)' : 'Fault = Side Out (Change)')
+              : 'Rally = Point Every Turn'}
+          </span>
+
+          {/* Undo Control (Always Present - Eliminates Layout Shifting) */}
           <button
-            onClick={() => handleScorePoint('teamA')}
-            className={`touch-target flex-1 py-3 px-2 rounded-xl text-white font-bold text-xs shadow-sm transition active:scale-95 ${
-              servingTeam === 'teamA'
-                ? 'bg-[#0F382C] hover:bg-[#144637] ring-2 ring-[#84CC16]/60'
-                : 'bg-[#1b4b3c] hover:bg-[#235d4b]'
+            onClick={handleUndo}
+            disabled={history.length === 0}
+            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition active:scale-95 shrink-0 ${
+              history.length > 0
+                ? 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-2xs'
+                : 'bg-transparent text-slate-300 border border-transparent cursor-not-allowed'
+            }`}
+            title={history.length > 0 ? 'Undo last point' : 'No points to undo'}
+            aria-label="Undo last point"
+          >
+            <Undo2 className="w-3.5 h-3.5" />
+            <span>Undo</span>
+          </button>
+        </div>
+
+        {/* Center: Interactive Pickleball Court (The Primary Interactive Element) */}
+        <div className="flex-1 w-full max-h-[360px] min-h-[220px] rounded-2xl border-2 border-white/90 shadow-md overflow-hidden flex flex-col bg-[#0F382C] relative select-none">
+          {/* Top Half: Team 1 Service Area */}
+          <div
+            className={`flex-1 relative flex border-b border-white/60 transition ${
+              servingTeam === 'teamA' ? 'bg-[#154E3E]' : 'bg-[#0F382C]'
             }`}
           >
-            <span className="whitespace-nowrap">+1 Team 1 ({scoreA})</span>
-            {servingTeam === 'teamA' && (
-              <span className="block text-[9px] text-[#84CC16] font-normal whitespace-nowrap">
-                Serving #{serverNumber}
-              </span>
-            )}
+            {/* Team 1 Left Court Box (Deuce / Right from Team 1's perspective) */}
+            <div
+              onClick={() => handleScorePoint('teamA')}
+              className={`flex-1 border-r border-white/40 flex flex-col items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 active:scale-[0.99] transition ${
+                isLeftAServing ? 'bg-[#1a5b47]' : ''
+              }`}
+              title={`Score point for Team 1 (${playerLeftA.name})`}
+            >
+              {/* Player Avatar with Server Indicator strictly inside Avatar Boundary */}
+              <div className="relative">
+                <PlayerAvatar
+                  avatar={playerLeftA.avatar}
+                  name={playerLeftA.name}
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow transition-all duration-200 ${
+                    isLeftAServing
+                      ? 'ring-2 ring-inset ring-[#84CC16] shadow-[inset_0_0_8px_rgba(132,204,22,0.6),0_0_12px_rgba(132,204,22,0.35)]'
+                      : 'border border-white/40'
+                  }`}
+                >
+                  {isLeftAServing && (
+                    <>
+                      {/* Subtle lime-green inner-ring */}
+                      <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-[#84CC16] pointer-events-none" />
+                      {/* Glowing server badge inside avatar boundary */}
+                      <div className="absolute bottom-0 inset-x-0 py-0.5 bg-[#061E16]/90 backdrop-blur-xs flex items-center justify-center border-t border-[#84CC16]/60 pointer-events-none">
+                        <span className="text-[8px] font-black font-mono text-[#84CC16] drop-shadow-[0_0_3px_rgba(132,204,22,0.9)] leading-none">
+                          #{serverNumber}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </PlayerAvatar>
+              </div>
+
+              {/* Player Name & Info */}
+              <div className="mt-1 text-center min-w-0 px-1 pointer-events-none">
+                <span className="text-xs font-bold text-white block truncate max-w-[95px] drop-shadow-xs">
+                  {playerLeftA.name}
+                </span>
+                <span className="text-[10px] text-emerald-200/80 font-mono tabular-nums block">
+                  L{playerLeftA.skillRating} · Team 1
+                </span>
+              </div>
+            </div>
+
+            {/* Team 1 Right Court Box */}
+            <div
+              onClick={() => handleScorePoint('teamA')}
+              className={`flex-1 flex flex-col items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 active:scale-[0.99] transition ${
+                isRightAServing ? 'bg-[#1a5b47]' : ''
+              }`}
+              title={`Score point for Team 1 (${playerRightA.name})`}
+            >
+              {/* Player Avatar with Server Indicator strictly inside Avatar Boundary */}
+              <div className="relative">
+                <PlayerAvatar
+                  avatar={playerRightA.avatar}
+                  name={playerRightA.name}
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow transition-all duration-200 ${
+                    isRightAServing
+                      ? 'ring-2 ring-inset ring-[#84CC16] shadow-[inset_0_0_8px_rgba(132,204,22,0.6),0_0_12px_rgba(132,204,22,0.35)]'
+                      : 'border border-white/40'
+                  }`}
+                >
+                  {isRightAServing && (
+                    <>
+                      {/* Subtle lime-green inner-ring */}
+                      <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-[#84CC16] pointer-events-none" />
+                      {/* Glowing server badge inside avatar boundary */}
+                      <div className="absolute bottom-0 inset-x-0 py-0.5 bg-[#061E16]/90 backdrop-blur-xs flex items-center justify-center border-t border-[#84CC16]/60 pointer-events-none">
+                        <span className="text-[8px] font-black font-mono text-[#84CC16] drop-shadow-[0_0_3px_rgba(132,204,22,0.9)] leading-none">
+                          #{serverNumber}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </PlayerAvatar>
+              </div>
+
+              {/* Player Name & Info */}
+              <div className="mt-1 text-center min-w-0 px-1 pointer-events-none">
+                <span className="text-xs font-bold text-white block truncate max-w-[95px] drop-shadow-xs">
+                  {playerRightA.name}
+                </span>
+                <span className="text-[10px] text-emerald-200/80 font-mono tabular-nums block">
+                  L{playerRightA.skillRating} · Team 1
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Central Non-Volley Zone (The Kitchen) & Net Line */}
+          <div className="h-8 sm:h-9 bg-[#0A261D] border-y border-white/60 flex items-center justify-center relative shrink-0">
+            {/* Center Net Division */}
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[2px] bg-white/90 z-10" />
+            <div className="relative z-20 px-2 py-0.5 rounded bg-[#0A261D]/90 border border-white/20 text-[9px] sm:text-[10px] font-bold text-emerald-200/90 uppercase tracking-widest font-mono">
+              Non-Volley Zone (Kitchen)
+            </div>
+          </div>
+
+          {/* Bottom Half: Team 2 Service Area */}
+          <div
+            className={`flex-1 relative flex border-t border-white/60 transition ${
+              servingTeam === 'teamB' ? 'bg-[#154E3E]' : 'bg-[#0F382C]'
+            }`}
+          >
+            {/* Team 2 Left Court Box */}
+            <div
+              onClick={() => handleScorePoint('teamB')}
+              className={`flex-1 border-r border-white/40 flex flex-col items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 active:scale-[0.99] transition ${
+                isLeftBServing ? 'bg-[#1a5b47]' : ''
+              }`}
+              title={`Score point for Team 2 (${playerLeftB.name})`}
+            >
+              {/* Player Avatar with Server Indicator strictly inside Avatar Boundary */}
+              <div className="relative">
+                <PlayerAvatar
+                  avatar={playerLeftB.avatar}
+                  name={playerLeftB.name}
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow transition-all duration-200 ${
+                    isLeftBServing
+                      ? 'ring-2 ring-inset ring-[#84CC16] shadow-[inset_0_0_8px_rgba(132,204,22,0.6),0_0_12px_rgba(132,204,22,0.35)]'
+                      : 'border border-white/40'
+                  }`}
+                >
+                  {isLeftBServing && (
+                    <>
+                      {/* Subtle lime-green inner-ring */}
+                      <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-[#84CC16] pointer-events-none" />
+                      {/* Glowing server badge inside avatar boundary */}
+                      <div className="absolute bottom-0 inset-x-0 py-0.5 bg-[#061E16]/90 backdrop-blur-xs flex items-center justify-center border-t border-[#84CC16]/60 pointer-events-none">
+                        <span className="text-[8px] font-black font-mono text-[#84CC16] drop-shadow-[0_0_3px_rgba(132,204,22,0.9)] leading-none">
+                          #{serverNumber}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </PlayerAvatar>
+              </div>
+
+              {/* Player Name & Info */}
+              <div className="mt-1 text-center min-w-0 px-1 pointer-events-none">
+                <span className="text-xs font-bold text-white block truncate max-w-[95px] drop-shadow-xs">
+                  {playerLeftB.name}
+                </span>
+                <span className="text-[10px] text-emerald-200/80 font-mono tabular-nums block">
+                  L{playerLeftB.skillRating} · Team 2
+                </span>
+              </div>
+            </div>
+
+            {/* Team 2 Right Court Box */}
+            <div
+              onClick={() => handleScorePoint('teamB')}
+              className={`flex-1 flex flex-col items-center justify-center p-2 relative cursor-pointer hover:bg-white/5 active:scale-[0.99] transition ${
+                isRightBServing ? 'bg-[#1a5b47]' : ''
+              }`}
+              title={`Score point for Team 2 (${playerRightB.name})`}
+            >
+              {/* Player Avatar with Server Indicator strictly inside Avatar Boundary */}
+              <div className="relative">
+                <PlayerAvatar
+                  avatar={playerRightB.avatar}
+                  name={playerRightB.name}
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full shadow transition-all duration-200 ${
+                    isRightBServing
+                      ? 'ring-2 ring-inset ring-[#84CC16] shadow-[inset_0_0_8px_rgba(132,204,22,0.6),0_0_12px_rgba(132,204,22,0.35)]'
+                      : 'border border-white/40'
+                  }`}
+                >
+                  {isRightBServing && (
+                    <>
+                      {/* Subtle lime-green inner-ring */}
+                      <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-[#84CC16] pointer-events-none" />
+                      {/* Glowing server badge inside avatar boundary */}
+                      <div className="absolute bottom-0 inset-x-0 py-0.5 bg-[#061E16]/90 backdrop-blur-xs flex items-center justify-center border-t border-[#84CC16]/60 pointer-events-none">
+                        <span className="text-[8px] font-black font-mono text-[#84CC16] drop-shadow-[0_0_3px_rgba(132,204,22,0.9)] leading-none">
+                          #{serverNumber}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </PlayerAvatar>
+              </div>
+
+              {/* Player Name & Info */}
+              <div className="mt-1 text-center min-w-0 px-1 pointer-events-none">
+                <span className="text-xs font-bold text-white block truncate max-w-[95px] drop-shadow-xs">
+                  {playerRightB.name}
+                </span>
+                <span className="text-[10px] text-emerald-200/80 font-mono tabular-nums block">
+                  L{playerRightB.skillRating} · Team 2
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* 3. Footer Quick-Touch Scoring Actions */}
+      <footer className="px-3 sm:px-4 py-2.5 bg-white border-t border-[#E2E8F0] shrink-0">
+        <div className="max-w-md mx-auto flex items-center gap-2">
+          {/* Team 1 Score Action */}
+          <button
+            onClick={() => handleScorePoint('teamA')}
+            className={`touch-target flex-1 py-2.5 px-2 rounded-xl text-white font-bold text-xs shadow-xs transition active:scale-95 flex flex-col items-center justify-center ${
+              servingTeam === 'teamA'
+                ? 'bg-[#0F382C] ring-2 ring-[#84CC16]'
+                : 'bg-[#185341] hover:bg-[#1e6650]'
+            }`}
+            aria-label={`Score point for Team 1, current score ${scoreA}`}
+          >
+            <span className="text-xs font-black truncate max-w-full">
+              +1 Team 1 ({scoreA})
+            </span>
+            <span className="text-[10px] text-emerald-200/90 font-medium truncate max-w-full">
+              {teamAPlayers.map((p) => p.name).join(' & ')}
+            </span>
           </button>
 
+          {/* Fault / Rotate Serve Button */}
           <button
             onClick={handleSideOut}
-            className="touch-target px-2.5 sm:px-3 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs flex flex-col items-center justify-center transition active:scale-95 shrink-0"
-            title="Fault / Change Server"
+            className="touch-target px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 font-bold text-xs transition active:scale-95 flex flex-col items-center justify-center shrink-0 min-w-[95px]"
+            title="Fault / Rotate Serve"
+            aria-label="Fault / Rotate Serve"
           >
-            <span className="text-[10px] text-slate-500 font-medium whitespace-nowrap">Fault / Change</span>
-            <span className="text-[11px] text-[#0F382C] font-extrabold whitespace-nowrap">
+            <span className="text-[10px] text-slate-500 font-semibold uppercase">Fault / Rotate</span>
+            <span className="text-xs text-[#0F382C] font-black">
               {scoringMode === 'side_out' && serverNumber === 1 ? 'Server #2' : 'Side Out'}
             </span>
           </button>
 
+          {/* Team 2 Score Action */}
           <button
             onClick={() => handleScorePoint('teamB')}
-            className={`touch-target flex-1 py-3 px-2 rounded-xl text-white font-bold text-xs shadow-sm transition active:scale-95 ${
+            className={`touch-target flex-1 py-2.5 px-2 rounded-xl text-white font-bold text-xs shadow-xs transition active:scale-95 flex flex-col items-center justify-center ${
               servingTeam === 'teamB'
-                ? 'bg-[#0F382C] hover:bg-[#144637] ring-2 ring-[#84CC16]/60'
-                : 'bg-[#1b4b3c] hover:bg-[#235d4b]'
+                ? 'bg-[#0F382C] ring-2 ring-[#84CC16]'
+                : 'bg-[#185341] hover:bg-[#1e6650]'
             }`}
+            aria-label={`Score point for Team 2, current score ${scoreB}`}
           >
-            <span className="whitespace-nowrap">+1 Team 2 ({scoreB})</span>
-            {servingTeam === 'teamB' && (
-              <span className="block text-[9px] text-[#84CC16] font-normal whitespace-nowrap">
-                Serving #{serverNumber}
-              </span>
-            )}
+            <span className="text-xs font-black truncate max-w-full">
+              +1 Team 2 ({scoreB})
+            </span>
+            <span className="text-[10px] text-emerald-200/90 font-medium truncate max-w-full">
+              {teamBPlayers.map((p) => p.name).join(' & ')}
+            </span>
           </button>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };

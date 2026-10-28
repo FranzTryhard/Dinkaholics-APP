@@ -49,11 +49,15 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
     [players]
   );
 
+  const STORAGE_KEY = 'dinkaholics_roundrobin_rounds_v1';
+  const LEGACY_STORAGE_KEY = 'picklematch_roundrobin_rounds';
+
   const [activeTab, setActiveTab] = useState<'bracket' | 'standings' | 'matrix'>('bracket');
   const [selectedRoundIndex, setSelectedRoundIndex] = useState(0);
   const [roundsCount, setRoundsCount] = useState<number>(5);
   const [targetScore, setTargetScore] = useState<number>(11);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isConfirmRegenerateOpen, setIsConfirmRegenerateOpen] = useState(false);
   const [customScoreMatch, setCustomScoreMatch] = useState<{
     roundNumber: number;
     matchId: string;
@@ -67,7 +71,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
   const [rounds, setRounds] = useState<RoundRobinRound[]>(() => {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
-        const saved = window.localStorage.getItem('picklematch_roundrobin_rounds');
+        const saved = window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY);
         if (saved) {
           return JSON.parse(saved);
         }
@@ -85,13 +89,14 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
     setRounds(newRounds);
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.setItem('picklematch_roundrobin_rounds', JSON.stringify(newRounds));
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newRounds));
       }
     } catch (e) {}
   };
 
-  const handleGenerateSchedule = () => {
+  const executeGenerateSchedule = () => {
     setIsGenerating(true);
+    setIsConfirmRegenerateOpen(false);
     setTimeout(() => {
       const newSchedule = generateRoundRobinSchedule(
         availablePlayers,
@@ -102,6 +107,15 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
       setSelectedRoundIndex(0);
       setIsGenerating(false);
     }, 500);
+  };
+
+  const handleTriggerRegenerate = () => {
+    const hasCompletedScores = rounds.some((r) => r.matches.some((m) => m.completed));
+    if (hasCompletedScores) {
+      setIsConfirmRegenerateOpen(true);
+    } else {
+      executeGenerateSchedule();
+    }
   };
 
   const handleScoreMatch = (
@@ -326,7 +340,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
 
             <div className="flex items-center gap-2 pl-4">
               <button
-                onClick={handleGenerateSchedule}
+                onClick={handleTriggerRegenerate}
                 disabled={isGenerating}
                 className="touch-target px-3 py-1.5 rounded-xl border border-[#E0E7E4] bg-[#F6F8F7] hover:bg-white text-[#172033] text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-60"
                 title="Regenerate round schedule"
@@ -859,6 +873,37 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                 className="cssbuttons-io-button justify-center"
               >
                 <span>Confirm Score</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Confirm Regenerate Tournament Schedule */}
+      {isConfirmRegenerateOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-sm rounded-3xl bg-white border border-[#E0E7E4] p-6 shadow-2xl relative text-center">
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3 border border-amber-200">
+              <RotateCcw className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-black text-[#172033] font-display">Regenerate Tournament Schedule?</h3>
+            <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">
+              You currently have <strong className="text-[#172033]">{completedMatchesCount} completed match {completedMatchesCount === 1 ? 'score' : 'scores'}</strong> in this tournament. Generating a new bracket will clear existing scores and recalculate round pairings.
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setIsConfirmRegenerateOpen(false)}
+                className="touch-target py-2.5 px-3 rounded-xl border border-[#E0E7E4] bg-white text-[#172033] font-bold text-xs hover:bg-slate-50 transition active:scale-95"
+              >
+                Keep Matches
+              </button>
+              <button
+                type="button"
+                onClick={executeGenerateSchedule}
+                className="touch-target py-2.5 px-3 rounded-xl bg-amber-600 text-white font-bold text-xs hover:bg-amber-700 transition active:scale-95 shadow-sm"
+              >
+                Reset & Regenerate
               </button>
             </div>
           </div>

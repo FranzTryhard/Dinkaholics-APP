@@ -6,6 +6,7 @@ interface PlayerAvatarProps {
   name?: string;
   className?: string;
   imgClassName?: string;
+  children?: React.ReactNode;
 }
 
 export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
@@ -13,6 +14,7 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
   name = 'Player',
   className = 'w-10 h-10 rounded-full',
   imgClassName = 'w-full h-full object-cover',
+  children,
 }) => {
   const displaySrc = avatar && avatar.trim().length > 0 ? avatar : DEFAULT_PLAYER_AVATAR;
 
@@ -31,6 +33,7 @@ export const PlayerAvatar: React.FC<PlayerAvatarProps> = ({
         }}
         className={imgClassName}
       />
+      {children}
     </div>
   );
 };

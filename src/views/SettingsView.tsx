@@ -93,10 +93,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           {/* Winner Stays Rule */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700 block">
+            <label htmlFor="winner-stays-rule" className="font-semibold text-slate-700 block">
               Winner-Stays Partner Rule
             </label>
             <select
+              id="winner-stays-rule"
+              aria-label="Winner-Stays Partner Rule"
               value={config.winnerStaysRule}
               onChange={(e) => handleSaveConfig({ winnerStaysRule: e.target.value as any })}
               className="touch-target w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs focus:outline-none focus:border-[#0F382C] focus:ring-1 focus:ring-[#0F382C]"
@@ -111,10 +113,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           {/* Max Consecutive Games */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-slate-700 block">
+            <label htmlFor="max-consecutive-games" className="font-semibold text-slate-700 block">
               Max Consecutive Games on Court
             </label>
             <select
+              id="max-consecutive-games"
+              aria-label="Max Consecutive Games on Court"
               value={config.maxConsecutiveGames}
               onChange={(e) => handleSaveConfig({ maxConsecutiveGames: Number(e.target.value) })}
               className="touch-target w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-xs focus:outline-none focus:border-[#0F382C] focus:ring-1 focus:ring-[#0F382C]"

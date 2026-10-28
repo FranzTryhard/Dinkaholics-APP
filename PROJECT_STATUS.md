@@ -60,8 +60,21 @@ Dinkaholics is an automated rotation, court management, and matchmaking app for 
 - [x] **[Batch 5 Brand Harmonization & Accessibility]** Standardized CTA buttons with `.cssbuttons-io-button` using high-contrast dark forest green text (`#0A2B22`) on brand accent lime (`#35D879`) exceeding WCAG AAA (6.8:1).
 - [x] **[Batch 5 Brand Harmonization & Accessibility]** Aligned Tournament Round Robin overview cards, match scorecards, standings table, partner matrix, and waiting queue with zero-pill discipline and tabular figures.
 - [x] **[Batch 5 Brand Harmonization & Accessibility]** Verified iOS Safari touch targets ($\ge 44\text{px}$), safe-area insets, keyboard focus rings, and dark court-side scoreboard mode.
+- [x] **[Batch 6 Premium Court Scorekeeper UI/UX Refinement]** Redesigned `CourtVisualScorekeeper.tsx` into a high-visibility, mobile-optimized digital court referee interface:
+  - Unified top bar with balanced back button, sound toggle, Court-Side tripod mode toggle, live court indicator with tabular timer, and distinct Finish Game button.
+  - Scoreboard hierarchy with official pickleball call composition (`Server Score · Receiver Score · Server #`), tabular-nums font, and restrained lime accent server badge.
+  - Fixed undo layout shifting: permanently positioned `Undo` button in a dedicated control row alongside the `Side-Out / Rally` segmented control and contextual `Fault = Next Server (#2)` / `Fault = Side Out` status pill.
+  - Authentic pickleball court layout with true service quadrants, central Non-Volley Zone (Kitchen) with net line, subtle quadrant lighting on serve, and server indicator redesigned as a subtle lime-green inner-ring with glowing `#{serverNumber}` badge strictly inside the player avatar boundary with zero text or court-line overlap.
+  - Responsive touch layout fitting cleanly within viewport on mobile without unnecessary scrolling.
+  - Preserved 100% of functional scoring logic, rotation rules, Web Audio synthesizer effects, and confetti win celebration.
 - [x] **[Clean Up]** Removed obsolete CSV match export button and utilities per user request.
 - [x] **[Clean Up — Queue UI]** Removed wait time badges (`< 1m wait time`) from Waiting Queue player rows and streamlined Session Insights to focus cleanly on active queue player counts and rotation pacing.
+- [x] **[Batch 7 Audit Action Plan Implementation]** Implemented audit-first fixes:
+  - **Tournament Bracket Safety:** Added a safety confirmation modal before regenerating the Round Robin schedule when scored matches exist, preventing accidental data loss.
+  - **Storage Key Harmonization:** Upgraded tournament storage to `dinkaholics_roundrobin_rounds_v1` with backward compatibility for legacy keys.
+  - **A11y Label Associations:** Explicitly bound `htmlFor` and `id` across `SettingsView` select inputs and added descriptive `aria-label` tags.
+  - **Search & Empty State Quick-Actions:** Added clear `X` buttons and direct "Clear filters" action buttons in empty states for both `HistoryView` and `PlayersView`.
+  - **Mobile Mode Switcher Polish:** Optimized touch targets and text truncation on the 4-mode segmented control in `DashboardView`.
 
 ---
 

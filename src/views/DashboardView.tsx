@@ -280,49 +280,57 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 bg-slate-100/90 rounded-xl">
               <button
+                type="button"
                 onClick={() => onSwitchMode('balanced')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                aria-label="Set rotation mode to Balanced"
+                className={`min-h-[40px] py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
                   session.rotationMode === 'balanced'
                     ? 'bg-[#0F382C] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Scale className="w-3.5 h-3.5" />
-                <span>Balanced</span>
+                <Scale className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Balanced</span>
               </button>
               <button
+                type="button"
                 onClick={() => onSwitchMode('king_of_court')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                aria-label="Set rotation mode to King of Court ladder"
+                className={`min-h-[40px] py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
                   session.rotationMode === 'king_of_court'
                     ? 'bg-[#0F382C] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
                 title="Winners move up toward Court 1; runners-up move down"
               >
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span>King/Ladder</span>
+                <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="truncate">King/Ladder</span>
               </button>
               <button
+                type="button"
                 onClick={() => onSwitchMode('winner_stays')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                aria-label="Set rotation mode to Winner-Stays"
+                className={`min-h-[40px] py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
                   session.rotationMode === 'winner_stays'
                     ? 'bg-[#0F382C] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <Trophy className="w-3.5 h-3.5" />
-                <span>Winner-Stays</span>
+                <Trophy className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Winner-Stays</span>
               </button>
               <button
+                type="button"
                 onClick={() => onSwitchMode('social')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                aria-label="Set rotation mode to Social Mix"
+                className={`min-h-[40px] py-2 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 whitespace-nowrap ${
                   session.rotationMode === 'social'
                     ? 'bg-[#0F382C] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <HeartHandshake className="w-3.5 h-3.5" />
-                <span>Social</span>
+                <HeartHandshake className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">Social</span>
               </button>
             </div>
           </div>
