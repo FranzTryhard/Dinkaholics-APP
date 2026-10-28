@@ -115,18 +115,11 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={() => setIsAddModalOpen(true)}
-          className="cssbuttons-io-button"
+          className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
         >
-          <svg
-            height="22"
-            width="22"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
-          </svg>
+          <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
           <span>Add New Player</span>
         </button>
       </div>
@@ -204,10 +197,11 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
             </p>
             {players.length === 0 ? (
               <button
+                type="button"
                 onClick={() => setIsAddModalOpen(true)}
-                className="cssbuttons-io-button mx-auto"
+                className="touch-target inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10 mx-auto"
               >
-                <UserPlus className="w-4 h-4 mr-1.5" />
+                <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
                 <span>Add First Player</span>
               </button>
             ) : (
@@ -425,17 +419,9 @@ export const PlayersView: React.FC<PlayersViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="cssbuttons-io-button flex-1 justify-center"
+                  className="touch-target flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition active:scale-95 border border-[#103F32]/10"
                 >
-                  <svg
-                    height="18"
-                    width="18"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z" fill="currentColor"></path>
-                  </svg>
+                  <UserPlus className="w-4 h-4 stroke-[2.2] text-[#35D879]" />
                   <span>Create Player</span>
                 </button>
               </div>

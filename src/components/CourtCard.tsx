@@ -183,7 +183,7 @@ export const CourtCard: React.FC<CourtCardProps> = ({
               onClick={() => onEnterScore(activeMatch)}
               className="cssbuttons-io-button w-full justify-center"
             >
-              <Trophy className="w-4 h-4 text-[#0A2B22]" />
+              <Trophy className="w-4 h-4 text-[#35D879]" />
               <span className="hidden sm:inline">Record Score & Next Match</span>
               <span className="sm:hidden">Record Score</span>
             </button>

@@ -870,7 +870,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                   );
                   setCustomScoreMatch(null);
                 }}
-                className="cssbuttons-io-button justify-center"
+                className="cssbuttons-io-button flex-1 justify-center"
               >
                 <span>Confirm Score</span>
               </button>
