@@ -1,6 +1,6 @@
 import React from 'react';
 import { Session, RotationMode } from '../types';
-import { Plus, RotateCcw, Trophy, Sliders } from 'lucide-react';
+import { Plus, RotateCcw, Trophy, Sliders, Tv } from 'lucide-react';
 import { PickleballIcon } from './PickleballIcon';
 import { DinkaholicsLogo } from './DinkaholicsLogo';
 
@@ -11,6 +11,7 @@ interface NavbarProps {
   onNewSession: () => void;
   onResetDemo: () => void;
   onNavigateTab: (tab: any) => void;
+  onOpenKiosk?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNewSession,
   onResetDemo,
   onNavigateTab,
+  onOpenKiosk,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E0E7E4] transition-all">
@@ -134,6 +136,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Primary Action Zone */}
         <div className="flex items-center gap-2 shrink-0">
+          {onOpenKiosk && (
+            <button
+              type="button"
+              onClick={onOpenKiosk}
+              className="touch-target px-2.5 py-1.5 rounded-xl bg-[#103F32] hover:bg-[#155443] text-[#35D879] transition flex items-center gap-1.5 font-bold text-xs shadow-2xs cursor-pointer"
+              title="Launch Clubhouse TV Spectator Kiosk"
+              aria-label="Clubhouse TV Spectator Kiosk"
+            >
+              <Tv className="w-3.5 h-3.5 text-[#35D879]" />
+              <span className="hidden sm:inline">TV Kiosk</span>
+            </button>
+          )}
+
           <button
             onClick={() => onNavigateTab('settings')}
             className={`touch-target p-2 rounded-xl transition ${

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Session, Match, MatchCandidate, Player } from '../types';
 import { CourtCard } from '../components/CourtCard';
-import { Layers } from 'lucide-react';
+import { Layers, Tv } from 'lucide-react';
 
 interface CourtsViewProps {
   session: Session;
@@ -12,6 +12,7 @@ interface CourtsViewProps {
   onEnterScore: (match: Match) => void;
   onManualCustomMatch: (courtNumber: number) => void;
   onRegenerateRecommendation: (courtNumber: number) => void;
+  onOpenKiosk?: () => void;
 }
 
 export const CourtsView: React.FC<CourtsViewProps> = ({
@@ -23,6 +24,7 @@ export const CourtsView: React.FC<CourtsViewProps> = ({
   onEnterScore,
   onManualCustomMatch,
   onRegenerateRecommendation,
+  onOpenKiosk,
 }) => {
   const playersById = React.useMemo(() => {
     return players.reduce<Record<string, Player>>((acc, p) => {
@@ -47,9 +49,22 @@ export const CourtsView: React.FC<CourtsViewProps> = ({
           </p>
         </div>
 
-        <span className="self-start sm:self-auto px-3 py-1.5 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] text-xs font-bold font-mono tabular-nums">
-          {session.courtCount} Active {session.courtCount === 1 ? 'Court' : 'Courts'}
-        </span>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          {onOpenKiosk && (
+            <button
+              type="button"
+              onClick={onOpenKiosk}
+              className="touch-target px-3 py-1.5 rounded-xl bg-[#103F32] hover:bg-[#155443] text-[#35D879] transition flex items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer"
+              title="Launch Clubhouse TV Spectator Kiosk"
+            >
+              <Tv className="w-4 h-4 text-[#35D879]" />
+              <span>Clubhouse TV</span>
+            </button>
+          )}
+          <span className="px-3 py-1.5 rounded-xl bg-[#E5F8EC] text-[#103F32] border border-[#C4EED3] text-xs font-bold font-mono tabular-nums">
+            {session.courtCount} Active {session.courtCount === 1 ? 'Court' : 'Courts'}
+          </span>
+        </div>
       </div>
 
       {/* Courts List */}

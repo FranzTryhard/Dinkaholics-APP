@@ -35,6 +35,7 @@ import { DinkaholicsLogo } from './components/DinkaholicsLogo';
 import { Layers, Play, Users, RotateCcw } from 'lucide-react';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION } from './engine/mockData';
 import { AppSplashLoader } from './components/AppSplashLoader';
+import { ClubhouseKioskView } from './components/ClubhouseKioskView';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -44,6 +45,7 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<TabType>('dashboard');
 
   // Modals state
+  const [isKioskOpen, setIsKioskOpen] = useState(false);
   const [activeScoreMatch, setActiveScoreMatch] = useState<Match | null>(null);
   const [customCourtNumber, setCustomCourtNumber] = useState<number | null>(null);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
@@ -390,6 +392,7 @@ export default function App() {
         onNewSession={() => setIsSetupModalOpen(true)}
         onResetDemo={() => setIsResetConfirmOpen(true)}
         onNavigateTab={(tab) => setCurrentTab(tab)}
+        onOpenKiosk={() => setIsKioskOpen(true)}
       />
 
       {/* Main View Container */}
@@ -408,6 +411,7 @@ export default function App() {
             onTogglePlayerStatus={handleTogglePlayerStatus}
             onEndSessionClick={() => setIsEndSessionModalOpen(true)}
             onNavigateTab={(tab) => setCurrentTab(tab)}
+            onOpenKiosk={() => setIsKioskOpen(true)}
           />
         )}
 
@@ -421,6 +425,7 @@ export default function App() {
             onEnterScore={(match) => setActiveScoreMatch(match)}
             onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
             onRegenerateRecommendation={handleRegenerateRecommendation}
+            onOpenKiosk={() => setIsKioskOpen(true)}
           />
         )}
 
@@ -510,6 +515,19 @@ export default function App() {
             setIsSetupModalOpen(false);
             setCurrentTab('players');
           }}
+        />
+      )}
+
+      {/* Modal: Fullscreen Clubhouse TV Spectator Kiosk */}
+      {isKioskOpen && (
+        <ClubhouseKioskView
+          session={effectiveSession}
+          players={effectivePlayers}
+          matches={matches}
+          recommendationsByCourt={recommendations}
+          onClose={() => setIsKioskOpen(false)}
+          onStartRecommended={handleStartRecommended}
+          onEnterScore={(match) => setActiveScoreMatch(match)}
         />
       )}
 
