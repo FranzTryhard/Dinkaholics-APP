@@ -23,7 +23,6 @@ import {
   ChevronRight,
   Sparkles,
   Crown,
-  Tv,
   UserPlus,
 } from 'lucide-react';
 import { PickleballIcon } from '../components/PickleballIcon';
@@ -41,7 +40,6 @@ interface DashboardViewProps {
   onTogglePlayerStatus: (playerId: string, status: any) => void;
   onEndSessionClick: () => void;
   onNavigateTab: (tab: any) => void;
-  onOpenKiosk?: () => void;
   onLoadSamplePlayers?: () => void;
 }
 
@@ -58,7 +56,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onTogglePlayerStatus,
   onEndSessionClick,
   onNavigateTab,
-  onOpenKiosk,
   onLoadSamplePlayers,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -295,37 +292,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             onNavigateToPlayers={() => onNavigateTab('players')}
           />
 
-          {/* Clubhouse TV & Spectator Kiosk Card */}
-          {onOpenKiosk && (
-            <div className="rounded-2xl p-4 bg-gradient-to-r from-[#103F32] to-[#0A261E] border border-[#1C5E4B] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#35D879]/20 border border-[#35D879]/40 flex items-center justify-center text-[#35D879] shrink-0">
-                  <Tv className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-black text-sm text-white font-display">
-                      Clubhouse TV & Spectator Kiosk
-                    </h4>
-                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#35D879] text-[#0A2018]">
-                      Wall Display
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#9BB7AB] mt-0.5">
-                    Fullscreen scoreboard, live court feed, and on-deck queue for lounge TVs.
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onOpenKiosk}
-                className="touch-target px-3.5 py-2 rounded-xl bg-[#35D879] hover:bg-[#43e687] text-[#0A2018] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition active:scale-95 shadow-sm whitespace-nowrap cursor-pointer"
-              >
-                <Tv className="w-3.5 h-3.5" />
-                <span>Launch TV Mode</span>
-              </button>
-            </div>
-          )}
+
 
           {/* Section: Live Matches in Progress */}
           <div className="space-y-3">

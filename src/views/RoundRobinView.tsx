@@ -459,7 +459,7 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                 submessage="Distributing player pairings, court rotations, and bye rounds"
               />
             </div>
-          ) : currentRound && (
+          ) : currentRound ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -686,6 +686,26 @@ export const RoundRobinView: React.FC<RoundRobinViewProps> = ({
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
+              )}
+            </div>
+          ) : (
+            <div className="py-12 px-6 rounded-3xl bg-white border border-[#E0E7E4] text-center space-y-3 shadow-2xs">
+              <div className="w-12 h-12 rounded-2xl bg-[#E5F8EC] text-[#103F32] flex items-center justify-center mx-auto border border-[#C4EED3]">
+                <Trophy className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-[#172033] text-sm font-display">Need at least 4 active players</h3>
+              <p className="text-xs text-[#64748B] max-w-sm mx-auto leading-relaxed">
+                Doubles tournaments require at least 4 registered players in your roster to generate match pairings and court rotations.
+              </p>
+              {onNavigateToCourts && (
+                <button
+                  type="button"
+                  onClick={onNavigateToCourts}
+                  className="touch-target px-4 py-2.5 rounded-xl bg-[#103F32] hover:bg-[#165644] text-white font-bold text-xs shadow-xs transition inline-flex items-center gap-1.5 mx-auto"
+                >
+                  <Users className="w-4 h-4 text-[#35D879]" />
+                  <span>Go to Courts & Players</span>
+                </button>
               )}
             </div>
           )}

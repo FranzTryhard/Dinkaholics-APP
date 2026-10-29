@@ -1,6 +1,6 @@
 import React from 'react';
 import { Session, RotationMode } from '../types';
-import { Plus, RotateCcw, Trophy, Sliders, Tv, Swords } from 'lucide-react';
+import { Plus, RotateCcw, Trophy, Sliders } from 'lucide-react';
 import { PickleballIcon } from './PickleballIcon';
 import { DinkaholicsLogo } from './DinkaholicsLogo';
 
@@ -11,8 +11,6 @@ interface NavbarProps {
   onNewSession: () => void;
   onResetDemo: () => void;
   onNavigateTab: (tab: any) => void;
-  onOpenKiosk?: () => void;
-  onOpenHeadToHead?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -22,8 +20,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNewSession,
   onResetDemo,
   onNavigateTab,
-  onOpenKiosk,
-  onOpenHeadToHead,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E0E7E4] transition-all">
@@ -138,31 +134,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Primary Action Zone */}
         <div className="flex items-center gap-2 shrink-0">
-          {onOpenHeadToHead && (
-            <button
-              type="button"
-              onClick={onOpenHeadToHead}
-              className="touch-target px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#F6F8F7] text-[#103F32] border border-[#E0E7E4] transition flex items-center gap-1.5 font-bold text-xs shadow-2xs cursor-pointer"
-              title="Player Head-to-Head & Synergy Matrix"
-              aria-label="Player Head-to-Head & Synergy Matrix"
-            >
-              <Swords className="w-3.5 h-3.5 text-[#103F32]" />
-              <span className="hidden lg:inline">H2H Matrix</span>
-            </button>
-          )}
 
-          {onOpenKiosk && (
-            <button
-              type="button"
-              onClick={onOpenKiosk}
-              className="touch-target px-2.5 py-1.5 rounded-xl bg-[#103F32] hover:bg-[#155443] text-[#35D879] transition flex items-center gap-1.5 font-bold text-xs shadow-2xs cursor-pointer"
-              title="Launch Clubhouse TV Spectator Kiosk"
-              aria-label="Clubhouse TV Spectator Kiosk"
-            >
-              <Tv className="w-3.5 h-3.5 text-[#35D879]" />
-              <span className="hidden sm:inline">TV Kiosk</span>
-            </button>
-          )}
+
+
 
           <button
             onClick={() => onNavigateTab('settings')}

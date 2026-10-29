@@ -12,7 +12,6 @@ import {
   Calendar,
   ShieldCheck,
   UserCheck,
-  Swords,
   Clock,
   HeartHandshake,
 } from 'lucide-react';
@@ -25,7 +24,6 @@ interface PlayerDetailModalProps {
   onClose: () => void;
   onUpdatePlayerRating?: (playerId: string, newRating: SkillLevel) => void;
   onUpdatePlayerStatus?: (playerId: string, newStatus: PlayerStatus) => void;
-  onOpenHeadToHead?: (playerId: string) => void;
 }
 
 export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
@@ -36,7 +34,6 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
   onClose,
   onUpdatePlayerRating,
   onUpdatePlayerStatus,
-  onOpenHeadToHead,
 }) => {
   const insights = useMemo(() => {
     return getPlayerChemistryInsights(player, Object.values(playersById), matches);
@@ -215,16 +212,7 @@ export const PlayerDetailModal: React.FC<PlayerDetailModalProps> = ({
                   Chemistry & Rivalry Insights
                 </h3>
               </div>
-              {onOpenHeadToHead && (
-                <button
-                  type="button"
-                  onClick={() => onOpenHeadToHead(player.id)}
-                  className="touch-target px-3 py-1.5 rounded-xl bg-[#103F32] hover:bg-[#0c3127] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
-                >
-                  <Swords className="w-3.5 h-3.5 text-[#84CC16]" />
-                  <span>Compare Head-to-Head</span>
-                </button>
-              )}
+
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">

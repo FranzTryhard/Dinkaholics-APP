@@ -14,14 +14,14 @@ import { PlayerAvatar } from './PlayerAvatar';
 interface SessionInsightsProps {
   players: Player[];
   matches: Match[];
-  session: Session;
+  session?: Session | null;
   onNavigateToPlayers?: () => void;
 }
 
 export const SessionInsights: React.FC<SessionInsightsProps> = ({
   players,
   matches,
-  session,
+  session = null,
   onNavigateToPlayers,
 }) => {
   const activeQueue = players.filter((p) => p.status === 'available');
@@ -44,7 +44,7 @@ export const SessionInsights: React.FC<SessionInsightsProps> = ({
 
   // Completed matches
   const completedCount = matches.filter((m) => m.status === 'completed').length;
-  const activeCourtsCount = Object.values(session.activeCourtMatches).filter(Boolean).length;
+  const activeCourtsCount = session ? Object.values(session.activeCourtMatches).filter(Boolean).length : 0;
 
   return (
     <div className="rounded-2xl bg-white border border-slate-200/90 p-5 shadow-xs space-y-4">
@@ -136,7 +136,7 @@ export const SessionInsights: React.FC<SessionInsightsProps> = ({
 
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-3xl sm:text-4xl font-black font-mono text-[#0F382C] tracking-tight">
-                {activeCourtsCount}/{session.courtCount}
+                {activeCourtsCount}/{session?.courtCount ?? 2}
               </span>
               <span className="text-xs font-medium text-slate-500">Courts in Action</span>
             </div>

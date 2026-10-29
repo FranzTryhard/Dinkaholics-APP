@@ -1,20 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { Player, Match, Session } from '../types';
-import { Trophy, Flame, Award, ChevronRight, TrendingUp, Swords, HeartHandshake } from 'lucide-react';
+import { Trophy, Flame, Award, ChevronRight, TrendingUp, HeartHandshake } from 'lucide-react';
 import { PlayerDetailModal } from '../components/PlayerDetailModal';
 
 interface LeaderboardViewProps {
   players: Player[];
   matches: Match[];
   session?: Session | null;
-  onOpenHeadToHead?: (playerAId?: string, playerBId?: string) => void;
 }
 
 export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
   players,
   matches,
   session = null,
-  onOpenHeadToHead,
 }) => {
   const [scope, setScope] = useState<'session' | 'lifetime'>('session');
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -57,15 +55,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {onOpenHeadToHead && (
-            <button
-              onClick={() => onOpenHeadToHead()}
-              className="touch-target px-3.5 py-1.5 rounded-xl bg-[#103F32] hover:bg-[#0c3127] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
-            >
-              <Swords className="w-3.5 h-3.5 text-[#84CC16]" />
-              <span>Head-to-Head & Synergy Matrix</span>
-            </button>
-          )}
+
 
           {/* Scope Toggle */}
           <div className="inline-flex items-center gap-1 bg-[#F6F8F7] p-1 rounded-xl text-xs font-bold border border-[#E0E7E4]">
@@ -201,10 +191,6 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           playersById={playersById}
           session={session}
           onClose={() => setSelectedPlayer(null)}
-          onOpenHeadToHead={(pId) => {
-            setSelectedPlayer(null);
-            onOpenHeadToHead?.(pId);
-          }}
         />
       )}
     </div>

@@ -36,8 +36,6 @@ import { Layers, Play, Users, RotateCcw } from 'lucide-react';
 import { INITIAL_DEMO_PLAYERS, INITIAL_DEMO_SESSION } from './engine/mockData';
 import { DEFAULT_ROTATION_CONFIG } from './engine/config';
 import { AppSplashLoader } from './components/AppSplashLoader';
-import { ClubhouseKioskView } from './components/ClubhouseKioskView';
-import { HeadToHeadSynergyModal } from './components/HeadToHeadSynergyModal';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -47,19 +45,11 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<TabType>('dashboard');
 
   // Modals state
-  const [isKioskOpen, setIsKioskOpen] = useState(false);
-  const [isH2HOpen, setIsH2HOpen] = useState(false);
-  const [h2hPlayers, setH2hPlayers] = useState<{ playerAId?: string; playerBId?: string }>({});
   const [activeScoreMatch, setActiveScoreMatch] = useState<Match | null>(null);
   const [customCourtNumber, setCustomCourtNumber] = useState<number | null>(null);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isEndSessionModalOpen, setIsEndSessionModalOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
-
-  const handleOpenHeadToHead = (playerAId?: string, playerBId?: string) => {
-    setH2hPlayers({ playerAId, playerBId });
-    setIsH2HOpen(true);
-  };
 
   // Recommendations state: courtNumber -> MatchCandidate
   const [recommendations, setRecommendations] = useState<Record<number, MatchCandidate | null>>({});
@@ -429,8 +419,6 @@ export default function App() {
         onNewSession={() => setIsSetupModalOpen(true)}
         onResetDemo={() => setIsResetConfirmOpen(true)}
         onNavigateTab={(tab) => setCurrentTab(tab)}
-        onOpenKiosk={() => setIsKioskOpen(true)}
-        onOpenHeadToHead={() => handleOpenHeadToHead()}
       />
 
       {/* Main View Container */}
@@ -449,7 +437,6 @@ export default function App() {
             onTogglePlayerStatus={handleTogglePlayerStatus}
             onEndSessionClick={() => setIsEndSessionModalOpen(true)}
             onNavigateTab={(tab) => setCurrentTab(tab)}
-            onOpenKiosk={() => setIsKioskOpen(true)}
             onLoadSamplePlayers={handleLoadSamplePlayers}
           />
         )}
@@ -464,7 +451,6 @@ export default function App() {
             onEnterScore={(match) => setActiveScoreMatch(match)}
             onManualCustomMatch={(courtNum) => setCustomCourtNumber(courtNum)}
             onRegenerateRecommendation={handleRegenerateRecommendation}
-            onOpenKiosk={() => setIsKioskOpen(true)}
           />
         )}
 
@@ -490,7 +476,6 @@ export default function App() {
             onUpdatePlayerStatus={handleTogglePlayerStatus}
             onDeletePlayer={handleDeletePlayer}
             onUpdatePlayerDetails={handleUpdatePlayerDetails}
-            onOpenHeadToHead={(pId) => handleOpenHeadToHead(pId)}
           />
         )}
 
@@ -499,7 +484,6 @@ export default function App() {
             players={players}
             matches={matches}
             session={session}
-            onOpenHeadToHead={(pA, pB) => handleOpenHeadToHead(pA, pB)}
           />
         )}
 
@@ -565,29 +549,9 @@ export default function App() {
         />
       )}
 
-      {/* Modal: Fullscreen Clubhouse TV Spectator Kiosk */}
-      {isKioskOpen && (
-        <ClubhouseKioskView
-          session={effectiveSession}
-          players={effectivePlayers}
-          matches={matches}
-          recommendationsByCourt={recommendations}
-          onClose={() => setIsKioskOpen(false)}
-          onStartRecommended={handleStartRecommended}
-          onEnterScore={(match) => setActiveScoreMatch(match)}
-        />
-      )}
 
-      {/* Modal: Player Head-to-Head & Synergy Matrix */}
-      {isH2HOpen && (
-        <HeadToHeadSynergyModal
-          players={effectivePlayers}
-          matches={matches}
-          initialPlayerAId={h2hPlayers.playerAId}
-          initialPlayerBId={h2hPlayers.playerBId}
-          onClose={() => setIsH2HOpen(false)}
-        />
-      )}
+
+
 
       {/* Modal: End Session Recap */}
       {isEndSessionModalOpen && session && (
