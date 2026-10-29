@@ -7,7 +7,6 @@ import {
   Sliders,
   RotateCcw,
   Trash2,
-  Figma,
   ShieldCheck,
   Check,
   Crown,
@@ -318,34 +317,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       )}
 
 
-      {/* Figma Mockup Export Guide */}
-      <div className="rounded-2xl bg-white border border-slate-200/90 p-5 space-y-3 shadow-xs">
-        <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
-          <Figma className="w-5 h-5 text-purple-600" />
-          <div>
-            <h2 className="font-bold text-slate-900 text-sm">Figma Mockup Integration Guide</h2>
-            <p className="text-[11px] text-slate-400">How to export your Figma designs for AI Studio</p>
-          </div>
-        </div>
-
-        <div className="text-xs text-slate-600 space-y-2 leading-relaxed">
-          <p>
-            Automated development environments cannot directly open authenticated private Figma web canvas links.
-            To export mockups from your Figma file:
-          </p>
-          <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-500">
-            <li>
-              <strong>Export Frames as PNG/SVG:</strong> Select the frames in Figma, go to the right sidebar under the <em>Export</em> section, choose <strong>PNG</strong> or <strong>SVG</strong> (at 2x), and download.
-            </li>
-            <li>
-              <strong>Copy as SVG:</strong> Right-click any component/frame in Figma &gt; <em>Copy/Paste as</em> &gt; <em>Copy as SVG</em>.
-            </li>
-            <li>
-              <strong>Copy CSS/Properties:</strong> In Figma Dev Mode, inspect styles (colors, border-radii, layout spacing) and paste them here.
-            </li>
-          </ul>
-        </div>
-      </div>
 
       {/* Data Management & Demo Reset */}
       <div className="rounded-2xl bg-white border border-slate-200/90 p-5 space-y-4 shadow-xs">

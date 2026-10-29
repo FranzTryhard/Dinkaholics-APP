@@ -33,9 +33,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="font-black text-[#172033] text-lg tracking-tight leading-none font-display">
                 Dinkaholics
               </span>
-              <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#103F32] text-[#35D879] shadow-2xs">
-                DH
-              </span>
             </div>
             {session ? (
               <div className="text-[11px] text-[#64748B] font-medium truncate max-w-[140px] sm:max-w-xs mt-0.5">

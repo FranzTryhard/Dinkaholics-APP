@@ -46,40 +46,41 @@ export const AppSplashLoader: React.FC<AppSplashLoaderProps> = ({
   return (
     <div
       onClick={handleSkip}
-      className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#071F18] text-white select-none transition-opacity duration-400 ease-out cursor-pointer ${
+      className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-white text-[#172033] select-none transition-opacity duration-400 ease-out cursor-pointer ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
       role="dialog"
       aria-label="Loading Dinkaholics"
     >
-      {/* Background Court Ambient Glow */}
-      <div className="absolute inset-0 bg-radial from-[#0F382C]/60 via-[#071F18] to-[#04120E] pointer-events-none" />
+      {/* Background Soft Court Ambient Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(229,248,236,0.65)_0%,rgba(246,248,247,0.45)_55%,#FFFFFF_100%)] pointer-events-none" />
 
-      {/* Decorative Subtle Pickleball Grid */}
-      <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#84CC16_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+      {/* Decorative Subtle Court Dot Matrix */}
+      <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#103F32_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-sm w-full">
-        {/* The Uiverse Bouncing Pickleball / Paddle Loader */}
-        <div className="py-6 flex items-center justify-center relative">
-          <div className="loader scale-[1.7] transform-gpu" aria-hidden="true" />
+        {/* The Bouncing Pickleball / Paddle Loader with Mint Halo Anchor */}
+        <div className="py-7 flex items-center justify-center relative">
+          <div className="absolute w-28 h-28 rounded-full bg-[#E5F8EC] border border-[#C4EED3]/80 shadow-2xs" />
+          <div className="loader loader-paddle-dark scale-[1.7] transform-gpu relative z-10" aria-hidden="true" />
         </div>
 
         {/* Brand Lockup */}
-        <div className="mt-3 space-y-2 flex flex-col items-center">
-          <h1 className="text-3xl font-black tracking-tight text-white font-display flex items-center justify-center gap-1">
+        <div className="mt-3 space-y-1.5 flex flex-col items-center">
+          <h1 className="text-3xl font-black tracking-tight text-[#172033] font-display flex items-center justify-center gap-1">
             <span>DINK</span>
-            <span className="text-[#84CC16]">AHOLICS</span>
+            <span className="text-[#103F32]">AHOLICS</span>
           </h1>
 
-          <p className="text-xs text-emerald-200/70 font-sans tracking-wide">
+          <p className="text-xs text-[#64748B] font-medium tracking-wide">
             Smart Pickleball Matchmaking & Rotation
           </p>
         </div>
 
         {/* 3-Second Loading Bar Indicator */}
-        <div className="w-48 h-1 bg-white/10 rounded-full mt-8 overflow-hidden">
+        <div className="w-48 h-1.5 bg-[#E0E7E4] rounded-full mt-8 overflow-hidden shadow-2xs">
           <div
-            className="h-full bg-gradient-to-r from-[#84CC16] to-[#0cffaa] rounded-full"
+            className="h-full bg-gradient-to-r from-[#103F32] via-[#22C55E] to-[#84CC16] rounded-full"
             style={{
               animation: `splashProgress ${durationMs}ms cubic-bezier(0.16, 1, 0.3, 1) forwards`,
             }}
@@ -88,7 +89,7 @@ export const AppSplashLoader: React.FC<AppSplashLoaderProps> = ({
 
         {/* Touch-Friendly Skip Hint */}
         {allowSkip && (
-          <p className="text-[11px] text-emerald-300/40 mt-5 font-mono tracking-wider">
+          <p className="text-[11px] text-[#94A3B8] hover:text-[#64748B] mt-5 font-mono tracking-wider transition-colors">
             Tap anywhere to skip
           </p>
         )}

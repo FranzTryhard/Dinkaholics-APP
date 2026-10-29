@@ -278,7 +278,8 @@
 
 .loader-paddle-dark:before,
 .pickleball-bounce-loader-dark:before {
-  --loader-paddle-color: #0B2920;
+  --loader-paddle-color: #103F32;
+  box-shadow: 0 4px 10px -2px rgba(16, 63, 50, 0.2);
 }
 
 @keyframes bounce1 {
